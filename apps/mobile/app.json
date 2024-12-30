@@ -13,7 +13,8 @@
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true
       },
-      "bundleIdentifier": "com.KS.KarmaSoc"
+      "bundleIdentifier": "com.KS.KarmaSoc",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
