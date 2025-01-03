@@ -14,18 +14,19 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://business.loopearn.com"),
   title: {
     default:
-      "LoopEarn | Earn now. Close later. Secure your future home with us.",
+      "LoopEarn | Earn While You Learn, Unlock Potential, Earn Rewards: The Community-Powered Platform",
     template: "%s | LoopEarn",
   },
   description:
-    "Reimagining Event-Based Sales &mdash; Connecting you with buyers today for tomorrow's transactions, all in one seamless platform.",
+    "Empower your local business with LoopEarn! Easily list your services, create engaging campaigns, and attract customers through gamified deals that drive sales and loyalty.",
   openGraph: {
-    title: "LoopEarn | Earn now. close later, Secure your future home with us.",
+    title:
+      "LoopEarn | Earn While You Learn, Unlock Potential, Earn Rewards: The Community-Powered Platform",
     description:
-      "Reimagining Event-Based Sales &mdash; Connecting you with buyers today for tomorrow's transactions, all in one seamless platform.",
+      "Empower your local business with LoopEarn! Easily list your services, create engaging campaigns, and attract customers through gamified deals that drive sales and loyalty.",
     url: "https://business.loopearn.com",
     siteName:
-      "Reimagining Event-Based Sales &mdash; Connecting you with buyers today for tomorrow's transactions, all in one seamless platform.",
+      "Empower your local business with LoopEarn! Easily list your services, create engaging campaigns, and attract customers through gamified deals that drive sales and loyalty.",
     locale: "en_US",
     type: "website",
     images: [

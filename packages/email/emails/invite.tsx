@@ -40,8 +40,8 @@ const baseAppUrl =
 export const InviteEmail = ({
   invitedByEmail = "bukinoshita@example.com",
   invitedByName = "Bhaskaran Rathnachalam",
-  email = "bhaskar@relistex.com",
-  teamName = "Relistex",
+  email = "bhaskar@loopearn.com",
+  teamName = "LoopEarn",
   inviteCode = "jnwe9203frnwefl239jweflasn1230oqef",
   ip = "192.168.1.1",
   location = "Bangalore, India",
@@ -98,7 +98,7 @@ export const InviteEmail = ({
                 {invitedByEmail}
               </Link>
               ) {t("invite.link1")} <strong>{teamName}</strong>{" "}
-              {t("invite.link2")} <strong>Relistex</strong>.
+              {t("invite.link2")} <strong>LoopEarn</strong>.
             </Text>
             <Section className="mb-[42px] mt-[32px] text-center">
               <Button

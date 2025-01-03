@@ -21,7 +21,7 @@ interface WelcomeProps {
 
 const baseUrl =
   process.env.VERCEL_ENV === "production"
-    ? "https://relistex.com/email"
+    ? "https://loopearn.com/email"
     : "http://localhost:3000/email";
 
 export const WelcomeEmail = ({
@@ -65,17 +65,17 @@ export const WelcomeEmail = ({
           >
             <Logo baseUrl={baseUrl} />
             <Heading className="text-[#121212] text-[21px] font-normal text-center p-0 my-[30px] mx-0">
-              Welcome to Relistex
+              Welcome to LoopEarn
             </Heading>
 
             <br />
 
             <span className="font-medium">Hi {firstName},</span>
             <Text className="text-[#121212]">
-              Welcome to Relistex! I'm David, one of the founders.
+              Welcome to LoopEarn! I'm Randhir, one of the founders.
               <br />
               <br />
-              We've been working on Relistex for the past months, and during
+              We've been working on LoopEarn for the past months, and during
               this time, we've implemented the basic functionality to get
               started. However, with your feedback, we can make the right
               decisions to help you succeed.
@@ -88,7 +88,7 @@ export const WelcomeEmail = ({
               Should you have any questions, please don't hesitate to reply
               directly to this email or to{" "}
               <Link
-                href="https://cal.com/bhaskar-relistex/15min"
+                href="https://cal.com/randhir-loopearn/15min"
                 className="text-[#121212] underline"
               >
                 schedule a call with me
