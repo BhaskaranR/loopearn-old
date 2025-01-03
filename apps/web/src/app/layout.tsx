@@ -1,23 +1,22 @@
-import "@loopearn/ui/globals.css";
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
-import { Provider as AnalyticsProvider } from "@loopearn/analytics/client";
-import { cn } from "@loopearn/ui/cn";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { siteConfig } from "@/lib/config";
+import { fontSans } from "@/lib/fonts";
+import { cn, constructMetadata } from "@/lib/utils";
+import type { Metadata, Viewport } from "next";
+import "./globals.css";
 
-const DepartureMono = localFont({
-  src: "../fonts/DepartureMono-Regular.woff2",
-  variable: "--font-departure-mono",
+export const metadata: Metadata = constructMetadata({
+  title: `${siteConfig.name} | ${siteConfig.description}`,
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://v1.run"),
-  title: "Create v1",
-  description:
-    "A free, open-source starter kit for your next project, built with insights from Midday.",
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
 };
 
 export default function RootLayout({
@@ -29,15 +28,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          `${DepartureMono.variable} ${GeistSans.variable} ${GeistMono.variable}`,
-          "antialiased dark",
+          "min-h-screen bg-background antialiased w-full mx-auto scroll-smooth",
+          fontSans.variable
         )}
       >
-        <Header />
-        {children}
-        <Footer />
-
-        <AnalyticsProvider />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+        >
+          {children}
+          <ThemeToggle />
+          <TailwindIndicator />
+        </ThemeProvider>
       </body>
     </html>
   );

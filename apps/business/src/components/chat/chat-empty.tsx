@@ -1,0 +1,19 @@
+import { Icons } from "@loopearn/ui/icons";
+import Link from "next/link";
+import { Logo } from "../logo";
+
+type Props = {
+  firstName: string;
+};
+
+export function ChatEmpty({ firstName }: Props) {
+  return (
+    <div className="w-full mt-[200px] todesktop:mt-24 md:mt-24 flex flex-col items-center justify-center text-center">
+      <Logo className="hidden font-semibold sm:inline-block" />
+      <span className="font-medium text-xl mt-6">
+        Hi {firstName}, how can I help <br />
+        you today?
+      </span>
+    </div>
+  );
+}

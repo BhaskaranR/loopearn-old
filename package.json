@@ -1,5 +1,5 @@
 {
-  "name": "v1",
+  "name": "loopearn",
   "private": true,
   "workspaces": ["packages/*", "apps/*", "tooling/*"],
   "scripts": {

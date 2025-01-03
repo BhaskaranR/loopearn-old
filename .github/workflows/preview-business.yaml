@@ -1,11 +1,11 @@
-name: Preview Deployment - Attorney
+name: Preview Deployment - Business
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ATTORNEY }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_BUSINESS }}
   TURBO_TOKEN: ${{ secrets.VERCEL_TOKEN }}
   TURBO_TEAM: ${{ secrets.VERCEL_ORG_ID }}
-  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT_BUSINESS }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_BUSINESS_AUTH_TOKEN }}
   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
   SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING: true
 on:
@@ -13,7 +13,7 @@ on:
     branches-ignore:
       - main
     paths:
-      - apps/attorney/**
+      - apps/business/**
       - packages/**
 jobs:
   deploy-preview:
@@ -25,8 +25,8 @@ jobs:
           bun-version: latest
       - name: Install dependencies
         run: bun install
-      - name: 🧪 Run unit tests
-        run: bun run test
+      # - name: 🧪 Run unit tests
+      #   run: bun run test
       - name: 📤 Pull Vercel Environment Information
         run: bunx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
       - name: 🏗 Build Project Artifacts

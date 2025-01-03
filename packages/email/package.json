@@ -1,6 +1,15 @@
 {
   "name": "@loopearn/email",
   "version": "0.1.0",
+  "dependencies": {
+    "@loopearn/ui": "workspace:*",
+    "@loopearn/utils": "workspace:*",
+    "@react-email/components": "^0.0.31",
+    "@react-email/render": "^1.0.3",
+    "@react-email/tailwind": "^1.0.4",
+    "date-fns": "^4.1.0",
+    "responsive-react-email": "^0.0.5"
+  },
   "private": true,
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
@@ -11,11 +20,7 @@
     "build": "email build",
     "start": "email start"
   },
-  "dependencies": {
-    "@react-email/components": "^0.0.24",
-    "@react-email/tailwind": "^0.1.0"
-  },
   "devDependencies": {
-    "react-email": "^3.0.1"
+    "react-email": "^3.0.4"
   }
 }
