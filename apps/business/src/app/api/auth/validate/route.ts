@@ -1,5 +1,5 @@
 import { env } from "@/env.mjs";
-import { client as RedisClient } from "@loopearn/kv";
+import { client as RedisClient } from "@loopearn/kv/client";
 import { createClient as supaClient } from "@supabase/supabase-js";
 import { Ratelimit } from "@upstash/ratelimit";
 import { type NextRequest, NextResponse } from "next/server";
