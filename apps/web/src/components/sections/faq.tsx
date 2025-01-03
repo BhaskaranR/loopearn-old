@@ -21,10 +21,7 @@ export function FAQ() {
         className="w-full max-w-2xl mx-auto py-10"
       >
         {siteConfig.faqs.map((faq, index) => (
-          <AccordionItem
-            key={`item-${index.toString()}`}
-            value={`item-${index.toString()}`}
-          >
+          <AccordionItem key={`item-${index.toString()}`}>
             <AccordionTrigger className="text-left hover:no-underline">
               {faq.question}
             </AccordionTrigger>
