@@ -2,6 +2,7 @@ import {
   Body,
   Container,
   Font,
+  Head,
   Heading,
   Html,
   Img,
@@ -23,14 +24,16 @@ const baseUrl =
     ? "https://relistex.com/email"
     : "http://localhost:3000/email";
 
-export const WelcomeEmail = ({ fullName = "Viktor Hofte" }: WelcomeProps) => {
+export const WelcomeEmail = ({
+  fullName = "Randhir Lakavathu",
+}: WelcomeProps) => {
   const firstName = fullName.split(" ").at(0);
-  const text = `Hi ${firstName}, Welcome to Relistex! I'm David, one of the founders. It's really important to us that you have a great experience ramping up.`;
+  const text = `Hi ${firstName}, Welcome to Loopearn! I'm Randhir, founder of Loopearn. It's really important to us that you have a great experience ramping up.`;
 
   return (
     <Html>
       <Tailwind>
-        <head>
+        <Head>
           <Font
             fontFamily="Geist"
             fallbackFontFamily="Helvetica"
@@ -52,7 +55,7 @@ export const WelcomeEmail = ({ fullName = "Viktor Hofte" }: WelcomeProps) => {
             fontWeight={500}
             fontStyle="normal"
           />
-        </head>
+        </Head>
         <Preview>{text}</Preview>
 
         <Body className="bg-[#fff] my-auto mx-auto font-sans">

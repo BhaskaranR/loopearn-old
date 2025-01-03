@@ -53,7 +53,7 @@ export const InviteEmail = ({
   return (
     <Html>
       <Tailwind>
-        <head>
+        <Head>
           <Font
             fontFamily="Geist"
             fallbackFontFamily="Helvetica"
@@ -75,7 +75,7 @@ export const InviteEmail = ({
             fontWeight={500}
             fontStyle="normal"
           />
-        </head>
+        </Head>
         <Preview>{t("invite.preview", { teamName })}</Preview>
 
         <Body className="bg-[#fff] my-auto mx-auto font-sans">
