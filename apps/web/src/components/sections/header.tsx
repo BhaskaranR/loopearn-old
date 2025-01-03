@@ -78,7 +78,7 @@ export function Header() {
               </Link>
 
               <Link
-                href="https://business.loopearn.com"
+                href="https://loopearn.com"
                 className={cn(
                   buttonVariants({ variant: "default" }),
                   "h-8 text-white rounded-full group",
