@@ -23,7 +23,6 @@ export const env = createEnv({
     RESEND_API_KEY: z.string(),
     OPENPANEL_SECRET_KEY: z.string(),
     WEBHOOK_SECRET: z.string(),
-    NOVU_SECRET_KEY: z.string(),
     RESEND_AUDIENCE_ID: z.string(),
   },
   /**
@@ -60,7 +59,6 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID,
     OPENPANEL_SECRET_KEY: process.env.OPENPANEL_SECRET_KEY,
     WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
-    NOVU_SECRET_KEY: process.env.NOVU_SECRET_KEY,
     RESEND_AUDIENCE_ID: process.env.RESEND_AUDIENCE_ID,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
