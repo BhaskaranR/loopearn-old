@@ -1,13 +1,19 @@
-import { Img } from "@react-email/components";
+import { Img, Section } from "@react-email/components";
 
-export function Logo({ baseUrl }: { baseUrl: string }) {
+type Props = {
+  baseUrl: string;
+};
+
+export function Logo({ baseUrl }: Props) {
   return (
-    <Img
-      src={`${baseUrl}/logo.png`}
-      alt="Logo"
-      className="my-0 mx-auto text-center"
-      width={70}
-      height={70}
-    />
+    <Section className="mt-[32px]">
+      <Img
+        src={`${baseUrl}/logo.png`}
+        width="45"
+        height="45"
+        alt="loopearn"
+        className="my-0 mx-auto block"
+      />
+    </Section>
   );
 }

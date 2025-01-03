@@ -1,0 +1,162 @@
+CREATE TABLE business(
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  ein varchar(255) ,
+  avatar_url varchar(255),
+  business_name varchar(255) NOT NULL,
+  business_email varchar(255),
+  business_phone varchar(255),
+  business_url text,
+  business_image text,
+  business_meta jsonb,
+  business_currency text,
+  category text,
+  business_handle text unique default null,
+  business_affiliates jsonb,
+  stripe jsonb,
+  industry varchar(255),
+  street_address varchar(255),
+  city varchar(255),
+  state varchar(255),
+  postal_code varchar(255),
+  country varchar(255),
+  owner_id uuid REFERENCES public.users(id),
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  referral_code text UNIQUE
+);
+
+alter table "public"."business" add column "document_classification" boolean default false;
+
+-- add status
+CREATE TABLE business_users(
+  id serial PRIMARY KEY,
+  business_id uuid REFERENCES business(id),
+  user_id uuid REFERENCES public.users(id),
+  role VARCHAR(255),
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE public.business ENABLE ROW LEVEL SECURITY;
+
+-- business account read only to the business_users associated with the business account
+CREATE POLICY "Allow business logged-in read access" ON public.business
+  FOR SELECT
+    USING (auth.role() = 'authenticated');
+
+ALTER TABLE public.business_users ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE function public.custom_access_token_hook(event jsonb)
+returns jsonb
+language plpgsql
+stable
+as $$
+  declare
+    claims jsonb;
+    business_account_role varchar; -- Changed from public.app_role to varchar
+    business_account_id uuid;
+    business_name varchar;
+    industry varchar;
+  begin
+    -- Check if the user is marked as admin in the profiles table
+    RAISE LOG 'Function started. user id: %', event->>'user_id';
+
+    select business_users.role, business_users.business_id, business.business_name, business.industry into business_account_role, business_account_id, business_name, industry   from public.business join public.business_users on
+    business.id = business_users.business_id where business_users.user_id = (event->>'user_id')::uuid;
+
+
+    RAISE LOG 'Business account role: %', business_account_role;
+
+    claims := event->'claims';
+
+    if business_account_role is not null then
+      -- Set the claim
+      claims := jsonb_set(claims, '{business_account_role}', to_jsonb(business_account_role));
+      claims := jsonb_set(claims, '{business_id}', to_jsonb(business_account_id));
+      claims := jsonb_set(claims, '{business_name}', to_jsonb(business_name));
+      claims := jsonb_set(claims, '{industry}', to_jsonb(industry));
+
+        -- Update the 'claims' object in the original event
+        event := jsonb_set(event, '{claims}', claims);
+    end if;
+
+    RAISE LOG 'Function ended. Event: %', event;
+    -- Return the modified or original event
+    return event;
+  end;
+$$;
+
+CREATE POLICY "Allow business individual update access" ON public.business
+  FOR UPDATE
+    USING (auth.uid() = owner_id);
+
+grant usage on schema public to supabase_auth_admin;
+
+grant execute
+  on function public.custom_access_token_hook
+  to supabase_auth_admin;
+
+revoke execute
+  on function public.custom_access_token_hook
+  from authenticated, anon;
+
+grant all
+  on table public.business
+to supabase_auth_admin;
+
+grant all
+  on table public.business_users
+to supabase_auth_admin;
+
+-- revoke all
+--   on table public.business
+--   from authenticated, anon;
+
+-- revoke all
+--   on table public.business_users
+--   from authenticated, anon;
+
+create policy "Allow auth admin to read user roles" ON public.business_users
+as permissive for select
+to supabase_auth_admin
+using (true);
+
+
+create policy "Allow  business_users logged-in read access" on public.business_users for
+select
+  using (auth.jwt () ->> 'business_id' = business_id::text);
+
+
+-- write a function that returns auth.jwt()
+CREATE OR REPLACE FUNCTION public.get_jwt()
+  RETURNS jsonb
+  LANGUAGE plpgsql
+  AS $$
+  BEGIN
+    RETURN auth.jwt();
+  END;
+  $$;
+
+
+GRANT EXECUTE ON FUNCTION public.get_jwt() TO authenticated;
+
+CREATE OR REPLACE FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) RETURNS "uuid"
+      LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO 'public'
+    AS $$
+declare
+    new_business_id uuid;
+begin
+    insert into business (business_name, industry, owner_id) values (business_name, industry, auth.uid()) returning id into new_business_id;
+    insert into business_users (user_id, business_id, role) values (auth.uid(), new_business_id, 'owner');
+
+    return new_business_id;
+end;
+$$;
+
+ALTER FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) OWNER TO "postgres";
+
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "anon";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "service_role";
+
+

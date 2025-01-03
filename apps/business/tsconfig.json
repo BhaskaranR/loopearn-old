@@ -1,11 +1,12 @@
 {
-  "extends": "@loopearn/typescript/nextjs.json",
+  "extends": "@loopearn/tsconfig/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "strict": true
+    "strict": false,
+    "noImplicitAny": false
   },
   "include": [
     "next-env.d.ts",

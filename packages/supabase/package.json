@@ -6,7 +6,8 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:generate": "supabase gen types --lang=typescript --project-id $PROJECT_ID --schema public > src/types/db.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.1",
@@ -25,6 +26,9 @@
     "./mutations": "./src/mutations/index.ts",
     "./middleware": "./src/clients/middleware.ts",
     "./queries": "./src/queries/index.ts",
-    "./types": "./src/types/index.ts"
+    "./cached-queries": "./src/queries/cached-queries.ts",
+    "./storage": "./src/utils/storage.ts",
+    "./types": "./src/types/index.ts",
+    "./db": "./src/types/db.ts"
   }
 }

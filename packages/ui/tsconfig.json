@@ -1,10 +1,11 @@
 {
-  "extends": "@loopearn/typescript/react-library.json",
+  "extends": "@loopearn/tsconfig/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "jsx": "react-jsx"
   },
   "include": ["src"],
   "exclude": ["node_modules"]

@@ -12,8 +12,14 @@
     "start": "email start"
   },
   "dependencies": {
+    "@loopearn/ui": "workspace:*",
+    "@loopearn/utils": "workspace:*",
+    "@react-email/render": "0.0.10",
+    "date-fns": "^4.1.0",
+    "react-email": "3.0.4",
     "@react-email/components": "^0.0.24",
-    "@react-email/tailwind": "^0.1.0"
+    "@react-email/tailwind": "^0.1.0",
+    "responsive-react-email": "^0.0.5"
   },
   "devDependencies": {
     "react-email": "^3.0.1"

@@ -1,4 +1,4 @@
-name: Production Deployment - Attorney
+name: Production Deployment - Business
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_ATTORNEY }}
@@ -13,7 +13,7 @@ on:
     branches:
       - main
     paths:
-      - apps/attorney/**
+      - apps/business/**
       - packages/**
 jobs:
   deploy-production:
@@ -26,9 +26,9 @@ jobs:
       - name: Install dependencies
         run: bun install
       # - name: 🔦 Run linter
-      #   run: bun run lint --filter=@relistex/attorney
+      #   run: bun run lint --filter=@loopearn/business
       # - name: 🪐 Check TypeScript
-      #   run: bun run typecheck --filter=@relistex/attorney
+      #   run: bun run typecheck --filter=@loopearn/business
       - name: 🧪 Run unit tests
         run: bun run test
       - name: 📤 Pull Vercel Environment Information
@@ -42,4 +42,4 @@ jobs:
       - name: Deploy Project Artifacts to Vercel
         run: |
           bunx vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} > domain.txt
-          bunx vercel alias --scope=${{ secrets.VERCEL_ORG_ID }} --token=${{ secrets.VERCEL_TOKEN }} set `cat domain.txt` attorney.relistex.com
+          bunx vercel alias --scope=${{ secrets.VERCEL_ORG_ID }} --token=${{ secrets.VERCEL_TOKEN }} set `cat domain.txt` business.loopearn.com
