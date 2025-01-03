@@ -1,11 +1,11 @@
 import { Section } from "@/components/section";
+import { siteConfig } from "@/lib/config";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { siteConfig } from "@/lib/config";
+} from "@loopearn/ui/accordion";
 
 export function FAQ() {
   return (
