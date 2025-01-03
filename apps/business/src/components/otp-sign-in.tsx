@@ -16,7 +16,7 @@ import { z } from "zod";
 
 import { useToast } from "@loopearn/ui/use-toast";
 
-async function checkEmailisAttorney(email: string) {
+async function checkEmailisBusiness(email: string) {
   const response = await fetch(`/api/auth/validateAttorney?email=${email}`);
   const data = await response.json();
   return data.exists;
@@ -60,7 +60,7 @@ export function OTPSignIn({ className }: Props) {
       setEmail(value);
     }
 
-    const emailExists = await checkEmailisAttorney(value);
+    const emailExists = await checkEmailisBusiness(value);
     if (!emailExists) {
       toast({
         title: "Error",

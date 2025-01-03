@@ -6,7 +6,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useQueryState } from "nuqs";
 import ReferredSection from "./components/ReferralSection";
-import AttorneySignUpForm from "./components/SignUpForm";
+import SignUpForm from "./components/SignUpForm";
 
 interface IProps {
   searchParams?: {
@@ -15,7 +15,7 @@ interface IProps {
   };
 }
 
-export default async function AttorneySignupPage({ searchParams }: IProps) {
+export default async function SignupPage({ searchParams }: IProps) {
   const cookiestore = cookies();
   const supabase = createClient();
   const referralCode = searchParams?.inviteCode;
@@ -53,7 +53,7 @@ export default async function AttorneySignupPage({ searchParams }: IProps) {
                     </h1>
                   </div>
                   <div className="flex flex-col gap-5">
-                    <AttorneySignUpForm referralCode={referralCode} />
+                    <SignUpForm referralCode={referralCode} />
                   </div>
 
                   <div className="my-8 self-center text-sm">

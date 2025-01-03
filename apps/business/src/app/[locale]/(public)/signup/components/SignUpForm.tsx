@@ -35,7 +35,7 @@ async function checkEmailUnique(email: string) {
 }
 
 // extend yup with password validation
-const AttorneySignUpForm = ({ referralCode }: { referralCode?: string }) => {
+const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
   const { toast } = useToast();
   const [type, setType] = useState<"email" | "phone">();
   const [isLoading, setLoading] = useState(false);
@@ -265,4 +265,4 @@ const AttorneySignUpForm = ({ referralCode }: { referralCode?: string }) => {
   );
 };
 
-export default memo(AttorneySignUpForm);
+export default memo(SignUpForm);

@@ -1,5 +1,5 @@
 import { env } from "@/env.mjs";
-import { client as RedisClient } from "@loopearn/kv/client";
+import { client as RedisClient } from "@loopearn/kv";
 import { createClient as supaClient } from "@supabase/supabase-js";
 import { Ratelimit } from "@upstash/ratelimit";
 import { type NextRequest, NextResponse } from "next/server";
@@ -56,7 +56,6 @@ export async function GET(req: NextRequest) {
   ) {
     return NextResponse.json({ exists: true });
   }
-
   return NextResponse.json({ exists: false });
 }
 
