@@ -22,9 +22,8 @@ export default function Home() {
         <FeatureScroll />
         <FeatureHighlight />
         <BentoGrid />
-        <Benefits />
+        {/* <Benefits /> */}
         <Features />
-        <Testimonials />
         <FAQ />
         <CTA />
         <Footer />
