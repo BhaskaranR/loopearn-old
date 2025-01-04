@@ -32,17 +32,17 @@ export default async function Layout({
 }) {
   const user = await getUser();
 
-  if (!user?.data?.business_users?.length) {
+  if (!user?.business_users?.length) {
     redirect("/teams");
   }
 
   if (user) {
-    await setupAnalytics({ userId: user.data.id });
+    await setupAnalytics({ userId: user.id });
   }
 
   return (
     <div className="relative">
-      <AI initialAIState={{ user: user.data, messages: [], chatId: nanoid() }}>
+      <AI initialAIState={{ user: user, messages: [], chatId: nanoid() }}>
         <Sidebar />
 
         <div className="mx-4 md:ml-[95px] md:mr-10 pb-8">

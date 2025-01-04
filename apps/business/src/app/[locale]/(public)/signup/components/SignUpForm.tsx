@@ -1,7 +1,5 @@
 "use client";
 import { type SignUpFormValues, signUpSchema } from "@/actions/schema";
-import { signUpAction } from "@/actions/sign-up-action";
-import { verifyOtpAction } from "@/actions/verify-otp-action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@loopearn/supabase/client";
 import { Alert, AlertDescription, AlertTitle } from "@loopearn/ui/alert";
@@ -13,10 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@loopearn/ui/card";
-import { cn } from "@loopearn/ui/cn";
 import { Form, FormControl, FormField, FormItem } from "@loopearn/ui/form";
 import { Input } from "@loopearn/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@loopearn/ui/input-otp";
 import { Label } from "@loopearn/ui/label";
 import { useToast } from "@loopearn/ui/use-toast";
 import { Loader2 } from "lucide-react";
@@ -42,8 +38,6 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
   const [isSent, setSent] = useState(false);
   const supabase = createClient();
   // nuqs get referral code
-
-  const verifyOtp = useAction(verifyOtpAction);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -96,16 +90,6 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
 
     setSent(true);
     setLoading(false);
-  }
-
-  async function onComplete(token: string) {
-    if (type) {
-      verifyOtp.execute({
-        type,
-        token,
-        email: form.getValues("email"),
-      });
-    }
   }
 
   if (isSent) {

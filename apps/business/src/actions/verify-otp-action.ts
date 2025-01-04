@@ -16,14 +16,14 @@ export const verifyOtpAction = actionClient
     const options =
       type === "email"
         ? {
-            email: email!,
+            email: email!, // Ensure email is defined
             token,
-            type: "email" as const,
+            type: "email",
           }
         : {
-            phone: phone!,
+            phone: phone!, // Ensure phone is defined
             token,
-            type: "sms" as const,
+            type: "sms",
           };
 
     const { data, error } = await supabase.auth.verifyOtp(options);

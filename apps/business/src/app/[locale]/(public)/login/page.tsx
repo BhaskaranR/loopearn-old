@@ -1,17 +1,7 @@
-import { AppleSignIn } from "@/components/apple-sign-in";
 import { ConsentBanner } from "@/components/consent-banner";
 import { DesktopCommandMenuSignIn } from "@/components/desktop-command-menu-sign-in";
-import { GoogleSignIn } from "@/components/google-sign-in";
 import { Logo } from "@/components/logo";
 import { OTPSignIn } from "@/components/otp-sign-in";
-import { Cookies } from "@/utils/constants";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@loopearn/ui/accordion";
-import { Icons } from "@loopearn/ui/icons";
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import Link from "next/link";
@@ -25,71 +15,7 @@ export default async function Page(params) {
   if (params?.searchParams?.return_to === "desktop/command") {
     return <DesktopCommandMenuSignIn />;
   }
-
-  const cookieStore = cookies();
-  const preferred = cookieStore.get(Cookies.PreferredSignInProvider);
   const showTrackingConsent = false;
-  // isEU() && !cookieStore.has(Cookies.TrackingConsent);
-  const { device } = userAgent({ headers: headers() });
-
-  let moreSignInOptions = null;
-  let preferredSignInOption =
-    device?.vendor === "Apple" ? (
-      <div className="flex flex-col space-y-2">
-        <GoogleSignIn />
-        <AppleSignIn />
-      </div>
-    ) : (
-      <GoogleSignIn />
-    );
-
-  switch (preferred?.value) {
-    case "apple":
-      preferredSignInOption = <AppleSignIn />;
-      moreSignInOptions = (
-        <>
-          <GoogleSignIn />
-          <OTPSignIn className="border-t-[1px] border-border pt-8" />
-        </>
-      );
-      break;
-
-    case "google":
-      preferredSignInOption = <GoogleSignIn />;
-      moreSignInOptions = (
-        <>
-          <AppleSignIn />
-          <OTPSignIn className="border-t-[1px] border-border pt-8" />
-        </>
-      );
-      break;
-
-    case "otp":
-      preferredSignInOption = <OTPSignIn />;
-      moreSignInOptions = (
-        <>
-          <GoogleSignIn />
-          <AppleSignIn />
-        </>
-      );
-      break;
-
-    default:
-      if (device?.vendor === "Apple") {
-        moreSignInOptions = (
-          <>
-            <OTPSignIn className="border-t-[1px] border-border pt-8" />
-          </>
-        );
-      } else {
-        moreSignInOptions = (
-          <>
-            <AppleSignIn />
-            <OTPSignIn className="border-t-[1px] border-border pt-8" />
-          </>
-        );
-      }
-  }
 
   return (
     <div>
@@ -116,24 +42,7 @@ export default async function Page(params) {
             </p>
 
             <div className="pointer-events-auto mt-6 flex flex-col mb-6">
-              {preferredSignInOption}
-
-              <Accordion
-                type="single"
-                collapsible
-                className="border-t-[1px] pt-2 mt-6"
-              >
-                <AccordionItem value="item-1" className="border-0">
-                  <AccordionTrigger className="justify-center space-x-2 flex text-sm">
-                    <span>More options</span>
-                  </AccordionTrigger>
-                  <AccordionContent className="mt-4">
-                    <div className="flex flex-col space-y-4">
-                      {moreSignInOptions}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+              <OTPSignIn />
             </div>
 
             <p className="text-xs text-[#878787]">

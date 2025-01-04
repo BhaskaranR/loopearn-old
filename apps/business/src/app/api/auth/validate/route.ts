@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const ip = req.headers.get("x-forwarded-for");
     const ratelimit = new Ratelimit({
       redis: RedisClient,
-      limiter: Ratelimit.slidingWindow(50, "1 d"),
+      limiter: Ratelimit.slidingWindow(500, "1 d"),
     });
 
     const { success, limit, reset, remaining } = await ratelimit.limit(

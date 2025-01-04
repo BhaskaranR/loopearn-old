@@ -3,14 +3,38 @@ import { addDays, isWithinInterval } from "date-fns";
 import type { Client } from "../types";
 
 export async function getUserQuery(supabase: Client, userId: string) {
-  const cols = `id, username, full_name, avatar_url, metadata, profile_status, referral_code, locale, phone, business_id,
-      business_users(role, business_id , business!inner(id, business_name, avatar_url))`;
-  return supabase
+  const cols = `
+    id,
+    username,
+    full_name,
+    avatar_url,
+    metadata,
+    profile_status,
+    referral_code,
+    locale,
+    phone,
+    business_id,
+    business_users!user_id(
+      role,
+      business:business_id(
+        id,
+        business_name,
+        avatar_url
+      )
+    )
+  `;
+  const { data, error } = await supabase
     .from("users")
     .select(cols)
     .eq("id", userId)
-    .single()
-    .throwOnError();
+    .single();
+
+  console.log("Response:", { data, error });
+
+  if (error) throw error;
+  if (!data) throw new Error("User not found");
+
+  return data;
 }
 
 export async function getCurrentUserBusinessQuery(supabase: Client) {

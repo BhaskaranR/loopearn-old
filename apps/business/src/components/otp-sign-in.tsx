@@ -33,7 +33,9 @@ export function OTPSignIn({ className }: Props) {
   const verifyOtp = useAction(verifyOtpAction);
   const [isLoading, setLoading] = useState(false);
   const [isSent, setSent] = useState(false);
-  const [email, setEmail] = useState<string>();
+  const [phone, setPhone] = useState();
+  const [email, setEmail] = useState<string | null>(null);
+  const [type, setType] = useState<"email" | "phone">("email");
   const supabase = createClient();
 
   const { toast } = useToast();
@@ -61,21 +63,27 @@ export function OTPSignIn({ className }: Props) {
       return;
     }
 
-    await supabase.auth.signInWithOtp({ email });
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+      console.error("Error signing in with OTP:", error.message);
+    } else {
+      console.log("OTP sent successfully!");
+    }
 
     setSent(true);
     setLoading(false);
   }
 
   async function onComplete(token: string) {
-    if (!email) return;
-
-    verifyOtp.execute({
-      token,
-      email,
-    });
+    if (type) {
+      verifyOtp.execute({
+        type,
+        token,
+        phone,
+        email,
+      });
+    }
   }
-
   if (isSent) {
     return (
       <div className={cn("flex flex-col space-y-4 items-center", className)}>

@@ -17,9 +17,11 @@ export const deleteUserAction = async () => {
     .select("business_id, business:business_id(id, business_name, avatar_url)")
     .eq("user_id", user?.data?.id!);
 
-  const businessIds = membersData
-    ?.filter(({ business }) => business.length === 1)
-    .map(({ business_id }) => business_id);
+  // const businessIds = membersData
+  //   ?.filter(({ business }) => business.length === 1)
+  //   .map(({ business_id }) => business_id);
+
+  const businessIds = [];
 
   if (businessIds?.length) {
     // Delete all teams with only one member

@@ -35,7 +35,7 @@ export const getUser = async () => {
     ["user", userId],
     {
       tags: [`user_${userId}`],
-      revalidate: 180,
+      revalidate: 1,
     },
   )();
 };

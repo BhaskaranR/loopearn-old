@@ -159,4 +159,7 @@ GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varyi
 GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "service_role";
 
-
+CREATE POLICY "Users can view their own business_users"
+ON public.business_users
+FOR SELECT
+USING (auth.uid() = user_id);
