@@ -17,7 +17,7 @@ export default async function Teams() {
   const supabase = createClient();
   const user = await getUser();
 
-  const teams = await getTeamsByUserIdQuery(supabase, user?.data?.id);
+  const teams = await getTeamsByUserIdQuery(supabase, user?.id);
 
   if (!teams?.data?.length) {
     redirect("/teams/create");

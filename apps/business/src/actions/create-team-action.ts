@@ -24,7 +24,7 @@ export const createBusinessAction = authActionClient
       return;
     }
 
-    // revalidateTag(`user_${user.data.id}`);
+    revalidateTag(`user_${user.data.id}`);
     revalidateTag(`teams_${team_id}`);
 
     if (redirectTo) {

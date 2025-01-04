@@ -43,19 +43,18 @@ export const getUser = async () => {
 export const getBusinessUser = async () => {
   const supabase = createClient();
   const user = await getUser();
-  const { data } = user!;
-  const businessId = data!.business_users.at(0)?.business_id!;
+  const businessId = user?.business_id!;
 
   return unstable_cache(
     async () => {
       return getBusinessUserQuery(supabase, {
-        userId: data!.id,
+        userId: user!.id,
         businessId,
       });
     },
-    ["business", "user", data!.id],
+    ["business", "user", user!.id],
     {
-      tags: [`business_user_${data!.id}`],
+      tags: [`business_user_${user!.id}`],
       revalidate: 180,
     },
   )();
@@ -65,7 +64,7 @@ export const getBusinessMembers = async () => {
   const supabase = createClient();
 
   const user = await getUser();
-  const businessId = user?.data?.business_users?.at(0)?.business_id;
+  const businessId = user?.business_id;
 
   if (!businessId) {
     return null;
@@ -87,7 +86,7 @@ export const getTeamInvites = async () => {
   const supabase = createClient();
 
   const user = await getUser();
-  const teamId = user?.data?.business_users?.at(0)?.business_id;
+  const teamId = user?.business_id;
 
   if (!teamId) {
     return;
@@ -109,7 +108,7 @@ export const getUserInvites = async () => {
   const supabase = createClient();
 
   const user = await getUser();
-  const email = user?.data?.username!;
+  const email = user?.username!;
 
   return unstable_cache(
     async () => {

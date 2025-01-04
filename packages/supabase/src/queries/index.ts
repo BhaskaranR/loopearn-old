@@ -4,25 +4,9 @@ import type { Client } from "../types";
 
 export async function getUserQuery(supabase: Client, userId: string) {
   const cols = `
-    id,
-    username,
-    full_name,
-    avatar_url,
-    metadata,
-    profile_status,
-    referral_code,
-    locale,
-    phone,
-    business_id,
-    business_users!user_id(
-      role,
-      business:business_id(
-        id,
-        business_name,
-        avatar_url
-      )
-    )
-  `;
+      *,
+      business:business_id(*)
+    `;
   const { data, error } = await supabase
     .from("users")
     .select(cols)

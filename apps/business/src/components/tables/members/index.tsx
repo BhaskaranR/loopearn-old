@@ -9,8 +9,8 @@ export async function MembersTable() {
   const user = await getUser();
   const teamMembers = await getBusinessMembersQuery(
     supabase,
-    user?.data?.business_users[0]?.business_id ?? "",
+    user?.business_id ?? "",
   );
 
-  return <DataTable data={teamMembers?.data} currentUser={user?.data} />;
+  return <DataTable data={teamMembers?.data} currentUser={user} />;
 }

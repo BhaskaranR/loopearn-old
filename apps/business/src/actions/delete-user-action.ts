@@ -15,7 +15,7 @@ export const deleteUserAction = async () => {
   const { data: membersData } = await supabase
     .from("business_users")
     .select("business_id, business:business_id(id, business_name, avatar_url)")
-    .eq("user_id", user?.data?.id!);
+    .eq("user_id", user?.id!);
 
   // const businessIds = membersData
   //   ?.filter(({ business }) => business.length === 1)
@@ -31,7 +31,7 @@ export const deleteUserAction = async () => {
   const userId = await deleteUser(supabase);
 
   await resend.contacts.remove({
-    email: user?.data?.username!,
+    email: user?.username!,
     audienceId: process.env.RESEND_AUDIENCE_ID!,
   });
 

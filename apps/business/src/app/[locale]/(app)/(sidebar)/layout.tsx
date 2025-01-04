@@ -32,7 +32,7 @@ export default async function Layout({
 }) {
   const user = await getUser();
 
-  if (!user?.business_users?.length) {
+  if (!user?.business_id) {
     redirect("/teams");
   }
 

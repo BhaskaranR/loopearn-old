@@ -54,7 +54,7 @@ export async function submitUserMessage(
   }
 
   const user = await getUser();
-  const teamId = user?.data?.business_users?.at(0)?.business_id as string;
+  const teamId = user?.business_users?.at(0)?.business_id as string;
 
   aiState.update({
     ...aiState.get(),

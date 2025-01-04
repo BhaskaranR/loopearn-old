@@ -13,7 +13,7 @@ export async function GET(req, res) {
 
   const { data } = await download(supabase, {
     bucket: "vault",
-    path: `${user?.data?.business_users?.[0]?.business_id ?? ""}/${path}`,
+    path: `${user?.business_users?.[0]?.business_id ?? ""}/${path}`,
   });
 
   const responseHeaders = new Headers(res.headers);

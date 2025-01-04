@@ -7,9 +7,9 @@ export async function TeamMenu() {
 
   return (
     <TeamDropdown
-      selectedTeamId={user?.data?.business_users?.at(0)?.business_id}
+      selectedTeamId={user?.business_users?.at(0)?.business_id}
       teams={teams?.data}
-      key={user?.data?.business_users?.at(0)?.business_id}
+      key={user?.business_users?.at(0)?.business_id}
     />
   );
 }

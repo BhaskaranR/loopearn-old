@@ -322,7 +322,6 @@ $_$;
 
 ALTER FUNCTION "public"."get_user_referrals"("user_id" "text") OWNER TO "postgres";
 
-
 CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -349,6 +348,7 @@ BEGIN
     INSERT INTO public.users(
       id,
       username,
+      business_id,
       full_name,
       phone,
       metadata,
@@ -358,6 +358,7 @@ BEGIN
     VALUES (
       NEW.id,
       NEW.email,
+      business_id,
       CONCAT(
       NEW.raw_user_meta_data ->> 'first_name', ' ',
       NEW.raw_user_meta_data ->> 'last_name'),
@@ -471,7 +472,6 @@ BEGIN
   RETURN new;
 END;
 $$;
-
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
