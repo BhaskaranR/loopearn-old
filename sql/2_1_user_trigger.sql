@@ -1,5 +1,4 @@
-
-CREATE OR REPLACE FUNCTION generate_referral_code()
+CREATE OR REPLACE FUNCTION public.generate_referral_code()
 RETURNS TEXT
 LANGUAGE plpgsql
 AS $$
@@ -14,9 +13,9 @@ BEGIN
     -- Check if the referral code already exists in the users or business table
     EXECUTE format('
       SELECT EXISTS (
-        SELECT 1 FROM users u WHERE u.referral_code = %L
+        SELECT 1 FROM public.users u WHERE u.referral_code = %L
       ) OR EXISTS (
-        SELECT 1 FROM business b WHERE b.referral_code = %L
+        SELECT 1 FROM public.business b WHERE b.referral_code = %L
       )', referral_code, referral_code)
     INTO referral_code_exists;
 
@@ -48,7 +47,7 @@ BEGIN
       business_name = NEW.raw_user_meta_data ->> 'companyName';
 
   IF new_referral_code IS NULL THEN
-    new_referral_code := generate_referral_code();
+    new_referral_code := public.generate_referral_code();
   end IF;
 
   RAISE LOG 'Generated referral code: %', new_referral_code;

@@ -8,22 +8,21 @@ import { cn } from "@loopearn/ui/cn";
 import { Form, FormControl, FormField, FormItem } from "@loopearn/ui/form";
 import { Input } from "@loopearn/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@loopearn/ui/input-otp";
+import { useToast } from "@loopearn/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useToast } from "@loopearn/ui/use-toast";
-
 async function checkEmailisBusiness(email: string) {
-  const response = await fetch(`/api/auth/validateAttorney?email=${email}`);
+  const response = await fetch(`/api/auth/validate?email=${email}`);
   const data = await response.json();
   return data.exists;
 }
 
 const formSchema = z.object({
-  value: z.string().min(1),
+  email: z.string().email(),
 });
 
 type Props = {
@@ -34,33 +33,24 @@ export function OTPSignIn({ className }: Props) {
   const verifyOtp = useAction(verifyOtpAction);
   const [isLoading, setLoading] = useState(false);
   const [isSent, setSent] = useState(false);
-  const [phone, setPhone] = useState<string | undefined>();
-  const [email, setEmail] = useState<string | undefined>();
-  const [type, setType] = useState<"email" | "phone" | undefined>();
+  const [email, setEmail] = useState<string>();
   const supabase = createClient();
+
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      value: "",
+      email: "",
     },
   });
 
-  async function onSubmit({ value }: z.infer<typeof formSchema>) {
+  async function onSubmit({ email }: z.infer<typeof formSchema>) {
     setLoading(true);
 
-    const isPhone = value.startsWith("+");
+    setEmail(email);
 
-    setType(isPhone ? "phone" : "email");
-
-    if (isPhone) {
-      setPhone(value);
-    } else {
-      setEmail(value);
-    }
-
-    const emailExists = await checkEmailisBusiness(value);
+    const emailExists = await checkEmailisBusiness(email);
     if (!emailExists) {
       toast({
         title: "Error",
@@ -71,25 +61,19 @@ export function OTPSignIn({ className }: Props) {
       return;
     }
 
-    const options = isPhone
-      ? { phone: value }
-      : { email: value, options: { shouldCreateUser: false } };
-
-    await supabase.auth.signInWithOtp(options);
+    await supabase.auth.signInWithOtp({ email });
 
     setSent(true);
     setLoading(false);
   }
 
   async function onComplete(token: string) {
-    if (type) {
-      verifyOtp.execute({
-        type,
-        token,
-        phone,
-        email,
-      });
-    }
+    if (!email) return;
+
+    verifyOtp.execute({
+      token,
+      email,
+    });
   }
 
   if (isSent) {
@@ -97,6 +81,7 @@ export function OTPSignIn({ className }: Props) {
       <div className={cn("flex flex-col space-y-4 items-center", className)}>
         <InputOTP
           maxLength={6}
+          autoFocus
           onComplete={onComplete}
           disabled={verifyOtp.status === "executing"}
           render={({ slots }) => (
@@ -112,13 +97,18 @@ export function OTPSignIn({ className }: Props) {
           )}
         />
 
-        <button
-          onClick={() => setSent(false)}
-          type="button"
-          className="text-sm"
-        >
-          Try again
-        </button>
+        <div className="flex space-x-2">
+          <span className="text-sm text-[#878787]">
+            Didn't receive the email?
+          </span>
+          <button
+            onClick={() => setSent(false)}
+            type="button"
+            className="text-sm text-primary underline font-medium"
+          >
+            Resend code
+          </button>
+        </div>
       </div>
     );
   }
@@ -129,12 +119,12 @@ export function OTPSignIn({ className }: Props) {
         <div className={cn("flex flex-col space-y-4", className)}>
           <FormField
             control={form.control}
-            name="value"
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder="Enter email"
+                    placeholder="Enter email address"
                     {...field}
                     autoCapitalize="false"
                     autoCorrect="false"

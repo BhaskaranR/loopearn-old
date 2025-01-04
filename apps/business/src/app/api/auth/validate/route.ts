@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     });
 
     const { success, limit, reset, remaining } = await ratelimit.limit(
-      `relistex_ratelimit_${ip}`,
+      `loopearn_ratelimit_${ip}`,
     );
 
     if (!success) {

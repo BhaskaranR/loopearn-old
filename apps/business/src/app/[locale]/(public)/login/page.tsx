@@ -1,8 +1,17 @@
+import { AppleSignIn } from "@/components/apple-sign-in";
 import { ConsentBanner } from "@/components/consent-banner";
 import { DesktopCommandMenuSignIn } from "@/components/desktop-command-menu-sign-in";
+import { GoogleSignIn } from "@/components/google-sign-in";
 import { Logo } from "@/components/logo";
 import { OTPSignIn } from "@/components/otp-sign-in";
 import { Cookies } from "@/utils/constants";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@loopearn/ui/accordion";
+import { Icons } from "@loopearn/ui/icons";
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import Link from "next/link";
@@ -19,11 +28,68 @@ export default async function Page(params) {
 
   const cookieStore = cookies();
   const preferred = cookieStore.get(Cookies.PreferredSignInProvider);
+  const showTrackingConsent = false;
+  // isEU() && !cookieStore.has(Cookies.TrackingConsent);
+  const { device } = userAgent({ headers: headers() });
 
-  const moreSignInOptions = null;
-  const preferredSignInOption = (
-    <OTPSignIn className="border-t-[1px] border-border pt-8" />
-  );
+  let moreSignInOptions = null;
+  let preferredSignInOption =
+    device?.vendor === "Apple" ? (
+      <div className="flex flex-col space-y-2">
+        <GoogleSignIn />
+        <AppleSignIn />
+      </div>
+    ) : (
+      <GoogleSignIn />
+    );
+
+  switch (preferred?.value) {
+    case "apple":
+      preferredSignInOption = <AppleSignIn />;
+      moreSignInOptions = (
+        <>
+          <GoogleSignIn />
+          <OTPSignIn className="border-t-[1px] border-border pt-8" />
+        </>
+      );
+      break;
+
+    case "google":
+      preferredSignInOption = <GoogleSignIn />;
+      moreSignInOptions = (
+        <>
+          <AppleSignIn />
+          <OTPSignIn className="border-t-[1px] border-border pt-8" />
+        </>
+      );
+      break;
+
+    case "otp":
+      preferredSignInOption = <OTPSignIn />;
+      moreSignInOptions = (
+        <>
+          <GoogleSignIn />
+          <AppleSignIn />
+        </>
+      );
+      break;
+
+    default:
+      if (device?.vendor === "Apple") {
+        moreSignInOptions = (
+          <>
+            <OTPSignIn className="border-t-[1px] border-border pt-8" />
+          </>
+        );
+      } else {
+        moreSignInOptions = (
+          <>
+            <AppleSignIn />
+            <OTPSignIn className="border-t-[1px] border-border pt-8" />
+          </>
+        );
+      }
+  }
 
   return (
     <div>
@@ -46,17 +112,28 @@ export default async function Page(params) {
             </div>
 
             <p className="font-medium pb-1 text-2xl text-[#878787]">
-              Earn While You Learn
+              Learn while you earn.
             </p>
 
             <div className="pointer-events-auto mt-6 flex flex-col mb-6">
               {preferredSignInOption}
-            </div>
-            <div className="my-4 text-center text-sm">
-              Don't have an account?{" "}
-              <Link href="/signup" className="underline">
-                Sign up
-              </Link>
+
+              <Accordion
+                type="single"
+                collapsible
+                className="border-t-[1px] pt-2 mt-6"
+              >
+                <AccordionItem value="item-1" className="border-0">
+                  <AccordionTrigger className="justify-center space-x-2 flex text-sm">
+                    <span>More options</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="mt-4">
+                    <div className="flex flex-col space-y-4">
+                      {moreSignInOptions}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
 
             <p className="text-xs text-[#878787]">
@@ -66,7 +143,7 @@ export default async function Page(params) {
                 Terms of Service
               </a>{" "}
               and{" "}
-              <a href="https://loopearn.com/privacy" className="underline">
+              <a href="https://loopearn.com/policy" className="underline">
                 Privacy Policy
               </a>
               .
@@ -74,6 +151,8 @@ export default async function Page(params) {
           </div>
         </div>
       </div>
+
+      {showTrackingConsent && <ConsentBanner />}
     </div>
   );
 }
