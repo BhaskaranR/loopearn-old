@@ -59,14 +59,17 @@ export const createClient = (options?: CreateClientOptions) => {
     {
       ...rest,
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
+        get(name: string) {
+          return cookieStore.get(name)?.value;
         },
-        setAll(cookiesToSet) {
+        set(name: string, value: string, options: CookieOptions) {
           try {
-            for (const { name, value, options } of cookiesToSet) {
-              cookieStore.set(name, value, options);
-            }
+            cookieStore.set({ name, value, ...options });
+          } catch (error) {}
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: "", ...options });
           } catch (error) {}
         },
       },
@@ -75,6 +78,8 @@ export const createClient = (options?: CreateClientOptions) => {
         headers: {
           // Pass user agent from browser
           "user-agent": headers().get("user-agent") as string,
+          // https://supabase.com/docs/guides/platform/read-replicas#experimental-routing
+          "sb-lb-routing-mode": "alpha-all-services",
         },
       },
     },

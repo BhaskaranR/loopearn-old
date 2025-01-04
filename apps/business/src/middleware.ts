@@ -35,8 +35,8 @@ export async function middleware(request: NextRequest) {
   if (
     !session &&
     newUrl.pathname !== "/login" &&
-    newUrl.pathname !== "/signup" &&
-    !newUrl.pathname.includes("/report")
+    !newUrl.pathname.includes("/report") &&
+    !newUrl.pathname.includes("/i/")
   ) {
     const encodedSearchParams = `${newUrl.pathname.substring(1)}${
       newUrl.search
@@ -54,9 +54,17 @@ export async function middleware(request: NextRequest) {
   // If authenticated but no full_name redirect to user setup page
   if (
     newUrl.pathname !== "/setup" &&
+    newUrl.pathname !== "/teams/create" &&
     session &&
     !session?.user?.user_metadata?.full_name
   ) {
+    // Check if the URL contains an invite code
+    const inviteCodeMatch = newUrl.pathname.startsWith("/teams/invite/");
+
+    if (inviteCodeMatch) {
+      return NextResponse.redirect(`${url.origin}${newUrl.pathname}`);
+    }
+
     return NextResponse.redirect(`${url.origin}/setup`);
   }
 
