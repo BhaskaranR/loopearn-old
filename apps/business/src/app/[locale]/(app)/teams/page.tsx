@@ -1,6 +1,6 @@
 import { SelectTeamTable } from "@/components/tables/select-team/table";
 import { UserMenu } from "@/components/user-menu";
-import { getUser } from "@loopearn/supabase/cached-queries";
+import { getTeams, getUser } from "@loopearn/supabase/cached-queries";
 import { getTeamsByUserIdQuery } from "@loopearn/supabase/queries";
 import { createClient } from "@loopearn/supabase/server";
 import { Icons } from "@loopearn/ui/icons";
@@ -14,10 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Teams() {
-  const supabase = createClient();
-  const user = await getUser();
-
-  const teams = await getTeamsByUserIdQuery(supabase, user?.id);
+  const teams = await getTeams();
 
   if (!teams?.data?.length) {
     redirect("/teams/create");

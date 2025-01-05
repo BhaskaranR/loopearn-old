@@ -6,6 +6,7 @@ import { createClient } from "../clients/server";
 import {
   getBusinessMembersQuery,
   getBusinessUserQuery,
+  getTeamsByUserIdQuery,
   getUserInvitesQuery,
   getUserQuery,
 } from "../queries";
@@ -36,6 +37,28 @@ export const getUser = async () => {
     {
       tags: [`user_${userId}`],
       revalidate: 1,
+    },
+  )();
+};
+
+export const getTeams = async () => {
+  const supabase = createClient();
+
+  const user = await getUser();
+  const userId = user?.id;
+
+  if (!userId) {
+    return;
+  }
+
+  return unstable_cache(
+    async () => {
+      return getTeamsByUserIdQuery(supabase, userId);
+    },
+    ["teams", userId],
+    {
+      tags: [`teams_${userId}`],
+      revalidate: 180,
     },
   )();
 };

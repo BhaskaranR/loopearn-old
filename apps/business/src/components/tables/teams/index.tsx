@@ -11,8 +11,8 @@ export async function TeamsTable() {
   const user = await getUser();
 
   const [teams, invites] = await Promise.all([
-    getTeamsByUserIdQuery(supabase, user.data?.id),
-    getUserInvitesQuery(supabase, user.data?.username),
+    getTeamsByUserIdQuery(supabase, user?.id),
+    getUserInvitesQuery(supabase, user?.username),
   ]);
 
   return (

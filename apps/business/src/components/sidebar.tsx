@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Logo } from "./logo";
 import { MainMenu } from "./main-menu";
-// import { TeamMenu } from "./team-menu";
+import { TeamMenu } from "./team-menu";
 
 export function Sidebar() {
   const initialItems = cookies().has(Cookies.MenuConfig)
@@ -26,9 +26,9 @@ export function Sidebar() {
         <MainMenu initialItems={initialItems} />
       </div>
 
-      {/* <Suspense>
+      <Suspense>
         <TeamMenu />
-      </Suspense> */}
+      </Suspense>
     </aside>
   );
 }

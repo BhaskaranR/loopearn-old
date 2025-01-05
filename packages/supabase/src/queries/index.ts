@@ -86,14 +86,12 @@ export async function getBusinessUserQuery(
 
 export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {
   return supabase
-    .from("business_users")
-    .select(
-      `
-      id,
-      role,
-      business:business_id(*)`,
-    )
-    .eq("user_id", userId)
+    .from("business")
+    .select(`
+      *,
+      business_users!inner(business_id)
+    `)
+    .eq("business_users.user_id", userId)
     .throwOnError();
 }
 

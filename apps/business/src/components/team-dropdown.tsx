@@ -17,11 +17,11 @@ export function TeamDropdown({ selectedTeamId: initialId, teams }) {
   const [isOpen, onOpenChange] = useState(false);
   const changeTeam = useAction(changeTeamAction);
 
-  const sortedTeams = [...teams, { team: { id: "add" } }].sort((a, b) => {
-    if (a.team.id === selectedId) return -1;
-    if (b.team.id === selectedId) return 1;
+  const sortedTeams = [...teams, { id: "add" }].sort((a, b) => {
+    if (a.id === selectedId) return -1;
+    if (b.id === selectedId) return 1;
 
-    return a.team.id - b.team.id;
+    return a?.id - b?.id;
   });
 
   const ref = useClickAway(() => {
@@ -33,7 +33,7 @@ export function TeamDropdown({ selectedTeamId: initialId, teams }) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <motion.div layout className="w-[32px] h-[32px] relative">
-        {sortedTeams.map(({ team }, index) => (
+        {sortedTeams.map((team, index) => (
           <motion.div
             key={team.id}
             className="w-[32px] h-[32px] left-0 overflow-hidden absolute"
@@ -81,11 +81,11 @@ export function TeamDropdown({ selectedTeamId: initialId, teams }) {
                   }
                 }}
               >
-                <AvatarImage src={team?.logo_url} />
+                <AvatarImage src={team?.avatar_url} />
                 <AvatarFallback className="rounded-sm w-[32px] h-[32px]">
                   <span className="text-xs">
-                    {team?.name?.charAt(0)?.toUpperCase()}
-                    {team?.name?.charAt(1)?.toUpperCase()}
+                    {team?.business_name?.charAt(0)?.toUpperCase()}
+                    {team?.business_name?.charAt(1)?.toUpperCase()}
                   </span>
                 </AvatarFallback>
               </Avatar>
