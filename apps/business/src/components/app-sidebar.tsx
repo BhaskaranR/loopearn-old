@@ -1,32 +1,38 @@
 "use client";
 
 import {
+  AppWindow,
   AudioWaveform,
-  BookOpen,
-  Bot,
+  Brain,
   Command,
+  CreditCard,
   Frame,
   GalleryVerticalEnd,
-  type LucideIcon,
+  Home,
+  Moon,
   PieChart,
   Settings2,
-  SquareTerminal,
+  Share2,
+  Users,
 } from "lucide-react";
-
-import type * as React from "react";
+import type React from "react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@loopearn/ui/sidebar";
-import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
-import { NavUser } from "./nav-user";
 import { SidebarOptInForm } from "./sidebar-opt-in-form";
 import { TeamSwitcher } from "./team-switcher";
+
+// Dynamically import NavProjects with no SSR
 
 // This is sample data.
 const data = {
@@ -35,125 +41,82 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+  dashboard: {
+    name: "Dashboard",
+    url: "/dashboard",
+    icon: <PieChart className="h-10 w-10" />,
+  },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Penelope & The Beauty Bar",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "Beauty & Spa",
     },
     {
-      name: "Acme Corp.",
+      name: "European Rejuvenation Center.",
       logo: AudioWaveform,
-      plan: "Startup",
+      plan: "Health & Fitness",
     },
     {
       name: "Evil Corp.",
       logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      plan: "Health & Fitness",
     },
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      name: "Dashboard",
+      url: "/dashboard",
+      icon: <Home className="h-10 w-10" />,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
+      name: "Campaigns",
+      url: "/campaigns",
+      icon: <Frame className="h-10 w-10" />,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "Leads",
+      url: "/leads",
+      icon: <PieChart className="h-10 w-10" />,
+    },
+    {
+      name: "Apps",
+      url: "/apps",
+      icon: <AppWindow className="h-10 w-10" />,
+    },
+    {
+      name: "Influencers",
+      url: "/influencers",
+      icon: <Share2 className="h-10 w-10" />,
+    },
+  ],
+  ai: [
+    {
+      name: "My AI Agent",
+      url: "/ai-agent",
+      icon: <Brain className="h-10 w-10" />,
+    },
+  ],
+  application: [
+    {
+      name: "Settings",
+      url: "/settings",
+      icon: <Settings2 className="h-10 w-10" />,
+    },
+    {
+      name: "Subscription",
+      url: "/subscription",
+      icon: <CreditCard className="h-10 w-10" />,
+    },
+    {
+      name: "Teams",
+      url: "/teams",
+      icon: <Users className="h-10 w-10" />,
+    },
+    {
+      name: "Theme",
+      url: "/theme",
+      icon: <Moon className="h-10 w-10" />,
     },
   ],
 };
@@ -165,12 +128,52 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects
-          projects={
-            data.projects as { name: string; url: string; icon: LucideIcon }[]
-          }
-        />
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarMenu>
+            {data.projects.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild>
+                  <a href={item.url}>
+                    {item.icon}
+                    <span>{item.name}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>AI</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.ai.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild>
+                  <a href={item.url}>
+                    {item.icon}
+                    <span>{item.name}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.application.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild>
+                  <a href={item.url}>
+                    {item.icon}
+                    <span>{item.name}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <div className="p-1">
