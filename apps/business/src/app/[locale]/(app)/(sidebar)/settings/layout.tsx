@@ -2,7 +2,7 @@ import { SecondaryMenu } from "@/components/secondary-menu";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="max-w-[800px]">
+    <div className="mx-auto max-w-[800px]">
       <SecondaryMenu
         items={[
           { path: "/settings", label: "General" },
