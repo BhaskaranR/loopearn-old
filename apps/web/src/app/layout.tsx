@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background antialiased w-full mx-auto scroll-smooth",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <ThemeProvider
