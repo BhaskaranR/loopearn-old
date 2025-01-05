@@ -2,6 +2,7 @@ import { ConsentBanner } from "@/components/consent-banner";
 import { DesktopCommandMenuSignIn } from "@/components/desktop-command-menu-sign-in";
 import { Logo } from "@/components/logo";
 import { OTPSignIn } from "@/components/otp-sign-in";
+import { Cookies } from "@/utils/constants";
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import Link from "next/link";
@@ -15,7 +16,14 @@ export default async function Page(params) {
   if (params?.searchParams?.return_to === "desktop/command") {
     return <DesktopCommandMenuSignIn />;
   }
-  const showTrackingConsent = false;
+
+  const cookieStore = cookies();
+  const preferred = cookieStore.get(Cookies.PreferredSignInProvider);
+
+  const moreSignInOptions = null;
+  const preferredSignInOption = (
+    <OTPSignIn className="border-t-[1px] border-border pt-8" />
+  );
 
   return (
     <div>
@@ -38,11 +46,17 @@ export default async function Page(params) {
             </div>
 
             <p className="font-medium pb-1 text-2xl text-[#878787]">
-              Learn while you earn.
+              Earn While You Learn
             </p>
 
             <div className="pointer-events-auto mt-6 flex flex-col mb-6">
-              <OTPSignIn />
+              {preferredSignInOption}
+            </div>
+            <div className="my-4 text-center text-sm">
+              Don't have an account?{" "}
+              <Link href="/signup" className="underline">
+                Sign up
+              </Link>
             </div>
 
             <p className="text-xs text-[#878787]">
@@ -52,7 +66,7 @@ export default async function Page(params) {
                 Terms of Service
               </a>{" "}
               and{" "}
-              <a href="https://loopearn.com/policy" className="underline">
+              <a href="https://loopearn.com/privacy" className="underline">
                 Privacy Policy
               </a>
               .
@@ -60,8 +74,6 @@ export default async function Page(params) {
           </div>
         </div>
       </div>
-
-      {showTrackingConsent && <ConsentBanner />}
     </div>
   );
 }

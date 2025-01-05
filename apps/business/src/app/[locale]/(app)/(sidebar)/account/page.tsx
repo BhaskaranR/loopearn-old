@@ -10,8 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Account() {
-  const userData = await getUser();
-  const user = userData?.data;
+  const user = await getUser();
 
   return (
     <div className="space-y-12">

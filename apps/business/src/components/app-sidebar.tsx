@@ -110,7 +110,7 @@ const data = {
     },
     {
       name: "Teams",
-      url: "/teams",
+      url: "/settings/members",
       icon: <Users className="h-10 w-10" />,
     },
     {

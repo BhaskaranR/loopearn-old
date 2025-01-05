@@ -58,7 +58,7 @@ export async function updateSession(
   if (
     !user &&
     !newUrl.pathname.startsWith("/login") &&
-    !newUrl.pathname.startsWith("/auth")
+    !newUrl.pathname.startsWith("/signup")
   ) {
     const encodedSearchParams = `${newUrl.pathname.substring(1)}${newUrl.search}`;
 
