@@ -68,7 +68,7 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
       email: formData.email,
       options: {
         data: {
-          emailRedirectTo: "https://business-new.loopearn.com",
+          emailRedirectTo: "https://business.loopearn.com",
           full_name: `${formData.firstName} ${formData.lastName}`,
           companyName: formData.companyName,
           industry: "business",

@@ -71,7 +71,7 @@ export function Header() {
             </Link>
             <div className="hidden lg:block space-x-2">
               <Link
-                href="https://business-new.loopearn.com"
+                href="https://business.loopearn.com"
                 className={cn(buttonVariants({ variant: "link" }))}
               >
                 {siteConfig.list}
