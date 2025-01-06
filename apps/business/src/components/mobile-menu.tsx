@@ -4,6 +4,7 @@ import { Button } from "@loopearn/ui/button";
 import { Icons } from "@loopearn/ui/icons";
 import { Sheet, SheetContent, SheetTrigger } from "@loopearn/ui/sheet";
 import { useState } from "react";
+import { Logo } from "./logo";
 import { MainMenu } from "./main-menu";
 
 export function MobileMenu() {
@@ -23,7 +24,7 @@ export function MobileMenu() {
       </div>
       <SheetContent side="left" className="border-none rounded-none -ml-2">
         <div className="ml-2 mb-8">
-          <Icons.Logo />
+          <Logo className="hidden font-semibold sm:inline-block" />
         </div>
 
         <MainMenu onSelect={() => setOpen(false)} />

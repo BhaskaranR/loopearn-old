@@ -17,16 +17,16 @@ export function SelectTeamTable({ data }) {
             <TableCell className="border-r-[0px] py-4">
               <div className="flex items-center space-x-4">
                 <Avatar className="rounded-full w-8 h-8">
-                  <AvatarImage src={row.business?.avatar_url} />
+                  <AvatarImage src={row?.avatar_url} />
                   <AvatarFallback>
                     <span className="text-xs">
-                      {row.business.name?.charAt(0)?.toUpperCase()}
+                      {row.business_name?.charAt(0)?.toUpperCase()}
                     </span>
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="font-medium text-sm">
-                    {row.business.name}
+                    {row.business_name}
                   </span>
                 </div>
               </div>
@@ -38,7 +38,7 @@ export function SelectTeamTable({ data }) {
                     variant="outline"
                     onClick={() =>
                       changeTeam.execute({
-                        businessId: row.business.id,
+                        businessId: row.id,
                         redirectTo: "/",
                       })
                     }
