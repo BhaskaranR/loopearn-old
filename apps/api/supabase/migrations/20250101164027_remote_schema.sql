@@ -14,7 +14,7 @@ BEGIN
     -- Generate a random 8-character alphanumeric code
     referral_code := SUBSTRING(MD5(RANDOM()::TEXT), 1, 8);
 
-    -- Check if the referral code already exists in the users or business_accounts table
+    -- Check if the referral code already exists in the users or business table
     EXECUTE format('
       SELECT EXISTS (
         SELECT 1 FROM users u WHERE u.referral_code = %L

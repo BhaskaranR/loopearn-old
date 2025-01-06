@@ -33,7 +33,7 @@ export function MobileDrawer() {
         </DrawerHeader>
         <DrawerFooter>
           <Link
-            href="https://business.loopearn.com"
+            href="https://business-new.loopearn.com"
             className={cn(
               buttonVariants({ variant: "default" }),
               "text-white rounded-full group",

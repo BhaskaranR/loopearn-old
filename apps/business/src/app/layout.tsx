@@ -11,7 +11,7 @@ import type { ReactElement } from "react";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://business.loopearn.com"),
+  metadataBase: new URL("https://business-new.loopearn.com"),
   title: {
     default:
       "LoopEarn | Earn While You Learn, Unlock Potential, Earn Rewards: The Community-Powered Platform",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       "LoopEarn | Earn While You Learn, Unlock Potential, Earn Rewards: The Community-Powered Platform",
     description:
       "Empower your local business with LoopEarn! Easily list your services, create engaging campaigns, and attract customers through gamified deals that drive sales and loyalty.",
-    url: "https://business.loopearn.com",
+    url: "https://business-new.loopearn.com",
     siteName:
       "Empower your local business with LoopEarn! Easily list your services, create engaging campaigns, and attract customers through gamified deals that drive sales and loyalty.",
     locale: "en_US",

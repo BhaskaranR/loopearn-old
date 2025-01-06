@@ -29,12 +29,12 @@ interface InviteEmailProps {
 
 const baseUrl =
   process.env.VERCEL_ENV === "production"
-    ? "https://business.loopearn.com/email"
+    ? "https://business-new.loopearn.com/email"
     : "http://localhost:3000/email";
 
 const baseAppUrl =
   process.env.VERCEL_ENV === "production"
-    ? "https://business.loopearn.com"
+    ? "https://business-new.loopearn.com"
     : "http://localhost:3000";
 
 export const InviteEmail = ({
