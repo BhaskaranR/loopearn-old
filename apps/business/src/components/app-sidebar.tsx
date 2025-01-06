@@ -43,7 +43,7 @@ const data = {
   },
   dashboard: {
     name: "Dashboard",
-    url: "/dashboard",
+    url: "/",
     icon: <PieChart className="h-10 w-10" />,
   },
   teams: [
@@ -66,7 +66,7 @@ const data = {
   projects: [
     {
       name: "Dashboard",
-      url: "/dashboard",
+      url: "/",
       icon: <Home className="h-10 w-10" />,
     },
     {
