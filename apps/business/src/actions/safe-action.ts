@@ -85,13 +85,13 @@ export const authActionClient = actionClientWithMeta
     const user = await getUser();
     const supabase = createClient();
 
-    if (!user?.data) {
+    if (!user) {
       throw new Error("Unauthorized");
     }
 
     const analytics = await setupAnalytics({
-      userId: user.data.id,
-      fullName: user.data.full_name,
+      userId: user.id,
+      fullName: user.full_name,
     });
 
     if (metadata?.track) {
@@ -103,7 +103,7 @@ export const authActionClient = actionClientWithMeta
         ctx: {
           supabase,
           analytics,
-          user: user.data,
+          user,
         },
       });
     });

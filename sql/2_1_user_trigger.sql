@@ -56,7 +56,6 @@ BEGIN
     INSERT INTO public.users(
       id,
       username,
-      business_id,
       full_name,
       phone,
       metadata,
@@ -66,7 +65,6 @@ BEGIN
     VALUES (
       NEW.id,
       NEW.email,
-      business_id,
       CONCAT(
       NEW.raw_user_meta_data ->> 'first_name', ' ',
       NEW.raw_user_meta_data ->> 'last_name'),
@@ -101,7 +99,6 @@ BEGIN
     INSERT INTO public.users(
       id,
       username,
-      business_id,
       full_name,
       phone,
       metadata,
@@ -111,7 +108,6 @@ BEGIN
     VALUES (
       NEW.id,
       NEW.email,
-      business_id,
       CONCAT(
 	    NEW.raw_user_meta_data ->> 'first_name', ' ',
 	    NEW.raw_user_meta_data ->> 'last_name'),
