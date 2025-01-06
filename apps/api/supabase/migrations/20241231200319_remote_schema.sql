@@ -256,12 +256,12 @@ BEGIN
     -- Generate a random 8-character alphanumeric code
     referral_code := SUBSTRING(MD5(RANDOM()::TEXT), 1, 8);
 
-    -- Check if the referral code already exists in the users or business_accounts table
+    -- Check if the referral code already exists in the users or business table
     EXECUTE format('
       SELECT EXISTS (
-        SELECT 1 FROM users u WHERE u.referral_code = %L
+        SELECT 1 FROM public.users u WHERE u.referral_code = %L
       ) OR EXISTS (
-        SELECT 1 FROM business_accounts b WHERE b.referral_code = %L
+        SELECT 1 FROM public.business b WHERE b.referral_code = %L
       )', referral_code, referral_code)
     INTO referral_code_exists;
 
@@ -334,12 +334,12 @@ BEGIN
 
   SELECT id, referral_code INTO  business_id, new_referral_code
     FROM
-      public.business_accounts
+      public.business
     WHERE
       business_name = NEW.raw_user_meta_data ->> 'companyName';
 
   IF new_referral_code IS NULL THEN
-    new_referral_code := generate_referral_code();
+    new_referral_code := public.generate_referral_code();
   end IF;
 
   RAISE LOG 'Generated referral code: %', new_referral_code;
@@ -421,7 +421,7 @@ BEGIN
 
       -- If not found, insert new business and get the new ID
       IF business_id IS NULL THEN
-        INSERT INTO public.business_accounts(
+        INSERT INTO public.business(
           business_name,
           business_email,
           industry,
