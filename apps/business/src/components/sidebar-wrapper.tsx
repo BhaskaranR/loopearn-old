@@ -1,16 +1,6 @@
 "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
-// import { Header } from "@/components/header";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@loopearn/ui/breadcrumb";
-import { Separator } from "@loopearn/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,

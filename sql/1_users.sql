@@ -4,18 +4,6 @@ CREATE TYPE public.user_status AS enum(
   'OFFLINE'
 );
 
-CREATE TYPE public.kyc_status AS enum(
-  'pending',
-  'verified',
-  'rejected'
-);
-
-CREATE TYPE public.profile_status AS enum(
-  'pending',
-  'incomplete',
-  'complete'
-);
-
 -- USERS
 CREATE TABLE public.users(
   -- UUID from auth.users
@@ -23,23 +11,16 @@ CREATE TABLE public.users(
   username text,
   full_name text,
   avatar_url text,
-  -- The customer's  address, stored in JSON format.
   address jsonb,
   phone text,
-  -- Stores user's payment instruments.
-  payment_method jsonb,
-  info jsonb, -- stores user's mailing address, home address, etc.
-  details jsonb, -- sets the identity verification details
   metadata jsonb,
-  stripe jsonb,
   status user_status DEFAULT 'OFFLINE' ::public.user_status,
-  kyc kyc_status DEFAULT 'pending' ::public.kyc_status,
-  profile_status profile_status DEFAULT 'pending' ::public.profile_status,
   referral_code text UNIQUE,
-  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+  business_id uuid references public.business(id) default null,
+  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+  locale text DEFAULT 'en'
 );
 
-ALTER TABLE public.users ADD COLUMN locale text DEFAULT 'en';
 ALTER TABLE public.users ADD COLUMN business_id uuid references public.business(id) default null;
 
 COMMENT ON TABLE public.users IS 'Profile data for each user.';

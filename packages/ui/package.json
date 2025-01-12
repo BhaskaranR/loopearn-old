@@ -45,7 +45,7 @@
     "./editor": "./src/components/editor/index.tsx",
     "./globals.css": "./src/globals.css",
     "./hover-card": "./src/components/hover-card.tsx",
-    "./icons": "./src/components/icons.tsx",
+    "./icons": "./src/icons/index.tsx",
     "./input": "./src/components/input.tsx",
     "./input-otp": "./src/components/input-otp.tsx",
     "./label": "./src/components/label.tsx",

@@ -2,8 +2,6 @@ import { Logo } from "@/components/logo";
 import { SelectTeamTable } from "@/components/tables/select-team/table";
 import { UserMenu } from "@/components/user-menu";
 import { getTeams, getUser } from "@loopearn/supabase/cached-queries";
-import { getTeamsByUserIdQuery } from "@loopearn/supabase/queries";
-import { createClient } from "@loopearn/supabase/server";
 import { Icons } from "@loopearn/ui/icons";
 import type { Metadata } from "next";
 import Link from "next/link";

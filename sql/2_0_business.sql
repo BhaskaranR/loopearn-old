@@ -2,6 +2,7 @@ CREATE TABLE business(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   ein varchar(255) ,
   avatar_url varchar(255),
+  slug text unique default null,
   business_name varchar(255) NOT NULL,
   business_email varchar(255),
   business_phone varchar(255),
@@ -10,21 +11,19 @@ CREATE TABLE business(
   business_meta jsonb,
   business_currency text,
   category text,
-  business_handle text unique default null,
-  business_affiliates jsonb,
-  stripe jsonb,
-  industry varchar(255),
+  tags text[],
   street_address varchar(255),
   city varchar(255),
   state varchar(255),
   postal_code varchar(255),
   country varchar(255),
+  stripe_id text,
+  stripe_connect_id text,
   owner_id uuid REFERENCES public.users(id),
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  referral_code text UNIQUE
+  referral_code text UNIQUE,
+  document_classification boolean default false
 );
-
-alter table "public"."business" add column "document_classification" boolean default false;
 
 -- add status
 CREATE TABLE business_users(

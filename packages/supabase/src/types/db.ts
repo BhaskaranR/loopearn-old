@@ -12,10 +12,8 @@ export type Database = {
       business: {
         Row: {
           avatar_url: string | null
-          business_affiliates: Json | null
           business_currency: string | null
           business_email: string | null
-          business_handle: string | null
           business_image: string | null
           business_meta: Json | null
           business_name: string
@@ -28,20 +26,20 @@ export type Database = {
           document_classification: boolean | null
           ein: string | null
           id: string
-          industry: string | null
           owner_id: string | null
           postal_code: string | null
           referral_code: string | null
+          slug: string | null
           state: string | null
           street_address: string | null
-          stripe: Json | null
+          stripe_connect_id: string | null
+          stripe_id: string | null
+          tags: string[] | null
         }
         Insert: {
           avatar_url?: string | null
-          business_affiliates?: Json | null
           business_currency?: string | null
           business_email?: string | null
-          business_handle?: string | null
           business_image?: string | null
           business_meta?: Json | null
           business_name: string
@@ -54,20 +52,20 @@ export type Database = {
           document_classification?: boolean | null
           ein?: string | null
           id?: string
-          industry?: string | null
           owner_id?: string | null
           postal_code?: string | null
           referral_code?: string | null
+          slug?: string | null
           state?: string | null
           street_address?: string | null
-          stripe?: Json | null
+          stripe_connect_id?: string | null
+          stripe_id?: string | null
+          tags?: string[] | null
         }
         Update: {
           avatar_url?: string | null
-          business_affiliates?: Json | null
           business_currency?: string | null
           business_email?: string | null
-          business_handle?: string | null
           business_image?: string | null
           business_meta?: Json | null
           business_name?: string
@@ -80,13 +78,15 @@ export type Database = {
           document_classification?: boolean | null
           ein?: string | null
           id?: string
-          industry?: string | null
           owner_id?: string | null
           postal_code?: string | null
           referral_code?: string | null
+          slug?: string | null
           state?: string | null
           street_address?: string | null
-          stripe?: Json | null
+          stripe_connect_id?: string | null
+          stripe_id?: string | null
+          tags?: string[] | null
         }
         Relationships: [
           {
@@ -134,60 +134,6 @@ export type Database = {
           {
             foreignKeyName: "business_users_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      referrals: {
-        Row: {
-          created_at: string | null
-          first_transaction_completed: boolean | null
-          id: string
-          is_affiliate: boolean | null
-          referral_code: string
-          referral_status: string | null
-          referred_id: string | null
-          referrer_id: string | null
-          rewarded_at: string | null
-          total_commission: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          first_transaction_completed?: boolean | null
-          id?: string
-          is_affiliate?: boolean | null
-          referral_code: string
-          referral_status?: string | null
-          referred_id?: string | null
-          referrer_id?: string | null
-          rewarded_at?: string | null
-          total_commission?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          first_transaction_completed?: boolean | null
-          id?: string
-          is_affiliate?: boolean | null
-          referral_code?: string
-          referral_status?: string | null
-          referred_id?: string | null
-          referrer_id?: string | null
-          rewarded_at?: string | null
-          total_commission?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "referrals_referred_id_fkey"
-            columns: ["referred_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "referrals_referrer_id_fkey"
-            columns: ["referrer_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -244,19 +190,13 @@ export type Database = {
           address: Json | null
           avatar_url: string | null
           business_id: string | null
-          details: Json | null
           full_name: string | null
           id: string
-          info: Json | null
-          kyc: Database["public"]["Enums"]["kyc_status"] | null
           locale: string | null
           metadata: Json | null
-          payment_method: Json | null
           phone: string | null
-          profile_status: Database["public"]["Enums"]["profile_status"] | null
           referral_code: string | null
           status: Database["public"]["Enums"]["user_status"] | null
-          stripe: Json | null
           updated_at: string
           username: string | null
         }
@@ -264,19 +204,13 @@ export type Database = {
           address?: Json | null
           avatar_url?: string | null
           business_id?: string | null
-          details?: Json | null
           full_name?: string | null
           id: string
-          info?: Json | null
-          kyc?: Database["public"]["Enums"]["kyc_status"] | null
           locale?: string | null
           metadata?: Json | null
-          payment_method?: Json | null
           phone?: string | null
-          profile_status?: Database["public"]["Enums"]["profile_status"] | null
           referral_code?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
-          stripe?: Json | null
           updated_at?: string
           username?: string | null
         }
@@ -284,19 +218,13 @@ export type Database = {
           address?: Json | null
           avatar_url?: string | null
           business_id?: string | null
-          details?: Json | null
           full_name?: string | null
           id?: string
-          info?: Json | null
-          kyc?: Database["public"]["Enums"]["kyc_status"] | null
           locale?: string | null
           metadata?: Json | null
-          payment_method?: Json | null
           phone?: string | null
-          profile_status?: Database["public"]["Enums"]["profile_status"] | null
           referral_code?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
-          stripe?: Json | null
           updated_at?: string
           username?: string | null
         }
