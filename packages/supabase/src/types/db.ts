@@ -24,9 +24,7 @@ export type Database = {
           country: string | null
           created_at: string | null
           document_classification: boolean | null
-          ein: string | null
           id: string
-          owner_id: string | null
           postal_code: string | null
           referral_code: string | null
           slug: string | null
@@ -50,9 +48,7 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           document_classification?: boolean | null
-          ein?: string | null
           id?: string
-          owner_id?: string | null
           postal_code?: string | null
           referral_code?: string | null
           slug?: string | null
@@ -76,9 +72,7 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           document_classification?: boolean | null
-          ein?: string | null
           id?: string
-          owner_id?: string | null
           postal_code?: string | null
           referral_code?: string | null
           slug?: string | null
@@ -88,15 +82,7 @@ export type Database = {
           stripe_id?: string | null
           tags?: string[] | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "business_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       business_users: {
         Row: {
@@ -243,13 +229,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_business: {
-        Args: {
-          business_name: string
-          industry: string
-        }
-        Returns: string
-      }
+      create_business:
+        | {
+            Args: {
+              business_name: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              business_name: string
+              industry: string
+            }
+            Returns: string
+          }
       custom_access_token_hook: {
         Args: {
           event: Json

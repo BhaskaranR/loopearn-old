@@ -105,7 +105,6 @@ export async function createBusiness(
 ) {
   const { data, error } = await supabase.rpc("create_business", {
     business_name: params.name,
-    industry: "Business",
   });
   console.log(error);
   return data;

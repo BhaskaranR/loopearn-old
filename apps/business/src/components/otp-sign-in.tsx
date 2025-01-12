@@ -56,7 +56,7 @@ export function OTPSignIn({ className }: Props) {
     if (!emailExists) {
       toast({
         title: "Error",
-        description: "User does not exist or is not signed up as an business.",
+        description: "User does not exist.",
         variant: "destructive",
       });
       setLoading(false);

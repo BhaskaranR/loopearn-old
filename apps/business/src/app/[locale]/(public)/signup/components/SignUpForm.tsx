@@ -16,9 +16,7 @@ import { Input } from "@loopearn/ui/input";
 import { Label } from "@loopearn/ui/label";
 import { useToast } from "@loopearn/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
-import { useQueryState } from "nuqs";
 import { useState } from "react";
 import { memo } from "react";
 import { useForm } from "react-hook-form";
@@ -71,7 +69,6 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
           emailRedirectTo: "https://business.loopearn.com",
           full_name: `${formData.firstName} ${formData.lastName}`,
           companyName: formData.companyName,
-          industry: "business",
           referral_code: referralCode,
         },
         shouldCreateUser: true,

@@ -76,7 +76,9 @@
     "./truncate": "./src/utils/truncate.ts",
     "./hooks": "./src/hooks/index.ts",
     "./quantity-input": "./src/components/quantity-input.tsx",
-    "./sidebar": "./src/components/sidebar.tsx"
+    "./sidebar": "./src/components/sidebar.tsx",
+    "./loading-spinner": "./src/components/loading-spinner.tsx",
+    "./wordmark": "./src/components/wordmark.tsx"
   },
   "dependencies": {
     "@mui/icons-material": "^6.1.6",

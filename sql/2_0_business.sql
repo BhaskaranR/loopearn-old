@@ -1,6 +1,5 @@
 CREATE TABLE business(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  ein varchar(255) ,
   avatar_url varchar(255),
   slug text unique default null,
   business_name varchar(255) NOT NULL,
@@ -19,7 +18,6 @@ CREATE TABLE business(
   country varchar(255),
   stripe_id text,
   stripe_connect_id text,
-  owner_id uuid REFERENCES public.users(id),
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   referral_code text UNIQUE,
   document_classification boolean default false
@@ -54,12 +52,11 @@ as $$
     business_account_role varchar; -- Changed from public.app_role to varchar
     business_account_id uuid;
     business_name varchar;
-    industry varchar;
   begin
     -- Check if the user is marked as admin in the profiles table
     RAISE LOG 'Function started. user id: %', event->>'user_id';
 
-    select business_users.role, business_users.business_id, business.business_name, business.industry into business_account_role, business_account_id, business_name, industry   from public.business join public.business_users on
+    select business_users.role, business_users.business_id, business.business_name into business_account_role, business_account_id, business_name   from public.business join public.business_users on
     business.id = business_users.business_id where business_users.user_id = (event->>'user_id')::uuid;
 
 
@@ -72,7 +69,6 @@ as $$
       claims := jsonb_set(claims, '{business_account_role}', to_jsonb(business_account_role));
       claims := jsonb_set(claims, '{business_id}', to_jsonb(business_account_id));
       claims := jsonb_set(claims, '{business_name}', to_jsonb(business_name));
-      claims := jsonb_set(claims, '{industry}', to_jsonb(industry));
 
         -- Update the 'claims' object in the original event
         event := jsonb_set(event, '{claims}', claims);
@@ -84,9 +80,26 @@ as $$
   end;
 $$;
 
-CREATE POLICY "Allow business individual update access" ON public.business
+
+// ... existing code ...
+
+DROP POLICY IF EXISTS "Allow business individual update access" ON public.business;
+
+CREATE INDEX idx_business_users_lookup ON business_users (user_id, business_id, role, is_active);
+
+CREATE POLICY "Allow business owner update access" ON public.business
   FOR UPDATE
-    USING (auth.uid() = owner_id);
+    USING (
+      EXISTS (
+        SELECT 1 FROM business_users
+        WHERE user_id = auth.uid()
+        AND business_id = public.business.id
+        AND role = 'owner'
+        AND is_active = true
+      )
+    );
+
+// ... existing code ...
 
 grant usage on schema public to supabase_auth_admin;
 
@@ -138,25 +151,25 @@ CREATE OR REPLACE FUNCTION public.get_jwt()
 
 GRANT EXECUTE ON FUNCTION public.get_jwt() TO authenticated;
 
-CREATE OR REPLACE FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) RETURNS "uuid"
+CREATE OR REPLACE FUNCTION "public"."create_business"("business_name" character varying) RETURNS "uuid"
       LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
 declare
     new_business_id uuid;
 begin
-    insert into business (business_name, industry, owner_id) values (business_name, industry, auth.uid()) returning id into new_business_id;
+    insert into business (business_name, owner_id) values (business_name, auth.uid()) returning id into new_business_id;
     insert into business_users (user_id, business_id, role) values (auth.uid(), new_business_id, 'owner');
 
     return new_business_id;
 end;
 $$;
 
-ALTER FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) OWNER TO "postgres";
+ALTER FUNCTION "public"."create_business"("business_name" character varying) OWNER TO "postgres";
 
-GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "industry" character varying) TO "service_role";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying) TO "anon";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying) TO "service_role";
 
 CREATE POLICY "Users can view their own business_users"
 ON public.business_users

@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
   }
 
   const cols =
-    "id, business_users(role, business_id , business!inner(id, industry))";
+    "id, business_users(role, business_id , business!inner(id, category))";
 
   const { data, error } = await getConnection()
     .from("users")

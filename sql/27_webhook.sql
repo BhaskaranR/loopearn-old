@@ -1,3 +1,24 @@
+
+CREATE OR REPLACE FUNCTION "public"."generate_hmac"("secret_key" "text", "message" "text") RETURNS "text"
+    LANGUAGE "plpgsql"
+    AS $$
+DECLARE
+    hmac_result bytea;
+BEGIN
+    hmac_result := extensions.hmac(message::bytea, secret_key::bytea, 'sha256');
+    RETURN encode(hmac_result, 'base64');
+END;
+$$;
+
+ALTER FUNCTION "public"."generate_hmac"("secret_key" "text", "message" "text") OWNER TO "postgres";
+
+
+
+GRANT ALL ON FUNCTION "public"."generate_hmac"("secret_key" "text", "message" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."generate_hmac"("secret_key" "text", "message" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."generate_hmac"("secret_key" "text", "message" "text") TO "service_role";
+
+
 CREATE OR REPLACE FUNCTION "public"."webhook"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
