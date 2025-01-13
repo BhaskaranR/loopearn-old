@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const decodedSignature = Buffer.from(signature, "base64");
 
   const calculatedSignature = crypto
-    .createHmac("sha256", process.env.WEBHOOK_SECRET_KEY!)
+    .createHmac("sha256", process.env.WEBHOOK_SECRET!)
     .update(text)
     .digest();
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
   const body = await req.json();
 
-  const email = body.record.username;
+  const email = body.record.email;
   const userId = body.record.id;
   const fullName = body.record.raw_user_meta_data.full_name;
 
@@ -54,19 +54,21 @@ export async function POST(req: Request) {
   });
 
   if (fullName) {
-    await resend.emails.send({
-      to: email,
-      subject: "Welcome to LoopEarn",
-      from: "Randhir from LoopEarn <randhir@loopearn.com>",
-      html: await render(
-        WelcomeEmail({
-          fullName,
-        }),
-      ),
-      headers: {
-        "X-Entity-Ref-ID": nanoid(),
-      },
-    });
+    try {
+      const html = await render(WelcomeEmail({ fullName }));
+
+      await resend.emails.send({
+        to: email,
+        subject: "Welcome to LoopEarn",
+        from: "Randhir from LoopEarn <randhir@loopearn.com>",
+        html,
+        headers: {
+          "X-Entity-Ref-ID": nanoid(),
+        },
+      });
+    } catch (error) {
+      logger(error as string);
+    }
   }
 
   try {

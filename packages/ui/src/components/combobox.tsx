@@ -3,6 +3,7 @@
 import { Command as CommandPrimitive } from "cmdk";
 import { Loader2 } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
+import { Icons } from "../icons";
 import { cn } from "../utils";
 import {
   CommandGroup,
@@ -10,7 +11,6 @@ import {
   CommandItem,
   CommandList,
 } from "./command";
-import { Icons } from "./icons";
 
 export type Option = Record<"id" | "name", string> & Record<string, string>;
 

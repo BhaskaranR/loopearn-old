@@ -1,5 +1,5 @@
+import { logger } from "@/utils/logger";
 import { OpenPanel, type PostEventPayload } from "@openpanel/nextjs";
-import { logger } from "@loopearn/logger";
 import { waitUntil } from "@vercel/functions";
 
 type Props = {

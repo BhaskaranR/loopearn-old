@@ -59,7 +59,6 @@ BEGIN
       full_name,
       phone,
       metadata,
-      profile_status,
       avatar_url,
       referral_code)
     VALUES (
@@ -70,7 +69,6 @@ BEGIN
       NEW.raw_user_meta_data ->> 'last_name'),
       NEW.raw_user_meta_data ->> 'phone',
       NEW.raw_user_meta_data,
-      'pending',
       NEW.raw_user_meta_data ->> 'avatar_url',
       new_referral_code
       );
@@ -102,7 +100,6 @@ BEGIN
       full_name,
       phone,
       metadata,
-      profile_status,
       avatar_url,
       referral_code)
     VALUES (
@@ -113,7 +110,6 @@ BEGIN
 	    NEW.raw_user_meta_data ->> 'last_name'),
       NEW.raw_user_meta_data ->> 'phone',
       NEW.raw_user_meta_data,
-      'complete',
       NEW.raw_user_meta_data ->> 'avatar_url',
       new_referral_code);
 
@@ -130,16 +126,10 @@ BEGIN
         INSERT INTO public.business(
           business_name,
           business_email,
-          industry,
-          owner_id,
-          ein,
           referral_code)
         VALUES (
           NEW.raw_user_meta_data ->> 'companyName',
           NEW.email,
-          NEW.raw_user_meta_data ->> 'industry',
-          NEW.id,
-          NEW.raw_user_meta_data ->> 'ein',
           new_referral_code)
         RETURNING
         id INTO business_id;

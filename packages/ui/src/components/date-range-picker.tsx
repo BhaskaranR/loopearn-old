@@ -2,10 +2,10 @@
 
 import type React from "react";
 import type { DateRange } from "react-day-picker";
+import { Icons } from "../icons";
 import { cn } from "../utils";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
-import { Icons } from "./icons";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 type Props = {

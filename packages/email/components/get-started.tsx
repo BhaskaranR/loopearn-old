@@ -1,5 +1,4 @@
-import { Button, Section } from "@react-email/components";
-import Link from "next/link"; // Ensure this import is present
+import { Button, Link, Section } from "@react-email/components";
 
 export function GetStarted() {
   return (

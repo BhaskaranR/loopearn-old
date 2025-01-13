@@ -139,6 +139,40 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
 }
 
+// Most of these icons are gotten from Vercel's open-sourced icons library: https://vercel.com/design/icons
+
+export { default as Airplay } from "./airplay";
+export { default as AlertCircleFill } from "./alert-circle-fill";
+export { default as Chart } from "./chart";
+export { default as CheckCircleFill } from "./check-circle-fill";
+export { default as Clipboard } from "./clipboard";
+export { default as Delete } from "./delete";
+export { default as Divider } from "./divider";
+export { default as Download } from "./download";
+export { default as Drag } from "./drag";
+export { default as Edit } from "./edit";
+export { default as ExternalLink } from "./external-link";
+export { default as Eye } from "./eye";
+export { default as EyeOff } from "./eye-off";
+export { default as Filter } from "./filter";
+export { default as Heart } from "./heart";
+export { default as InfinityIcon } from "./infinity";
+export { default as Link } from "./link";
+export { default as Lock } from "./lock";
+export { default as Logout } from "./logout";
+export { default as Message } from "./message";
+export { default as QR } from "./qr";
+export { default as Random } from "./random";
+export { default as Repeat } from "./repeat";
+export { default as Save } from "./save";
+export { default as Search } from "./search";
+export { default as Sort } from "./sort";
+export { default as ThreeDots } from "./three-dots";
+export { default as UploadCloud } from "./upload-cloud";
+export { default as Users } from "./users";
+export { default as X } from "./x";
+export { default as XCircleFill } from "./x-circle-fill";
+
 export const Icons = {
   SignOut: LogOut,
   Loader: Loader2,
@@ -156,6 +190,54 @@ export const Icons = {
         d="M15.304 0c-2.41.103-4.681.739-6.7 1.792l6.7 11.606V0Zm0 18.603-6.7 11.605a15.927 15.927 0 0 0 6.7 1.792V18.603ZM16.697 32V18.595L23.4 30.206A15.928 15.928 0 0 1 16.697 32Zm0-18.594V0c2.41.103 4.684.74 6.704 1.794l-6.704 11.612Zm-14.205 11.2L14.1 17.904 7.398 29.51a16.1 16.1 0 0 1-4.906-4.905Zm27.02-17.208-11.607 6.701 6.701-11.607a16.101 16.101 0 0 1 4.905 4.906ZM2.49 7.396A16.1 16.1 0 0 1 7.398 2.49l6.704 11.61L2.49 7.396Zm-.697 1.206A15.927 15.927 0 0 0 0 15.306h13.406L1.793 8.602ZM1.794 23.4A15.927 15.927 0 0 1 0 16.699h13.401L1.794 23.4Zm16.805-8.095H32a15.927 15.927 0 0 0-1.792-6.702l-11.61 6.702ZM30.207 23.4l-11.604-6.7H32c-.104 2.41-.74 4.68-1.793 6.7Zm-12.3-5.494 6.699 11.604a16.1 16.1 0 0 0 4.904-4.905l-11.604-6.7Z"
         clipRule="evenodd"
       />
+    </svg>
+  ),
+  Users: (props: IconProps) => (
+    <svg
+      height="18"
+      width="18"
+      viewBox="0 0 18 18"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g fill="currentColor">
+        <circle
+          cx="5.75"
+          cy="6.25"
+          fill="none"
+          r="2"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="1.5"
+        />
+        <circle
+          cx="12"
+          cy="3.75"
+          fill="none"
+          r="2"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M9.609,15.122c.523-.175,.83-.744,.636-1.259-.685-1.818-2.436-3.112-4.494-3.112s-3.809,1.294-4.494,3.112c-.194,.516,.113,1.085,.636,1.259,.962,.321,2.281,.628,3.859,.628s2.897-.307,3.858-.628Z"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M12.749,13.227c1.248-.077,2.304-.336,3.109-.605,.523-.175,.83-.744,.636-1.259-.685-1.818-2.436-3.112-4.494-3.112-.977,0-1.885,.292-2.643,.793"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="1.5"
+        />
+      </g>
     </svg>
   ),
   LogoIcon: (props: IconProps) => (

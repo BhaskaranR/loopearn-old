@@ -23,6 +23,7 @@
   },
   "exports": {
     "./server": "./src/clients/server.ts",
+    "./admin": "./src/clients/admin.ts",
     "./client": "./src/clients/client.ts",
     "./mutations": "./src/mutations/index.ts",
     "./middleware": "./src/clients/middleware.ts",

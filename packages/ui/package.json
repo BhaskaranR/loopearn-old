@@ -45,7 +45,7 @@
     "./editor": "./src/components/editor/index.tsx",
     "./globals.css": "./src/globals.css",
     "./hover-card": "./src/components/hover-card.tsx",
-    "./icons": "./src/components/icons.tsx",
+    "./icons": "./src/icons/index.tsx",
     "./input": "./src/components/input.tsx",
     "./input-otp": "./src/components/input-otp.tsx",
     "./label": "./src/components/label.tsx",
@@ -76,7 +76,9 @@
     "./truncate": "./src/utils/truncate.ts",
     "./hooks": "./src/hooks/index.ts",
     "./quantity-input": "./src/components/quantity-input.tsx",
-    "./sidebar": "./src/components/sidebar.tsx"
+    "./sidebar": "./src/components/sidebar.tsx",
+    "./loading-spinner": "./src/components/loading-spinner.tsx",
+    "./wordmark": "./src/components/wordmark.tsx"
   },
   "dependencies": {
     "@mui/icons-material": "^6.1.6",

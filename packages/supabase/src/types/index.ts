@@ -4,3 +4,13 @@ export type Client = SupabaseClient<Database>;
 
 export * from "./db";
 export * from "./jwtPayload";
+
+export const ONBOARDING_STEPS = [
+  "workspace",
+  "invite",
+  "plan",
+  "verify",
+  "completed",
+] as const;
+
+export type OnboardingStep = (typeof ONBOARDING_STEPS)[number];

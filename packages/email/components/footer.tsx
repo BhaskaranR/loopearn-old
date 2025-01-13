@@ -21,7 +21,7 @@ export function Footer({ baseUrl }: Props) {
       <br />
 
       <Text className="text-[21px] font-regular">
-        Earn now. Close later. Secure your future home with us.
+        Let's make your business grow.
       </Text>
 
       <br />
@@ -87,14 +87,14 @@ export function Footer({ baseUrl }: Props) {
               </Link>
             </Row>
 
-            <Row className="mb-1.5">
+            {/* <Row className="mb-1.5">
               <Link
                 className="text-[#707070] text-[14px]"
                 href="https://go.loopearn.com/E24P3oY"
               >
                 Engine
               </Link>
-            </Row>
+            </Row> */}
 
             <Row className="mb-1.5">
               <Link
