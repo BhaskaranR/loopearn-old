@@ -3,6 +3,7 @@ import { SelectTeamTable } from "@/components/tables/select-team/table";
 import { UserMenu } from "@/components/user-menu";
 import { getTeams, getUser } from "@loopearn/supabase/cached-queries";
 import { Icons } from "@loopearn/ui/icons";
+import { TooltipProvider } from "@loopearn/ui/tooltip";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -20,11 +21,11 @@ export default async function Teams() {
   }
 
   return (
-    <>
+    <TooltipProvider>
       <header className="w-full absolute left-0 right-0 flex justify-between items-center">
         <div className="ml-5 mt-4 md:ml-10 md:mt-10">
-          <Link href="/">
-            <Logo className="hidden font-semibold sm:inline-block" />
+          <Link href="/" className="inline-flex items-center">
+            <Logo className="font-semibold h-8 w-auto" />
           </Link>
         </div>
 
@@ -53,6 +54,6 @@ export default async function Teams() {
           </div>
         </div>
       </div>
-    </>
+    </TooltipProvider>
   );
 }

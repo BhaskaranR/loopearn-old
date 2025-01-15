@@ -31,9 +31,9 @@ export default async function Page(params) {
         <div className="ml-5 mt-4 md:ml-10 md:mt-10">
           <Link
             href="https://loopearn.com"
-            className="items-center gap-6 space-x-2 md:flex keychainify-checked"
+            className="inline-flex items-center"
           >
-            <Logo className="hidden font-semibold sm:inline-block" />
+            <Logo className="h-8 w-auto" />
           </Link>
         </div>
       </header>

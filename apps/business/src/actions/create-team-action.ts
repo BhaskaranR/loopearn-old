@@ -16,20 +16,22 @@ export const createBusinessAction = authActionClient
       channel: LogEvents.CreateTeam.channel,
     },
   })
-  .action(async ({ parsedInput: { name, redirectTo }, ctx: { supabase } }) => {
-    const team_id = await createBusiness(supabase, { name });
-    const user = await updateUser(supabase, { team_id });
+  .action(
+    async ({ parsedInput: { name, slug, redirectTo }, ctx: { supabase } }) => {
+      const team_id = await createBusiness(supabase, { name, slug });
+      const user = await updateUser(supabase, { team_id });
 
-    if (!user?.data) {
-      return;
-    }
+      if (!user?.data) {
+        return;
+      }
 
-    revalidateTag(`user_${user.data.id}`);
-    revalidateTag(`teams_${team_id}`);
+      revalidateTag(`user_${user.data.id}`);
+      revalidateTag(`teams_${team_id}`);
 
-    if (redirectTo) {
-      redirect(redirectTo);
-    }
+      if (redirectTo) {
+        redirect(redirectTo);
+      }
 
-    return team_id;
-  });
+      return team_id;
+    },
+  );

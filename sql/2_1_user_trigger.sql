@@ -1,33 +1,3 @@
-CREATE OR REPLACE FUNCTION public.generate_referral_code()
-RETURNS TEXT
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  referral_code TEXT;
-  referral_code_exists BOOLEAN;
-BEGIN
-  LOOP
-    -- Generate a random 8-character alphanumeric code
-    referral_code := SUBSTRING(MD5(RANDOM()::TEXT), 1, 8);
-
-    -- Check if the referral code already exists in the users or business table
-    EXECUTE format('
-      SELECT EXISTS (
-        SELECT 1 FROM public.users u WHERE u.referral_code = %L
-      ) OR EXISTS (
-        SELECT 1 FROM public.business b WHERE b.referral_code = %L
-      )', referral_code, referral_code)
-    INTO referral_code_exists;
-
-    -- If the referral code doesn't exist in either table, exit the loop
-    EXIT WHEN NOT referral_code_exists;
-  END LOOP;
-
-  RETURN referral_code;
-END;
-$$;
-
-
 CREATE OR REPLACE FUNCTION public.handle_new_user()
  RETURNS trigger
  LANGUAGE plpgsql
@@ -64,9 +34,7 @@ BEGIN
     VALUES (
       NEW.id,
       NEW.email,
-      CONCAT(
-      NEW.raw_user_meta_data ->> 'first_name', ' ',
-      NEW.raw_user_meta_data ->> 'last_name'),
+      NEW.raw_user_meta_data ->> 'full_name',
       NEW.raw_user_meta_data ->> 'phone',
       NEW.raw_user_meta_data,
       NEW.raw_user_meta_data ->> 'avatar_url',
@@ -105,9 +73,7 @@ BEGIN
     VALUES (
       NEW.id,
       NEW.email,
-      CONCAT(
-	    NEW.raw_user_meta_data ->> 'first_name', ' ',
-	    NEW.raw_user_meta_data ->> 'last_name'),
+      NEW.raw_user_meta_data ->> 'full_name',
       NEW.raw_user_meta_data ->> 'phone',
       NEW.raw_user_meta_data,
       NEW.raw_user_meta_data ->> 'avatar_url',
@@ -119,7 +85,6 @@ BEGIN
       IF business_id IS NOT NULL THEN
         RAISE EXCEPTION 'This company already exists. Please reach out to your company administrator for an invitation and to enable your account.';
       END IF;
-
 
       -- If not found, insert new business and get the new ID
       IF business_id IS NULL THEN
@@ -149,26 +114,36 @@ BEGIN
     END IF;
   END IF;
 
+  RAISE LOG 'Updating user with ID: %, business_id: %', NEW.id, business_id;
+
+  -- update user table with business_id if not already set
+  -- UPDATE public.users
+  -- SET business_id = CASE 
+  --   WHEN users.business_id IS NULL THEN business_id
+  --   ELSE users.business_id
+  -- END
+  -- WHERE id = NEW.id;
+
+  -- TODO implement referral code later
   RAISE LOG 'Referral Code: %', NEW.raw_user_meta_data ->> 'referral_code';
 
-  if (NEW.raw_user_meta_data ->> 'referral_code' IS NOT NULL) THEN
-    referrer_id := public.get_user_id_by_ref_code(NEW.raw_user_meta_data ->> 'referral_code');
+  -- if (NEW.raw_user_meta_data ->> 'referral_code' IS NOT NULL) THEN
+  --   referrer_id := public.get_user_id_by_ref_code(NEW.raw_user_meta_data ->> 'referral_code');
 
-    if (referrer_id  IS NOT NULL) THEN
-      INSERT INTO public.referrals(
-        referrer_id,
-        referred_id,
-        referral_code)
-      VALUES (
-        referrer_id,
-        NEW.id,
-        NEW.raw_user_meta_data ->> 'referral_code');
-    END IF;
-  END IF;
+  --   if (referrer_id  IS NOT NULL) THEN
+  --     INSERT INTO public.referrals(
+  --       referrer_id,
+  --       referred_id,
+  --       referral_code)
+  --     VALUES (
+  --       referrer_id,
+  --       NEW.id,
+  --       NEW.raw_user_meta_data ->> 'referral_code');
+  --   END IF;
+  -- END IF;
   RETURN new;
 END;
-$function$
-;
+$function$;
 
 
 -- trigger the function every time a user is created
@@ -178,3 +153,35 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE PROCEDURE public.handle_new_user();
+
+
+CREATE OR REPLACE FUNCTION public.generate_referral_code()
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  referral_code TEXT;
+  referral_code_exists BOOLEAN;
+BEGIN
+  LOOP
+    -- Generate a random 8-character alphanumeric code
+    referral_code := SUBSTRING(MD5(RANDOM()::TEXT), 1, 8);
+
+    -- Check if the referral code already exists in the users or business table
+    EXECUTE format('
+      SELECT EXISTS (
+        SELECT 1 FROM public.users u WHERE u.referral_code = %L
+      ) OR EXISTS (
+        SELECT 1 FROM public.business b WHERE b.referral_code = %L
+      )', referral_code, referral_code)
+    INTO referral_code_exists;
+
+    -- If the referral code doesn't exist in either table, exit the loop
+    EXIT WHEN NOT referral_code_exists;
+  END LOOP;
+
+  RETURN referral_code;
+END;
+$$;
+
+

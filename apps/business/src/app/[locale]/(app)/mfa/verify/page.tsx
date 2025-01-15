@@ -8,11 +8,8 @@ export default function Verify() {
   return (
     <div>
       <div className="absolute left-5 top-4 md:left-10 md:top-10">
-        <Link
-          href="https://loopearn.com"
-          className="items-center gap-6 space-x-2 md:flex keychainify-checked"
-        >
-          <Logo className="hidden font-semibold sm:inline-block" />
+        <Link href="https://loopearn.com" className="inline-flex items-center">
+          <Logo className="font-semibold h-8 w-auto" />
         </Link>
       </div>
 

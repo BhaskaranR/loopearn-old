@@ -1,11 +1,9 @@
-import { type QueryData, QueryError, QueryResult } from "@supabase/supabase-js";
-import { addDays, isWithinInterval } from "date-fns";
 import type { Client } from "../types";
 
 export async function getUserQuery(supabase: Client, userId: string) {
   const cols = `
       *,
-      business:business_id(*)
+      business_users!user_id(*)
     `;
   const { data, error } = await supabase
     .from("users")
@@ -89,7 +87,7 @@ export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {
     .from("business")
     .select(`
       *,
-      business_users!inner(business_id)
+      business_users!inner(id, role, business_id)
     `)
     .eq("business_users.user_id", userId)
     .throwOnError();

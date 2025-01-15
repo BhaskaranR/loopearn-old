@@ -16,7 +16,10 @@ export const setOnboardingProgress = authActionClient
     const { onboardingStep } = parsedInput;
 
     try {
-      await RedisClient.set(`onboarding-step:${ctx.user.id}`, onboardingStep);
+      await RedisClient.set(
+        `onboarding-step:${ctx.user.id}_${ctx.user.business_id}`,
+        onboardingStep,
+      );
     } catch (e) {
       console.error("Failed to update onboarding step", e);
       throw new Error("Failed to update onboarding step");

@@ -45,29 +45,26 @@ import * as React from "react";
 export const columns = [
   {
     id: "team",
-    accessorKey: "business.name",
+    accessorKey: "business.business_name",
     cell: ({ row }) => {
       const t = useI18n();
 
       return (
         <div className="flex items-center space-x-4">
           <Avatar className="rounded-full w-8 h-8">
-            <AvatarImage src={row.original.business?.avatar_url} />
+            <AvatarImage src={row.original?.avatar_url} />
             <AvatarFallback>
               <span className="text-xs">
-                {row.original.business?.name?.charAt(0)?.toUpperCase()}
+                {row.original?.business_name?.charAt(0)?.toUpperCase()}
               </span>
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <span className="font-medium text-sm">
-              {row.original.business.name}
+              {row.original.business_name}
             </span>
-            <span className="text-sm text-[#606060]">
-              {t(`roles.${row.original.role}`, {
-                defaultValue: row.original.role,
-                count: 1,
-              })}
+            <span className="text-sm text-[#606060] capitalize">
+              {row.original.business_users[0].role}
             </span>
           </div>
         </div>
@@ -134,7 +131,7 @@ export const columns = [
               variant="outline"
               onClick={() =>
                 viewTeam.execute({
-                  businessId: row.original.business.id,
+                  businessId: row.original.id,
                   redirectTo: "/",
                 })
               }
@@ -146,7 +143,7 @@ export const columns = [
                 variant="outline"
                 onClick={() =>
                   manageTeam.execute({
-                    businessId: row.original.business.id,
+                    businessId: row.original.id,
                     redirectTo: "/settings",
                   })
                 }
@@ -187,7 +184,7 @@ export const columns = [
                         disabled={leaveTeam.status === "executing"}
                         onClick={() =>
                           leaveTeam.execute({
-                            businessId: row.original.business.id,
+                            businessId: row.original.id,
                             role: row.original.role,
                             revalidatePath: "/account/teams",
                           })

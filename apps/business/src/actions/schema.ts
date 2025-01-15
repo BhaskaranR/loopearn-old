@@ -179,6 +179,9 @@ export const createBusinessSchema = z.object({
   name: z.string().min(2, {
     message: "Business name must be at least 2 characters.",
   }),
+  slug: z.string().min(4, {
+    message: "Slug must be at least 4 characters.",
+  }),
   redirectTo: z.string().optional(),
 });
 

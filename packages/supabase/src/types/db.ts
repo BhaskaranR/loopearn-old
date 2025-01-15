@@ -229,25 +229,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_business:
-        | {
-            Args: {
-              business_name: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              business_name: string
-              industry: string
-            }
-            Returns: string
-          }
+      create_business: {
+        Args: {
+          business_name: string
+          slug: string
+        }
+        Returns: string
+      }
       custom_access_token_hook: {
         Args: {
           event: Json
         }
         Returns: Json
+      }
+      generate_hmac: {
+        Args: {
+          secret_key: string
+          message: string
+        }
+        Returns: string
       }
       generate_referral_code: {
         Args: Record<PropertyKey, never>

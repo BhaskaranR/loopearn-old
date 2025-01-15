@@ -97,6 +97,7 @@ export async function deleteTeamMember(
 
 type CreateBusinessParams = {
   name: string;
+  slug: string;
 };
 
 export async function createBusiness(
@@ -105,6 +106,7 @@ export async function createBusiness(
 ) {
   const { data, error } = await supabase.rpc("create_business", {
     business_name: params.name,
+    slug: params.slug,
   });
   console.log(error);
   return data;

@@ -1,5 +1,6 @@
 import { ArchiveIcon } from "@radix-ui/react-icons";
 import { Check, Copy, Loader2, LogOut } from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FiGithub } from "react-icons/fi";
 import {
@@ -857,3 +858,7 @@ export const Icons = {
   Straighten: MdOutlineSquareFoot,
   Files: MdOutlineInventory2,
 };
+
+export * from "./nucleo";
+
+export type Icon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;

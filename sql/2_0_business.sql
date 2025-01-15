@@ -18,6 +18,7 @@ CREATE TABLE business(
   country varchar(255),
   stripe_id text,
   stripe_connect_id text,
+  plan text default 'free',
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   referral_code text UNIQUE,
   document_classification boolean default false
@@ -151,26 +152,30 @@ CREATE OR REPLACE FUNCTION public.get_jwt()
 
 GRANT EXECUTE ON FUNCTION public.get_jwt() TO authenticated;
 
-CREATE OR REPLACE FUNCTION "public"."create_business"("business_name" character varying) RETURNS "uuid"
+CREATE OR REPLACE FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying) RETURNS "uuid"
       LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
 declare
     new_business_id uuid;
 begin
-    insert into business (business_name, owner_id) values (business_name, auth.uid()) returning id into new_business_id;
+    insert into business (business_name, slug, owner_id) values (business_name, slug, auth.uid()) returning id into new_business_id;
     insert into business_users (user_id, business_id, role) values (auth.uid(), new_business_id, 'owner');
 
     return new_business_id;
 end;
 $$;
 
-ALTER FUNCTION "public"."create_business"("business_name" character varying) OWNER TO "postgres";
+ALTER FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying) OWNER TO "postgres";
 
-GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying) TO "service_role";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying) TO "anon";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying) TO "service_role";
 
+-- First drop the existing policy
+DROP POLICY IF EXISTS "Users can view their own business_users" ON public.business_users;
+
+-- Then create the new policy
 CREATE POLICY "Users can view their own business_users"
 ON public.business_users
 FOR SELECT

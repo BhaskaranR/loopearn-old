@@ -5,7 +5,7 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <>
       <NewBackground />
-      {/* {children} */}
+      {children}
     </>
   );
 }

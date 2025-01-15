@@ -1,4 +1,5 @@
-import { Wordmark } from "@loopearn/ui/wordmark";
+import { Logo } from "@/components/logo";
+// import { Wordmark } from "@loopearn/ui/wordmark";
 import { NextButton } from "../next-button";
 
 export default function Welcome() {
@@ -18,7 +19,7 @@ export default function Welcome() {
               />
             ))}
           </div>
-          <Wordmark className="relative h-16" />
+          <Logo className="relative h-16" />
         </div>
         <h1 className="animate-slide-up-fade mt-10 text-2xl font-medium [--offset:10px] [animation-delay:250ms] [animation-duration:1s] [animation-fill-mode:both]">
           Welcome to LoopEarn
