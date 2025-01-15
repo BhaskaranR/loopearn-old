@@ -153,13 +153,13 @@ export function CreateTeamModal({ onOpenChange }: Props) {
 
             <Button
               type="submit"
-              disabled={createTeam.status === "executing"}
+              disabled={createBusiness.status === "executing"}
               className="w-full"
             >
-              {createTeam.status === "executing" ? (
+              {createBusiness.status === "executing" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                "Create Team"
+                "Create Business"
               )}
             </Button>
           </form>
