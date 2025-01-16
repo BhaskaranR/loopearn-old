@@ -31,7 +31,6 @@ export const createBusinessAction = authActionClient
       if (redirectTo) {
         redirect(redirectTo);
       }
-
-      return team_id;
+      return business_id;
     },
   );

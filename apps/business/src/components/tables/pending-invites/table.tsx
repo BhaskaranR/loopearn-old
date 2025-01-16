@@ -47,9 +47,7 @@ export const columns = [
           </Avatar>
           <div className="flex flex-col">
             <span className="font-medium text-sm">Pending Invitation</span>
-            <span className="text-sm text-[#606060]">
-              {row.original.user.username}
-            </span>
+            <span className="text-sm text-[#606060]">{row.original.email}</span>
           </div>
         </div>
       );
