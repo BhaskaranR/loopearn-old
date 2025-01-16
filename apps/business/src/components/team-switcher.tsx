@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from "@loopearn/ui/sidebar";
 import { ChevronsUpDown, Plus } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
 import Image from "next/image";
 import * as React from "react";
 import { CreateTeamModal } from "./modals/create-team-modal";
@@ -26,6 +27,8 @@ export const TeamSwitcher = () => {
   const { isMobile } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState(null);
   const [teams, setTeams] = React.useState([]);
+
+  const changeTeam = useAction(changeTeamAction);
 
   React.useEffect(() => {
     async function fetchTeams() {
@@ -94,7 +97,13 @@ export const TeamSwitcher = () => {
               {teams.map((team, index) => (
                 <DropdownMenuItem
                   key={team.id}
-                  onClick={() => setActiveTeam(team)}
+                  onClick={() => {
+                    setActiveTeam(team);
+                    changeTeam.execute({
+                      businessId: team.id,
+                      redirectTo: "/",
+                    });
+                  }}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-sm border">
