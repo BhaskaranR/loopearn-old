@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function MapPosition(props: SVGProps<SVGSVGElement>) {
   return (

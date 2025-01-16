@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function Books2(props: SVGProps<SVGSVGElement>) {
   return (

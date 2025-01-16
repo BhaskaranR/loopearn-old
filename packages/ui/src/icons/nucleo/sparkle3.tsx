@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function Sparkle3(props: SVGProps<SVGSVGElement>) {
   return (

@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function GamingConsole(props: SVGProps<SVGSVGElement>) {
   return (

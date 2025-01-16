@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function CircleWarning(
   props: SVGProps<SVGSVGElement> & { invert?: boolean },

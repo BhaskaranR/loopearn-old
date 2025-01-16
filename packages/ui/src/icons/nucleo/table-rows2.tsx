@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function TableRows2(props: SVGProps<SVGSVGElement>) {
   return (

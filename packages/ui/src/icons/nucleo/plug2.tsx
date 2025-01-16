@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function Plug2(props: SVGProps<SVGSVGElement>) {
   return (

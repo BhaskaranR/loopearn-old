@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function ConnectedDotsFill(props: SVGProps<SVGSVGElement>) {
   return (

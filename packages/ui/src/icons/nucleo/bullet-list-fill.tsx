@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function BulletListFill(props: SVGProps<SVGSVGElement>) {
   return (

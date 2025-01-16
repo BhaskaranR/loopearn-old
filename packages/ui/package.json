@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "sideEffects": false,
-  "type": "module",
   "files": ["tailwind.config.ts", "postcss.config.js", "globals.css"],
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
@@ -82,7 +81,8 @@
     "./loading-spinner": "./src/components/loading-spinner.tsx",
     "./wordmark": "./src/components/wordmark.tsx",
     "./grid-plus": "./src/icons/grid-plus.tsx",
-    "./nucleo": "./src/icons/nucleo/index.ts"
+    "./nucleo": "./src/icons/nucleo/index.ts",
+    "./onboarding-popover": "./src/components/onboarding-popover.tsx"
   },
   "dependencies": {
     "@mui/icons-material": "^6.1.6",

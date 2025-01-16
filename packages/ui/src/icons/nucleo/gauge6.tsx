@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function Gauge6(props: SVGProps<SVGSVGElement>) {
   return (

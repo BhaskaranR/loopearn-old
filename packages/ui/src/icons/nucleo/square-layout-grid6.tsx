@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function SquareLayoutGrid6(props: SVGProps<SVGSVGElement>) {
   return (

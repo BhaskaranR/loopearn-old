@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function Circles(props: SVGProps<SVGSVGElement>) {
   return (

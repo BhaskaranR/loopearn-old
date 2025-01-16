@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import type { SVGProps } from "react";
 
 export function Toggle2Fill(props: SVGProps<SVGSVGElement>) {
   return (

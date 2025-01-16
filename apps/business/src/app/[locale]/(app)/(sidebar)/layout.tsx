@@ -1,6 +1,6 @@
 import { AI } from "@/actions/ai/chat";
 import { Header } from "@/components/header";
-import { getOnboardingStep } from "@/utils/get-onboarding-step";
+import Toolbar from "@/components/onboarding/toolbar";
 import { setupAnalytics } from "@loopearn/events/server";
 import { getUser } from "@loopearn/supabase/cached-queries";
 import { nanoid } from "nanoid";
@@ -23,7 +23,7 @@ export default async function Layout({
     redirect("/teams");
   }
 
-  const key = `onboarding-step:${user?.id}_${user?.business_id}`;
+  const key = `onboarding-step:${user?.id}`;
   // const onboardingStep = await getOnboardingStep(key);
   // if (onboardingStep !== "completed") {
   //   redirect("/onboarding");
@@ -37,6 +37,7 @@ export default async function Layout({
     <AI initialAIState={{ user: user, messages: [], chatId: nanoid() }}>
       <ClientSidebarWrapper headerContent={<Header />}>
         {children}
+        <Toolbar show={["onboarding"]} />
       </ClientSidebarWrapper>
     </AI>
   );
