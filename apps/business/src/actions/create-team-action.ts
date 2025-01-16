@@ -18,15 +18,15 @@ export const createBusinessAction = authActionClient
   })
   .action(
     async ({ parsedInput: { name, slug, redirectTo }, ctx: { supabase } }) => {
-      const team_id = await createBusiness(supabase, { name, slug });
-      const user = await updateUser(supabase, { team_id });
+      const business_id = await createBusiness(supabase, { name, slug });
+      const user = await updateUser(supabase, { business_id });
 
       if (!user?.data) {
         return;
       }
 
       revalidateTag(`user_${user.data.id}`);
-      revalidateTag(`teams_${team_id}`);
+      revalidateTag(`teams_${business_id}`);
 
       if (redirectTo) {
         redirect(redirectTo);

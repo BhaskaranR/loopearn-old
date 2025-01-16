@@ -34,6 +34,9 @@ grant all on table "public"."user_invites" to "service_role";
 
 alter table "public"."user_invites" add constraint "user_invites_invited_by_fkey" foreign key ("invited_by") references "public"."users"("id") on delete set null;
 
+ALTER TABLE user_invites
+ADD CONSTRAINT unique_email_business_id UNIQUE (email, business_id);
+
 alter table "public"."user_invites" add constraint "user_invites_business_id_fkey" foreign key ("business_id") references "public"."business"("id") on delete set null;
 CREATE OR REPLACE FUNCTION "private"."get_invites_for_authenticated_user"() RETURNS SETOF "uuid"
     LANGUAGE "sql" STABLE SECURITY DEFINER

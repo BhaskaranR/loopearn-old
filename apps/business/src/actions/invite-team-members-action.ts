@@ -40,7 +40,7 @@ export const inviteTeamMembersAction = authActionClient
         invited_by: user.id,
       }));
 
-      const { data: invtesData } = await supabase
+      const { data: invtesData, error } = await supabase
         .from("user_invites")
         .upsert(data, {
           onConflict: "email, business_id",
@@ -48,11 +48,13 @@ export const inviteTeamMembersAction = authActionClient
         })
         .select("email, code, user:invited_by(*), business:business_id(*)");
 
+      console.log(error);
+
       const emails = invtesData?.map(async (invites) => {
-        const user = invites
-          .user[0] as Database["public"]["Tables"]["users"]["Row"];
-        const business = invites
-          .business[0] as Database["public"]["Tables"]["business"]["Row"];
+        const user =
+          invites.user as Database["public"]["Tables"]["users"]["Row"];
+        const business =
+          invites.business as Database["public"]["Tables"]["business"]["Row"];
         return {
           from: "LoopEarn <support@loopearn.com>",
           to: [invites.email],

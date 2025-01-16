@@ -159,7 +159,7 @@ CREATE OR REPLACE FUNCTION "public"."create_business"("business_name" character 
 declare
     new_business_id uuid;
 begin
-    insert into business (business_name, slug, owner_id) values (business_name, slug, auth.uid()) returning id into new_business_id;
+    insert into business (business_name, slug) values (business_name, slug) returning id into new_business_id;
     insert into business_users (user_id, business_id, role) values (auth.uid(), new_business_id, 'owner');
 
     return new_business_id;
