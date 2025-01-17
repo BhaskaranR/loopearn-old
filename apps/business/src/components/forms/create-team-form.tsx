@@ -13,6 +13,7 @@ import {
 } from "@loopearn/ui/form";
 import { Input } from "@loopearn/ui/input";
 import { InfoTooltip } from "@loopearn/ui/tooltip";
+import slugify from "@sindresorhus/slugify";
 import { Loader2 } from "lucide-react";
 import { AlertCircle } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
@@ -25,7 +26,11 @@ async function checkSlugUnique(slug: string) {
   return !data.exists;
 }
 
-export function CreateTeamForm() {
+export function CreateTeamForm({
+  continueTo,
+}: {
+  continueTo: string;
+}) {
   const createTeam = useAction(createBusinessAction);
 
   const form = useForm<z.infer<typeof createBusinessSchema>>({
@@ -37,7 +42,14 @@ export function CreateTeamForm() {
   });
 
   function onSubmit(values: z.infer<typeof createBusinessSchema>) {
-    createTeam.execute({ name: values.name, redirectTo: "/teams/invite" });
+    if (continueTo) {
+      createTeam.execute({
+        name: values.name,
+        redirectTo: `${continueTo}?slug=${values.slug}`,
+      });
+    } else {
+      createTeam.execute({ name: values.name, redirectTo: "/teams/invite" });
+    }
   }
 
   return (
@@ -71,6 +83,11 @@ export function CreateTeamForm() {
                     autoCapitalize="none"
                     autoCorrect="off"
                     spellCheck="false"
+                    onChange={(e) => {
+                      const slug = slugify(e.target.value);
+                      field.onChange(e.target.value); // Update the name field
+                      form.setValue("slug", slug); // Update the slug field
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -97,7 +114,7 @@ export function CreateTeamForm() {
                 <FormControl>
                   <div className="relative mt-2 flex rounded-md shadow-sm">
                     <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-5 text-gray-500 sm:text-sm">
-                      app.{process.env.NEXT_PUBLIC_APP_DOMAIN}
+                      {process.env.NEXT_PUBLIC_APP_DOMAIN}
                     </span>
                     <Input
                       {...field}

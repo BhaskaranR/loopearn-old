@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@loopearn/supabase/client";
 import { Alert, AlertDescription, AlertTitle } from "@loopearn/ui/alert";
 import { Button } from "@loopearn/ui/button";
+
 import {
   Card,
   CardContent,
@@ -15,6 +16,7 @@ import { Form, FormControl, FormField, FormItem } from "@loopearn/ui/form";
 import { Input } from "@loopearn/ui/input";
 import { Label } from "@loopearn/ui/label";
 import { useToast } from "@loopearn/ui/use-toast";
+import slugify from "@sindresorhus/slugify";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -43,6 +45,7 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
       firstName: "",
       lastName: "",
       companyName: "",
+      slug: "",
       email: "",
     },
   });
@@ -62,6 +65,8 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
       return;
     }
 
+    const slug = `${slugify(formData.companyName)}-${Math.random().toString(36).substring(2, 15)}`;
+
     const { data, error } = await supabase.auth.signInWithOtp({
       email: formData.email,
       options: {
@@ -70,6 +75,7 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
           full_name: `${formData.firstName} ${formData.lastName}`,
           companyName: formData.companyName,
           referral_code: referralCode,
+          slug,
         },
         shouldCreateUser: true,
       },
