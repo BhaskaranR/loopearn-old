@@ -5,6 +5,7 @@ import { resend } from "@/utils/resend";
 import InviteEmail from "@loopearn/email/emails/invite";
 import { getI18n } from "@loopearn/email/locales";
 import { LogEvents } from "@loopearn/events/events";
+import { client as RedisClient } from "@loopearn/kv/client";
 import type { Database } from "@loopearn/supabase/db";
 import { render } from "@react-email/render";
 import { revalidatePath as revalidatePathFunc } from "next/cache";
@@ -26,7 +27,7 @@ export const inviteTeamMembersAction = authActionClient
   })
   .action(
     async ({
-      parsedInput: { invites, redirectTo, revalidatePath },
+      parsedInput: { saveOnly, invites, redirectTo, revalidatePath },
       ctx: { user, supabase },
     }) => {
       const { t } = getI18n({ locale: user.locale || "en" });
@@ -39,6 +40,16 @@ export const inviteTeamMembersAction = authActionClient
         business_id: user?.business_users[0]?.business_id,
         invited_by: user.id,
       }));
+
+      if (saveOnly) {
+        await RedisClient.set(
+          `invites:${user?.business_users[0]?.business_id}`,
+          data,
+          {
+            ex: 60 * 60 * 24 * 15, // 15 days
+          },
+        );
+      }
 
       const { data: invtesData, error } = await supabase
         .from("user_invites")
