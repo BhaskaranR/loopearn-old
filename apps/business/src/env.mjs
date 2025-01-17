@@ -35,6 +35,7 @@ export const env = createEnv({
     NEXT_PUBLIC_NOVU_APPLICATION_IDENTIFIER: z.string(),
     NEXT_PUBLIC_SUPABASE_ID: z.string(),
     NEXT_PUBLIC_OPENPANEL_CLIENT_ID: z.string(),
+    NEXT_PUBLIC_APP_DOMAIN: z.string(),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -60,6 +61,7 @@ export const env = createEnv({
     OPENPANEL_SECRET_KEY: process.env.OPENPANEL_SECRET_KEY,
     WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
     RESEND_AUDIENCE_ID: process.env.RESEND_AUDIENCE_ID,
+    NEXT_PUBLIC_APP_DOMAIN: process.env.NEXT_PUBLIC_APP_DOMAIN,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });

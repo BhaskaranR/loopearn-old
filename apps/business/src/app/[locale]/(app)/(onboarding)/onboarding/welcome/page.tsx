@@ -2,7 +2,7 @@ import { Logo } from "@/components/logo";
 // import { Wordmark } from "@loopearn/ui/wordmark";
 import { NextButton } from "../next-button";
 
-export default function Welcome() {
+export default async function Welcome() {
   return (
     <>
       <div className="relative mx-auto mt-24 flex max-w-sm flex-col items-center px-3 text-center md:mt-32 md:px-8 lg:mt-48">
@@ -19,7 +19,7 @@ export default function Welcome() {
               />
             ))}
           </div>
-          <Logo className="relative h-16" />
+          <Logo className="relative font-semibold h-8 w-auto" />
         </div>
         <h1 className="animate-slide-up-fade mt-10 text-2xl font-medium [--offset:10px] [animation-delay:250ms] [animation-duration:1s] [animation-fill-mode:both]">
           Welcome to LoopEarn

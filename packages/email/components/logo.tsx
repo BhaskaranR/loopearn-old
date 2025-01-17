@@ -1,19 +1,17 @@
-import { Img, Section } from "@react-email/components";
+import { InfinityIcon } from "@loopearn/ui/icons";
+import clsx from "clsx";
 
-type Props = {
-  baseUrl: string;
-};
-
-export function Logo({ baseUrl }: Props) {
+export function Logo({ className }: { className?: string }) {
   return (
-    <Section className="mt-[32px]">
-      <Img
-        src={`${baseUrl}/logo.png`}
-        width="45"
-        height="45"
-        alt="loopearn"
-        className="my-0 mx-auto block"
-      />
-    </Section>
+    <div
+      className={clsx(
+        "whitespace-nowrap font-display flex items-center text-lg text-black dark:text-white",
+        className,
+      )}
+    >
+      <span className="leading-none">L</span>
+      <InfinityIcon className="h-5 w-5 mx-[1px] translate-y-[0.5px] bg-gradient-to-br dark:from-white white:from-black from-black from-30% dark:to-white/40 white:to-black/40 to-black/40" />
+      <span className="leading-none">pEarn</span>
+    </div>
   );
 }

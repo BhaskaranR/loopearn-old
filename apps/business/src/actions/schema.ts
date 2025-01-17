@@ -7,6 +7,7 @@ export const signUpSchema = z.object({
   lastName: z.string().min(2).max(32),
   companyName: z.string().min(2).max(32),
   email: z.string().email(),
+  slug: z.string().min(4).max(32),
 });
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
@@ -210,6 +211,7 @@ export const deleteBusinessSchema = z.object({
 });
 
 export const inviteTeamMembersSchema = z.object({
+  saveOnly: z.boolean().optional(),
   invites: z.array(
     z.object({
       email: z.string().email().optional(),

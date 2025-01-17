@@ -63,7 +63,7 @@ export const WelcomeEmail = ({
             className="border-transparent md:border-[#E8E7E1] my-[40px] mx-auto p-[20px] max-w-[600px]"
             style={{ borderStyle: "solid", borderWidth: 1 }}
           >
-            <Logo baseUrl={baseUrl} />
+            <Logo className="font-semibold h-8 w-auto" />
             <Heading className="text-[#121212] text-[21px] font-normal text-center p-0 my-[30px] mx-0">
               Welcome to LoopEarn
             </Heading>

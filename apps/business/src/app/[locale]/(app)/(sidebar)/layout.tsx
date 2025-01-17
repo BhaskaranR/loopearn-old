@@ -1,6 +1,7 @@
 import { AI } from "@/actions/ai/chat";
 import { Header } from "@/components/header";
 import Toolbar from "@/components/onboarding/toolbar";
+import { getOnboardingStep } from "@/utils/get-onboarding-step";
 import { setupAnalytics } from "@loopearn/events/server";
 import { getUser } from "@loopearn/supabase/cached-queries";
 import { nanoid } from "nanoid";
@@ -23,10 +24,11 @@ export default async function Layout({
     redirect("/teams");
   }
 
-  const key = `onboarding-step:${user?.id}`;
+  // const key = `onboarding-step:${user?.id}`;
   // const onboardingStep = await getOnboardingStep(key);
   // if (onboardingStep !== "completed") {
-  //   redirect("/onboarding");
+  //   // redirect to onboarding page with business id
+  //   redirect(`/onboarding?slug=${user?.business_id}`);
   // }
 
   if (user) {
