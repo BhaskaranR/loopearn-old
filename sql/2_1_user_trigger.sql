@@ -1,160 +1,3 @@
-CREATE OR REPLACE FUNCTION public.handle_new_user()
- RETURNS trigger
- LANGUAGE plpgsql
- SECURITY DEFINER
-AS $function$
-DECLARE
-  business_id uuid;
-  new_referral_code TEXT;
-  referrer_id uuid;
-BEGIN
-  RAISE LOG 'Generate new referral code';
-
-  SELECT id, referral_code INTO  business_id, new_referral_code
-    FROM
-      public.business
-    WHERE
-      business_name = NEW.raw_user_meta_data ->> 'companyName';
-
-  IF new_referral_code IS NULL THEN
-    new_referral_code := public.generate_referral_code();
-  end IF;
-
-  RAISE LOG 'Generated referral code: %', new_referral_code;
-  IF (NEW.raw_user_meta_data ->> 'is_invite' IS NOT NULL) THEN
-    -- call
-    INSERT INTO public.users(
-      id,
-      username,
-      full_name,
-      phone,
-      metadata,
-      avatar_url,
-      referral_code)
-    VALUES (
-      NEW.id,
-      NEW.email,
-      NEW.raw_user_meta_data ->> 'full_name',
-      NEW.raw_user_meta_data ->> 'phone',
-      NEW.raw_user_meta_data,
-      NEW.raw_user_meta_data ->> 'avatar_url',
-      new_referral_code
-      );
-
-    -- if business account insert into company table & company users table
-    IF (NEW.raw_user_meta_data ->> 'companyName' IS NOT NULL) THEN
-
-      -- If not found, insert new business and get the new ID
-      IF business_id IS NULL THEN
-          RAISE EXCEPTION  'This company does not exist. Please reach out to your company administrator for an invitation and to enable your account.';
-      END IF;
-
-      RAISE LOG 'Handle New User role: %', business_id;
-      -- Insert into business_users with the found or new business ID
-      INSERT INTO public.business_users(
-        business_id,
-        user_id,
-        ROLE)
-      VALUES (
-        business_id,
-        NEW.id,
-        COALESCE(
-        NEW.raw_user_meta_data ->> 'role', 'admin'));
-    END IF;
-  ELSE
-    INSERT INTO public.users(
-      id,
-      username,
-      full_name,
-      phone,
-      metadata,
-      avatar_url,
-      referral_code)
-    VALUES (
-      NEW.id,
-      NEW.email,
-      NEW.raw_user_meta_data ->> 'full_name',
-      NEW.raw_user_meta_data ->> 'phone',
-      NEW.raw_user_meta_data,
-      NEW.raw_user_meta_data ->> 'avatar_url',
-      new_referral_code);
-
-    -- if business account insert into company table & company users table
-    IF (NEW.raw_user_meta_data ->> 'companyName' IS NOT NULL) THEN
-      -- if found throw an error
-      IF business_id IS NOT NULL THEN
-        RAISE EXCEPTION 'This company already exists. Please reach out to your company administrator for an invitation and to enable your account.';
-      END IF;
-
-      -- If not found, insert new business and get the new ID
-      IF business_id IS NULL THEN
-        INSERT INTO public.business(
-          business_name,
-          business_email,
-          referral_code)
-        VALUES (
-          NEW.raw_user_meta_data ->> 'companyName',
-          NEW.email,
-          new_referral_code)
-        RETURNING
-        id INTO business_id;
-      END IF;
-
-      RAISE LOG 'Handle New User role: %', business_id;
-      -- Insert into business_users with the found or new business ID
-      INSERT INTO public.business_users(
-        business_id,
-        user_id,
-        ROLE)
-      VALUES (
-        business_id,
-        NEW.id,
-        COALESCE(
-          NEW.raw_user_meta_data ->> 'role', 'admin'));
-    END IF;
-  END IF;
-
-  RAISE LOG 'Updating user with ID: %, business_id: %', NEW.id, business_id;
-
-  -- update user table with business_id if not already set
-  -- UPDATE public.users
-  -- SET business_id = CASE 
-  --   WHEN users.business_id IS NULL THEN business_id
-  --   ELSE users.business_id
-  -- END
-  -- WHERE id = NEW.id;
-
-  -- TODO implement referral code later
-  RAISE LOG 'Referral Code: %', NEW.raw_user_meta_data ->> 'referral_code';
-
-  -- if (NEW.raw_user_meta_data ->> 'referral_code' IS NOT NULL) THEN
-  --   referrer_id := public.get_user_id_by_ref_code(NEW.raw_user_meta_data ->> 'referral_code');
-
-  --   if (referrer_id  IS NOT NULL) THEN
-  --     INSERT INTO public.referrals(
-  --       referrer_id,
-  --       referred_id,
-  --       referral_code)
-  --     VALUES (
-  --       referrer_id,
-  --       NEW.id,
-  --       NEW.raw_user_meta_data ->> 'referral_code');
-  --   END IF;
-  -- END IF;
-  RETURN new;
-END;
-$function$;
-
-
--- trigger the function every time a user is created
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE PROCEDURE public.handle_new_user();
-
-
 CREATE OR REPLACE FUNCTION public.generate_referral_code()
 RETURNS TEXT
 LANGUAGE plpgsql
@@ -184,4 +27,111 @@ BEGIN
 END;
 $$;
 
+
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  business_id uuid;
+  new_referral_code TEXT;
+  referrer_id uuid;
+  onboarding_status public.onboarding_status := 'complete';
+BEGIN
+  SELECT id, referral_code INTO  business_id, new_referral_code
+    FROM
+      public.business
+    WHERE
+      business_name = NEW.raw_user_meta_data ->> 'companyName';
+
+  IF new_referral_code IS NULL THEN
+    new_referral_code := public.generate_referral_code();
+  END IF;
+  
+  -- if business account insert into company table & company users table
+  IF (NEW.raw_user_meta_data ->> 'companyName' IS NOT NULL) THEN
+    IF business_id IS NOT NULL THEN
+      RAISE EXCEPTION 'This company already exists. Please reach out to your company administrator for an invitation and to enable your account.';
+    END IF;
+    INSERT INTO public.business(
+      business_name,
+      business_email,
+      slug,
+      referral_code)
+    VALUES (
+      NEW.raw_user_meta_data ->> 'companyName',
+      NEW.email,
+      NEW.raw_user_meta_data ->> 'slug',
+      new_referral_code)
+    RETURNING
+    id INTO business_id;
+
+    onboarding_status := 'pending';
+  END IF;
+
+  INSERT INTO public.users(
+    id,
+    username,
+    business_id,
+    full_name,
+    phone,
+    metadata,
+    avatar_url,
+    onboarding_status,
+    referral_code)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    business_id,
+    NEW.raw_user_meta_data ->> 'full_name',
+    NEW.raw_user_meta_data ->> 'phone',
+    NEW.raw_user_meta_data,
+    NEW.raw_user_meta_data ->> 'avatar_url',
+    onboarding_status,
+    new_referral_code
+    );
+
+  -- if business account insert into company table & company users table
+  IF (business_id IS NOT NULL) THEN
+    INSERT INTO public.business_users(
+      business_id,
+      user_id,
+      ROLE)
+    VALUES (
+      business_id,
+      NEW.id,
+      COALESCE(
+      NEW.raw_user_meta_data ->> 'role', 'admin'));
+  END IF;
+
+  -- TODO implement referral code later
+  -- RAISE LOG 'Referral Code: %', NEW.raw_user_meta_data ->> 'referral_code';
+  -- if (NEW.raw_user_meta_data ->> 'referral_code' IS NOT NULL) THEN
+  --   referrer_id := public.get_user_id_by_ref_code(NEW.raw_user_meta_data ->> 'referral_code');
+
+  --   if (referrer_id  IS NOT NULL) THEN
+  --     INSERT INTO public.referrals(
+  --       referrer_id,
+  --       referred_id,
+  --       referral_code)
+  --     VALUES (
+  --       referrer_id,
+  --       NEW.id,
+  --       NEW.raw_user_meta_data ->> 'referral_code');
+  --   END IF;
+  -- END IF;
+  RETURN new;
+END;
+$function$;
+
+
+-- trigger the function every time a user is created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.handle_new_user();
 
