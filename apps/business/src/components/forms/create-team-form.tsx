@@ -45,6 +45,7 @@ export function CreateTeamForm({
     if (continueTo) {
       createTeam.execute({
         name: values.name,
+        slug: values.slug,
         redirectTo: `${continueTo}?slug=${values.slug}`,
       });
     } else {

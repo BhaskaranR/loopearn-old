@@ -65,7 +65,7 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
       return;
     }
 
-    const slug = `${slugify(formData.companyName)}-${Math.random().toString(36).substring(2, 15)}`;
+    const slug = `${slugify(formData.companyName)}-${Math.random().toString(36).substring(2, 3)}`;
 
     const { data, error } = await supabase.auth.signInWithOtp({
       email: formData.email,

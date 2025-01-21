@@ -11,8 +11,12 @@ export type Database = {
     Tables: {
       business: {
         Row: {
+          address_line_1: string | null
+          address_line_2: string | null
           avatar_url: string | null
+          billing_cycle_start: number | null
           business_currency: string | null
+          business_description: string | null
           business_email: string | null
           business_image: string | null
           business_meta: Json | null
@@ -21,22 +25,33 @@ export type Database = {
           business_url: string | null
           category: string | null
           city: string | null
+          contact_name: string | null
           country: string | null
           created_at: string | null
           document_classification: boolean | null
           id: string
+          invoice_prefix: string | null
+          payment_failed_at: string | null
+          payout_method_id: string | null
+          payouts_enabled: boolean | null
+          plan: string | null
           postal_code: string | null
           referral_code: string | null
+          shopify_store_id: string | null
           slug: string | null
           state: string | null
-          street_address: string | null
           stripe_connect_id: string | null
           stripe_id: string | null
           tags: string[] | null
+          updated_at: string | null
         }
         Insert: {
+          address_line_1?: string | null
+          address_line_2?: string | null
           avatar_url?: string | null
+          billing_cycle_start?: number | null
           business_currency?: string | null
+          business_description?: string | null
           business_email?: string | null
           business_image?: string | null
           business_meta?: Json | null
@@ -45,22 +60,33 @@ export type Database = {
           business_url?: string | null
           category?: string | null
           city?: string | null
+          contact_name?: string | null
           country?: string | null
           created_at?: string | null
           document_classification?: boolean | null
           id?: string
+          invoice_prefix?: string | null
+          payment_failed_at?: string | null
+          payout_method_id?: string | null
+          payouts_enabled?: boolean | null
+          plan?: string | null
           postal_code?: string | null
           referral_code?: string | null
+          shopify_store_id?: string | null
           slug?: string | null
           state?: string | null
-          street_address?: string | null
           stripe_connect_id?: string | null
           stripe_id?: string | null
           tags?: string[] | null
+          updated_at?: string | null
         }
         Update: {
+          address_line_1?: string | null
+          address_line_2?: string | null
           avatar_url?: string | null
+          billing_cycle_start?: number | null
           business_currency?: string | null
+          business_description?: string | null
           business_email?: string | null
           business_image?: string | null
           business_meta?: Json | null
@@ -69,18 +95,25 @@ export type Database = {
           business_url?: string | null
           category?: string | null
           city?: string | null
+          contact_name?: string | null
           country?: string | null
           created_at?: string | null
           document_classification?: boolean | null
           id?: string
+          invoice_prefix?: string | null
+          payment_failed_at?: string | null
+          payout_method_id?: string | null
+          payouts_enabled?: boolean | null
+          plan?: string | null
           postal_code?: string | null
           referral_code?: string | null
+          shopify_store_id?: string | null
           slug?: string | null
           state?: string | null
-          street_address?: string | null
           stripe_connect_id?: string | null
           stripe_id?: string | null
           tags?: string[] | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -123,6 +156,47 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          categoryid: number
+          categoryname: string
+        }
+        Insert: {
+          categoryid?: number
+          categoryname: string
+        }
+        Update: {
+          categoryid?: number
+          categoryname?: string
+        }
+        Relationships: []
+      }
+      subcategories: {
+        Row: {
+          categoryid: number
+          subcategoryid: number
+          subcategoryname: string
+        }
+        Insert: {
+          categoryid: number
+          subcategoryid?: number
+          subcategoryname: string
+        }
+        Update: {
+          categoryid?: number
+          subcategoryid?: number
+          subcategoryname?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subcategories_categoryid_fkey"
+            columns: ["categoryid"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["categoryid"]
           },
         ]
       }
@@ -180,6 +254,9 @@ export type Database = {
           id: string
           locale: string | null
           metadata: Json | null
+          onboarding_status:
+            | Database["public"]["Enums"]["onboarding_status"]
+            | null
           phone: string | null
           referral_code: string | null
           status: Database["public"]["Enums"]["user_status"] | null
@@ -194,6 +271,9 @@ export type Database = {
           id: string
           locale?: string | null
           metadata?: Json | null
+          onboarding_status?:
+            | Database["public"]["Enums"]["onboarding_status"]
+            | null
           phone?: string | null
           referral_code?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
@@ -208,6 +288,9 @@ export type Database = {
           id?: string
           locale?: string | null
           metadata?: Json | null
+          onboarding_status?:
+            | Database["public"]["Enums"]["onboarding_status"]
+            | null
           phone?: string | null
           referral_code?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
@@ -347,6 +430,7 @@ export type Database = {
     }
     Enums: {
       kyc_status: "pending" | "verified" | "rejected"
+      onboarding_status: "pending" | "complete"
       profile_status: "pending" | "incomplete" | "complete"
       teamRoles: "owner" | "member"
       user_status: "ONLINE" | "OFFLINE"

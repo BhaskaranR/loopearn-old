@@ -38,15 +38,15 @@ export async function deleteUser(supabase: Client) {
 
 export async function updateBusiness(supabase: Client, data) {
   const userData = await getCurrentUserBusinessQuery(supabase);
-  if (!userData?.data?.business_id) {
+  if (!userData?.business_id) {
     return;
   }
 
   return supabase
     .from("business")
     .update(data)
-    .eq("id", userData?.data?.business_id)
-    .select()
+    .eq("id", userData?.business_id)
+    .select("*")
     .single();
 }
 

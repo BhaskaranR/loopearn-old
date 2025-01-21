@@ -83,7 +83,8 @@
     "./wordmark": "./src/components/wordmark.tsx",
     "./grid-plus": "./src/icons/grid-plus.tsx",
     "./nucleo": "./src/icons/nucleo/index.ts",
-    "./onboarding-popover": "./src/components/onboarding-popover.tsx"
+    "./onboarding-popover": "./src/components/onboarding-popover.tsx",
+    "./toggle-group": "./src/components/toggle-group.tsx"
   },
   "dependencies": {
     "@mui/icons-material": "^6.1.6",

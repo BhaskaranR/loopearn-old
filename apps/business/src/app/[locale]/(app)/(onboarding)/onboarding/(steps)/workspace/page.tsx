@@ -1,11 +1,23 @@
-import { CreateTeamForm } from "@/components/forms/create-team-form";
-import { GridPlus } from "@loopearn/ui/grid-plus";
+import { getBusinessBySlug } from "@loopearn/supabase/cached-queries";
+import { redirect } from "next/navigation";
 import { StepPage } from "../step-page";
+import { OnboardTeamForm } from "./onboard-team-form";
 
-export default function Workspace() {
+export default async function Workspace({
+  searchParams,
+}: {
+  searchParams: { slug: string };
+}) {
+  const slug = searchParams.slug;
+
+  const { data: business } = await getBusinessBySlug(slug);
+
+  if (!business) {
+    redirect("/not-found");
+  }
+
   return (
     <StepPage
-      icon={GridPlus}
       title="Update your business"
       description={
         <a
@@ -19,7 +31,12 @@ export default function Workspace() {
         </a>
       }
     >
-      <CreateTeamForm continueTo={"/onboarding/invite"} />
+      <OnboardTeamForm
+        id={business.id.toString()}
+        name={business.business_name}
+        slug={business.slug}
+        continueTo={"/onboarding/category"}
+      />
     </StepPage>
   );
 }

@@ -103,7 +103,7 @@ BEGIN
       business_id,
       NEW.id,
       COALESCE(
-      NEW.raw_user_meta_data ->> 'role', 'admin'));
+      NEW.raw_user_meta_data ->> 'role', 'owner'));
   END IF;
 
   -- TODO implement referral code later

@@ -4,8 +4,12 @@ import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { createClient } from "../clients/server";
 import {
+  getBusinessByIdQuery,
+  getBusinessBySlugQuery,
   getBusinessMembersQuery,
   getBusinessUserQuery,
+  getCategoriesQuery,
+  getSubCategoriesQuery,
   getTeamsByUserIdQuery,
   getUserInvitesQuery,
   getUserQuery,
@@ -41,6 +45,23 @@ export const getUser = async () => {
   )();
 };
 
+export const getBusinessBySlug = async (slug: string) => {
+  const supabase = createClient();
+  const user = await getUser();
+  const userId = user?.id;
+
+  if (!userId) {
+    return;
+  }
+
+  return getBusinessBySlugQuery(supabase, userId, slug);
+};
+
+export const getBusinessById = async (businessId: string) => {
+  const supabase = createClient();
+  return getBusinessByIdQuery(supabase, businessId);
+};
+
 export const getTeams = async () => {
   const supabase = createClient();
 
@@ -63,7 +84,7 @@ export const getTeams = async () => {
   )();
 };
 
-export const getBusinessUser = async () => {
+export const getBusinessUser = async (slug?: string) => {
   const supabase = createClient();
   const user = await getUser();
   const businessId = user?.business_id!;
@@ -73,6 +94,7 @@ export const getBusinessUser = async () => {
       return getBusinessUserQuery(supabase, {
         userId: user!.id,
         businessId,
+        slug,
       });
     },
     ["business", "user", user!.id],
@@ -141,6 +163,36 @@ export const getUserInvites = async () => {
     {
       tags: [`user_invites_${email}`],
       revalidate: 180,
+    },
+  )();
+};
+
+export const getCategories = async () => {
+  const supabase = createClient();
+
+  return unstable_cache(
+    async () => {
+      return getCategoriesQuery(supabase);
+    },
+    ["categories"],
+    {
+      tags: ["categories"],
+      revalidate: 86400,
+    },
+  )();
+};
+
+export const getSubCategories = async (categoryId: string) => {
+  const supabase = createClient();
+
+  return unstable_cache(
+    async () => {
+      return getSubCategoriesQuery(supabase, categoryId);
+    },
+    ["subcategories", categoryId],
+    {
+      tags: [`subcategories_${categoryId}`],
+      revalidate: 86400,
     },
   )();
 };

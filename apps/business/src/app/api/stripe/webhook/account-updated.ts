@@ -1,3 +1,4 @@
+import { client as RedisClient } from "@loopearn/kv/client";
 import { createClient } from "@loopearn/supabase/admin";
 import type Stripe from "stripe";
 
@@ -6,8 +7,9 @@ export async function accountUpdated(event: Stripe.Event) {
 
   const { country, payouts_enabled } = account;
 
-  const supabase = createClient();
+  const loopEarnCustomerId = account.metadata.LoopEarnCustomerId;
 
+  const supabase = createClient();
   // need to update the business, stripeConnectId, country, payoutsEnabled for the business
   await supabase
     .from("business")
@@ -17,4 +19,8 @@ export async function accountUpdated(event: Stripe.Event) {
       payouts_enabled: payouts_enabled,
     })
     .eq("stripe_id", account.id);
+
+  await setOnboardingProgress({
+    onboardingStep: "completed",
+  });
 }

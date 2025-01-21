@@ -38,13 +38,12 @@ export async function GET(req: NextRequest) {
   const { data, error } = await getConnection()
     .from("business")
     .select(cols)
-    .eq("slug", slug)
-    .single();
+    .eq("slug", slug);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  if (data) {
+  if (data.length > 0) {
     return NextResponse.json({ exists: true });
   }
   return NextResponse.json({ exists: false });

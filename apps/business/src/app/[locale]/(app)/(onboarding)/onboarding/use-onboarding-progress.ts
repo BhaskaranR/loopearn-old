@@ -15,7 +15,7 @@ export function useOnboardingProgress() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   // const { slug: workspaceSlug } = useWorkspace();
-  const slug = searchParams.get("workspace");
+  const slug = searchParams.get("slug");
 
   const { execute, executeAsync, isExecuting, hasSucceeded } = useAction(
     setOnboardingProgress,
@@ -43,9 +43,7 @@ export function useOnboardingProgress() {
         onboardingStep: step,
       });
 
-      const queryParams = PRE_WORKSPACE_STEPS.includes(step)
-        ? ""
-        : `?workspace=${providedSlug || slug}`;
+      const queryParams = `?slug=${providedSlug || slug}`;
       router.push(`/onboarding/${step}${queryParams}`);
     },
     [execute, router, slug],

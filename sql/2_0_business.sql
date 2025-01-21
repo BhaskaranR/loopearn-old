@@ -2,6 +2,7 @@ CREATE TABLE business(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   avatar_url varchar(255),
   slug text unique default null,
+  contact_name varchar(255),
   business_name varchar(255) NOT NULL,
   business_email varchar(255),
   business_phone varchar(255),
@@ -9,9 +10,12 @@ CREATE TABLE business(
   business_image text,
   business_meta jsonb,
   business_currency text,
+  business_description text,
+  website_url text,
   category text,
   tags text[],
-  street_address varchar(255),
+  address_line_1 varchar(255),
+  address_line_2 varchar(255),
   city varchar(255),
   state varchar(255),
   postal_code varchar(255),
@@ -19,10 +23,18 @@ CREATE TABLE business(
   stripe_id text,
   stripe_connect_id text,
   plan text default 'free',
+  payouts_enabled boolean default false,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   referral_code text UNIQUE,
-  document_classification boolean default false
+  document_classification boolean default false,
+  billing_cycle_start int,
+  payment_failed_at timestamp with time zone,
+  payout_method_id text,
+  shopify_store_id text,
+  invoice_prefix text,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP;
 );
+
 
 -- add status
 CREATE TABLE business_users(

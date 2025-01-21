@@ -8,7 +8,8 @@ export * from "./jwtPayload";
 export const ONBOARDING_STEPS = [
   "workspace",
   "category",
-  "invite",
+  "subcategory",
+  "profile",
   "plan",
   "verify",
   "completed",

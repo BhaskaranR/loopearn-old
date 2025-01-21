@@ -1,23 +1,29 @@
+import { getBusinessBySlug } from "@loopearn/supabase/cached-queries";
 import { LaterButton } from "../../later-button";
 import { StepPage } from "../step-page";
+import { PlanSelector } from "./plan-selector";
 
-export default function Plan() {
+export default async function Plan({
+  searchParams,
+}: {
+  searchParams: { slug: string };
+}) {
+  const slug = searchParams.slug;
+
+  const { data: business } = await getBusinessBySlug(slug);
+
+  if (!business) {
+    return <div>Business not found</div>;
+  }
+
   return (
     <StepPage
       title="Choose your plan"
       description="Find a plan that fits your needs"
       className="max-w-2xl"
     >
-      <div />
+      <PlanSelector currentPlan={business.plan} slug={slug} />
       <div className="mt-8 flex flex-col gap-3">
-        <a
-          href="https://dub.co/enterprise"
-          target="_blank"
-          rel="noreferrer"
-          className="w-full text-center text-sm text-gray-500 transition-colors hover:text-gray-700"
-        >
-          Looking for enterprise?
-        </a>
         <LaterButton next="finish">I'll pick a plan later</LaterButton>
       </div>
     </StepPage>

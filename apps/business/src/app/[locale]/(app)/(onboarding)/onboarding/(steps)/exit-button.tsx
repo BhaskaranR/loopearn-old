@@ -1,6 +1,7 @@
 "use client";
 
-import { ExpandingArrow, LoadingSpinner } from "@dub/ui/icons";
+import { ExpandingArrow } from "@loopearn/ui/icons";
+import { LoadingSpinner } from "@loopearn/ui/loading-spinner";
 import { useOnboardingProgress } from "../use-onboarding-progress";
 
 export function ExitButton() {

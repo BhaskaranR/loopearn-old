@@ -2,14 +2,22 @@ import { stripe } from "@/stripe";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { accountUpdated } from "./account-updated";
+import { checkoutSessionCompleted } from "./checkout-session-completed";
+import { customerSubscriptionDeleted } from "./customer-subscription-deleted";
+import { customerSubscriptionUpdated } from "./customer-subscription-updated";
 
-const relevantEvents = new Set(["account.updated"]);
+const relevantEvents = new Set([
+  "account.updated",
+  "checkout.session.completed",
+  "customer.subscription.updated",
+  "customer.subscription.deleted",
+]);
 
-// POST /api/stripe/connect/webhook – listen to Stripe Connect webhooks (for connected accounts)
+// POST /api/stripe/webhook – listen to Stripe webhooks
 export const POST = async (req: Request) => {
   const buf = await req.text();
   const sig = req.headers.get("Stripe-Signature") as string;
-  const webhookSecret = process.env.STRIPE_CONNECT_WEBHOOK_SECRET;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   let event: Stripe.Event;
   try {
     if (!sig || !webhookSecret) return;
@@ -32,13 +40,17 @@ export const POST = async (req: Request) => {
       case "account.updated":
         await accountUpdated(event);
         break;
+      case "checkout.session.completed":
+        await checkoutSessionCompleted(event);
+        break;
+      case "customer.subscription.updated":
+        await customerSubscriptionUpdated(event);
+        break;
+      case "customer.subscription.deleted":
+        await customerSubscriptionDeleted(event);
+        break;
     }
   } catch (error) {
-    // log to slack
-    // await log({
-    //   message: `Stripe webhook failed. Error: ${error.message}`,
-    //   type: "errors",
-    // });
     return new Response('Webhook error: "Webhook handler failed. View logs."', {
       status: 400,
     });

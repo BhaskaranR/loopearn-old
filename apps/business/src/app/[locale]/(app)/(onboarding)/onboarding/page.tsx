@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation";
 
-export default function Onboarding() {
-  redirect("/onboarding/welcome");
+export default async function Onboarding({
+  searchParams,
+}: {
+  searchParams: { slug: string };
+}) {
+  redirect(`/onboarding/welcome?slug=${searchParams.slug}`);
 }
