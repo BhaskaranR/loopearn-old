@@ -18,9 +18,11 @@ export async function accountUpdated(event: Stripe.Event) {
       country,
       payouts_enabled: payouts_enabled,
     })
-    .eq("stripe_id", account.id);
+    .eq("id", account.metadata.LoopEarnCustomerId);
 
-  await setOnboardingProgress({
-    onboardingStep: "completed",
-  });
+  if (payouts_enabled) {
+    await setOnboardingProgress({
+      onboardingStep: "completed",
+    });
+  }
 }
