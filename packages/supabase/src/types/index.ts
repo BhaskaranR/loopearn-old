@@ -12,6 +12,7 @@ export const ONBOARDING_STEPS = [
   "profile",
   "plan",
   "verify",
+  "stripe-pending",
   "completed",
 ] as const;
 

@@ -1,4 +1,5 @@
 import { AI } from "@/actions/ai/chat";
+import { setOnboardingProgress } from "@/actions/set-onboarding-progress";
 import { Header } from "@/components/header";
 import Toolbar from "@/components/onboarding/toolbar";
 import { getOnboardingStep } from "@/utils/get-onboarding-step";
@@ -24,7 +25,8 @@ export default async function Layout({
     redirect("/teams");
   }
 
-  const key = `onboarding-step:${user?.business_id}`;
+  const key = `${user?.business_id}`;
+
   const onboardingStep = await getOnboardingStep(key);
   if (
     !(onboardingStep === "stripe-pending" || onboardingStep === "completed")
