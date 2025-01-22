@@ -9,7 +9,7 @@ const relevantEvents = new Set(["account.updated"]);
 export const POST = async (req: Request) => {
   const buf = await req.text();
   const sig = req.headers.get("Stripe-Signature") as string;
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = process.env.STRIPE_CONNECT_WEBHOOK_SECRET;
   let event: Stripe.Event;
   try {
     if (!sig || !webhookSecret) return;
