@@ -53,7 +53,5 @@ export async function checkoutSessionCompleted(event: Stripe.Event) {
     .eq("id", workspaceId);
 
   // complete onboarding step for loopEarnCustomerId
-  await setOnboardingProgress({
-    onboardingStep: "completed",
-  });
+  await RedisClient.set(`onboarding-step:${loopEarnCustomerId}`, "completed");
 }

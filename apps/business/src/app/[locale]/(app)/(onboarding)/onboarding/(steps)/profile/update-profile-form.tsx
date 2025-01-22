@@ -8,6 +8,8 @@ import {
   SearchAddressInput,
 } from "@/components/search-address-input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import countries from "@loopearn/location/country-flags";
+
 import {
   Form,
   FormControl,
@@ -67,7 +69,13 @@ export function UpdateProfileForm({ data, redirectTo }) {
     form.setValue("address_line_2", address.address_line_2);
     form.setValue("city", address.city);
     form.setValue("state", address.state);
-    form.setValue("country", address.country);
+    // get country code from country name
+    if (address.country) {
+      const countryCode = Object.values(countries).find(
+        (country) => country.name === address.country,
+      )?.code;
+      form.setValue("country", countryCode);
+    }
     form.setValue("postal_code", address.zip);
   };
 

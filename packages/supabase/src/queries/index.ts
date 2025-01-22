@@ -105,12 +105,7 @@ export async function getBusinessBySlugQuery(
   userId: string,
   slug: string,
 ) {
-  return supabase
-    .from("business")
-    .select("*")
-    .eq("slug", slug)
-    .throwOnError()
-    .single();
+  return supabase.from("business").select("*").eq("slug", slug).single();
 }
 
 export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {

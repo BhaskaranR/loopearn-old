@@ -1,10 +1,10 @@
 import { AI } from "@/actions/ai/chat";
-import { setOnboardingProgress } from "@/actions/set-onboarding-progress";
 import { Header } from "@/components/header";
 import Toolbar from "@/components/onboarding/toolbar";
 import { getOnboardingStep } from "@/utils/get-onboarding-step";
 import { setupAnalytics } from "@loopearn/events/server";
-import { getBusinessUser, getUser } from "@loopearn/supabase/cached-queries";
+import { client as RedisClient } from "@loopearn/kv/client";
+import { getUser } from "@loopearn/supabase/cached-queries";
 import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";

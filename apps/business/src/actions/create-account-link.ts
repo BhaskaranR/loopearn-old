@@ -21,16 +21,23 @@ export const createAccountLinkAction = authActionClient
       onboardingStep: "stripe-pending",
     });
 
-    const { url } = user.business.payouts_enabled
-      ? await stripe.accounts.createLoginLink(user.business.stripe_connect_id)
-      : await stripe.accountLinks.create({
-          account: user.business.stripe_connect_id,
-          refresh_url: `${env.NEXT_PUBLIC_BUSINESS_DOMAIN}`,
-          return_url: `${env.NEXT_PUBLIC_BUSINESS_DOMAIN}`,
-          type: "account_onboarding",
-          collect: "eventually_due",
-        });
+    // const { url } = user.business.payouts_enabled
+    //   ? await stripe.accounts.createLoginLink(user.business.stripe_connect_id)
+    //   : await stripe.accountLinks.create({
+    //       account: user.business.stripe_connect_id,
+    //       refresh_url: `${env.NEXT_PUBLIC_BUSINESS_DOMAIN}`,
+    //       return_url: `${env.NEXT_PUBLIC_BUSINESS_DOMAIN}`,
+    //       type: "account_onboarding",
+    //       collect: "eventually_due",
+    //     });
 
+    const { url } = await stripe.accountLinks.create({
+      account: user.business.stripe_connect_id,
+      refresh_url: `${env.NEXT_PUBLIC_BUSINESS_DOMAIN}`,
+      return_url: `${env.NEXT_PUBLIC_BUSINESS_DOMAIN}`,
+      type: "account_onboarding",
+      collect: "eventually_due",
+    });
     return {
       url,
     };

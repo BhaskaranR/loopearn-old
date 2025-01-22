@@ -21,8 +21,6 @@ export async function accountUpdated(event: Stripe.Event) {
     .eq("id", account.metadata.LoopEarnCustomerId);
 
   if (payouts_enabled) {
-    await setOnboardingProgress({
-      onboardingStep: "completed",
-    });
+    await RedisClient.set(`onboarding-step:${loopEarnCustomerId}`, "completed");
   }
 }
