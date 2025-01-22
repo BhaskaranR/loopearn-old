@@ -40,7 +40,7 @@ export async function getBusinessMembersQuery(
       id,
       role,
       business_id,
-      user:users(id, full_name, avatar_url, username),
+      user:users(id, full_name, avatar_url, username)
     `,
     )
     .eq("business_id", businessId)

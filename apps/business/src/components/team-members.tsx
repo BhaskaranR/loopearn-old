@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { MembersTable } from "./tables/members";
 import { PendingInvitesSkeleton } from "./tables/pending-invites/table";
 
-export function TeamMembers() {
+export async function TeamMembers() {
   return (
     <Tabs defaultValue="members">
       <TabsList className="bg-transparent border-b-[1px] w-full justify-start rounded-none mb-1 p-0 h-auto pb-4">
