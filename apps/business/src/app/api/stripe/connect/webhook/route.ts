@@ -1,15 +1,9 @@
 import { stripe } from "@/stripe";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { checkoutSessionCompleted } from "./checkout-session-completed";
-import { customerSubscriptionDeleted } from "./customer-subscription-deleted";
-import { customerSubscriptionUpdated } from "./customer-subscription-updated";
+import { accountUpdated } from "../account-updated";
 
-const relevantEvents = new Set([
-  "checkout.session.completed",
-  "customer.subscription.updated",
-  "customer.subscription.deleted",
-]);
+const relevantEvents = new Set(["account.updated"]);
 
 // POST /api/stripe/webhook – listen to Stripe webhooks
 export const POST = async (req: Request) => {
@@ -35,14 +29,8 @@ export const POST = async (req: Request) => {
   }
   try {
     switch (event.type) {
-      case "checkout.session.completed":
-        await checkoutSessionCompleted(event);
-        break;
-      case "customer.subscription.updated":
-        await customerSubscriptionUpdated(event);
-        break;
-      case "customer.subscription.deleted":
-        await customerSubscriptionDeleted(event);
+      case "account.updated":
+        await accountUpdated(event);
         break;
     }
   } catch (error) {
