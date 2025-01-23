@@ -84,7 +84,8 @@
     "./grid-plus": "./src/icons/grid-plus.tsx",
     "./nucleo": "./src/icons/nucleo/index.ts",
     "./onboarding-popover": "./src/components/onboarding-popover.tsx",
-    "./toggle-group": "./src/components/toggle-group.tsx"
+    "./toggle-group": "./src/components/toggle-group.tsx",
+    "./client-only": "./src/components/client-only.tsx"
   },
   "dependencies": {
     "@mui/icons-material": "^6.1.6",

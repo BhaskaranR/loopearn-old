@@ -4,7 +4,7 @@ export async function getUserQuery(supabase: Client, userId: string) {
   const cols = `
       *,
       business_users!user_id(*),
-      business:business_id(slug, payouts_enabled, stripe_connect_id, payouts_enabled)
+      business:business_id(slug, business_name, avatar_url, payouts_enabled, stripe_connect_id, payouts_enabled)
     `;
   const { data, error } = await supabase
     .from("users")

@@ -73,7 +73,7 @@ const BUSINESS_PLAN_MODIFIER = ({
       text: `${numeral(sales / 100).format("$0,0.00")} tracked sales/mo`,
       footnote: {
         title:
-          "Use Dub Conversions to track how your link clicks are converting to signups and sales. Limits are based on the total sale amount tracked within a given month.",
+          "Use LoopEarn Conversions to track how your link clicks are converting to signups and sales. Limits are based on the total sale amount tracked within a given month.",
         cta: "Learn more.",
         href: "https://business.loopearn.com/help/article/business-plan",
       },

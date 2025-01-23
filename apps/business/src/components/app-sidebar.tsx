@@ -35,6 +35,7 @@ import { SidebarOptInForm } from "./sidebar-opt-in-form";
 import { TeamMenu } from "./team-menu";
 import { TeamSwitcher } from "./team-switcher";
 import { ThemeSwitch } from "./theme-switch";
+// import { UserSurveyButton } from "./user-survey";
 
 // Dynamically import NavProjects with no SSR
 
@@ -167,6 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        {/* <UserSurveyButton /> */}
         <div className="p-1">
           <SidebarOptInForm />
         </div>

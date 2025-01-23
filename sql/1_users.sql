@@ -9,7 +9,6 @@ CREATE TYPE public.onboarding_status AS enum(
   'complete'
 );
 
-
 -- USERS
 CREATE TABLE public.users(
   -- UUID from auth.users
@@ -23,11 +22,11 @@ CREATE TABLE public.users(
   onboarding_status onboarding_status DEFAULT 'pending' ::public.onboarding_status,
   status user_status DEFAULT 'OFFLINE' ::public.user_status,
   referral_code text UNIQUE,
+  source text,
   business_id uuid references public.business(id) default null,
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   locale text DEFAULT 'en'
 );
-
 
 ALTER TABLE public.users ADD COLUMN business_id uuid references public.business(id) default null;
 

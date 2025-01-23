@@ -1,11 +1,11 @@
 import { createBusinessAction } from "@/actions/create-team-action";
 import { createBusinessSchema } from "@/actions/schema";
+import { env } from "@/env.mjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@loopearn/ui/button";
 import {
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@loopearn/ui/dialog";
@@ -59,7 +59,7 @@ export function CreateTeamModal({ onOpenChange }: Props) {
     <DialogContent className="max-w-[455px]">
       <div className="p-4 space-y-4 gap-4">
         <DialogHeader>
-          <DialogTitle>Create business</DialogTitle>
+          <DialogTitle>Create organization</DialogTitle>
           <DialogDescription>
             For example, you can use the name of your company.
           </DialogDescription>
@@ -73,10 +73,10 @@ export function CreateTeamModal({ onOpenChange }: Props) {
             <div>
               <label htmlFor="name" className="flex items-center space-x-2">
                 <p className="block text-sm font-medium text-gray-700">
-                  Business Name
+                  Organization Name
                 </p>
                 <InfoTooltip
-                  content={`This is the name of your business on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
+                  content={`This is the name of your organization on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
                 />
               </label>
 
@@ -105,11 +105,9 @@ export function CreateTeamModal({ onOpenChange }: Props) {
 
             <div>
               <label htmlFor="slug" className="flex items-center space-x-2">
-                <p className="block text-sm font-medium text-gray-700">
-                  Business Slug
-                </p>
+                <p className="block text-sm font-medium text-gray-700">Slug</p>
                 <InfoTooltip
-                  content={`This is your business's unique slug on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
+                  content={`This is your organization's unique slug on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
                 />
               </label>
 
@@ -121,7 +119,7 @@ export function CreateTeamModal({ onOpenChange }: Props) {
                     <FormControl>
                       <div className="relative mt-2 flex rounded-md shadow-sm">
                         <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-5 text-gray-500 sm:text-sm">
-                          app.{process.env.NEXT_PUBLIC_APP_DOMAIN}
+                          {env.NEXT_PUBLIC_BUSINESS_DOMAIN}
                         </span>
                         <Input
                           {...field}
@@ -159,7 +157,7 @@ export function CreateTeamModal({ onOpenChange }: Props) {
               {createBusiness.status === "executing" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                "Create Business"
+                "Create Organization"
               )}
             </Button>
           </form>

@@ -1,4 +1,5 @@
 import { ArchiveIcon } from "@radix-ui/react-icons";
+import type { LucideIcon } from "lucide-react";
 
 import type { ComponentType, SVGProps } from "react";
 import { FaXTwitter } from "react-icons/fa6";
@@ -861,3 +862,7 @@ export * from "./nucleo";
 export type Icon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
 export { default as ExpandingArrow } from "./expanding-arrow";
+export { ProductHunt } from "./product-hunt";
+export { Twitter } from "./twitter";
+export { LinkedIn } from "./linkedin";
+export { Google } from "./google";
