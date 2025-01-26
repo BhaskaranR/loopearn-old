@@ -55,10 +55,7 @@ CREATE POLICY "Allow business logged-in read access" ON public.business
 
 ALTER TABLE public.business_users ENABLE ROW LEVEL SECURITY;
 
-
-
 -- ... existing code ...
-
 DROP POLICY IF EXISTS "Allow business individual update access" ON public.business;
 
 CREATE INDEX idx_business_users_lookup ON business_users (user_id, business_id, role, is_active);
@@ -86,18 +83,26 @@ grant all
   on table public.business_users
 to supabase_auth_admin;
 
--- revoke all
---   on table public.business
---   from authenticated, anon;
+CREATE OR REPLACE FUNCTION public.get_user_business_id() RETURNS text
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    user_business_id text;
+BEGIN
+    SELECT business_id INTO user_business_id
+    FROM public.business_users
+    WHERE user_id = auth.uid()
+    LIMIT 1; -- Assuming a user can be associated with only one business at a time
 
--- revoke all
---   on table public.business_users
---   from authenticated, anon;
+    RAISE NOTICE 'User ID: %, Business ID: %', auth.uid(), user_business_id;
+    RETURN user_business_id;
+END;
+$$;
 
-create policy "Allow auth admin to read user roles" ON public.business_users
-as permissive for select
-to supabase_auth_admin
-using (true);
+
+-- Grant execute permission on the function to the necessary roles
+GRANT EXECUTE ON FUNCTION public.get_user_business_id() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.get_user_business_id() TO service_role;
 
 
 
@@ -105,18 +110,6 @@ using (true);
 CREATE POLICY "Allow business_users logged-in read access" ON public.business_users
 FOR SELECT
 USING (public.get_user_business_id() = business_id::text);
-
-
--- write a function that returns auth.jwt()
-CREATE OR REPLACE FUNCTION public.get_jwt()
-  RETURNS jsonb
-  LANGUAGE plpgsql
-  AS $$
-  BEGIN
-    RETURN auth.jwt();
-  END;
-  $$;
-
 
 GRANT EXECUTE ON FUNCTION public.get_jwt() TO authenticated;
 

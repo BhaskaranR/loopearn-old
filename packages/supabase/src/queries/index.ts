@@ -40,49 +40,14 @@ export async function getBusinessMembersQuery(
       `
       id,
       role,
-      business_id
-    `,
-    )
-    .eq("business_id", businessId)
-    .order("created_at");
-
-  if (error) throw error;
-
-  return {
-    data,
-  };
-}
-
-type GetBusinessUserParams = {
-  businessId?: string;
-  slug?: string;
-  userId: string;
-};
-
-export async function getBusinessUserQuery(
-  supabase: Client,
-  params: GetBusinessUserParams,
-) {
-  const query = supabase
-    .from("business_users")
-    .select(
-      `
-      id,
-      role,
       business_id,
-      business:business_id(id, slug, business_name, category, tags),
+      business:business_id(id, slug, business_name, avatar_url),
       user:users(id, full_name, avatar_url, username)
     `,
     )
-    .eq("user_id", params.userId);
+    .eq("business_id", businessId);
 
-  if (params.slug) {
-    query.eq("business.slug", params.slug);
-  } else if (params.businessId) {
-    query.eq("business_id", params.businessId);
-  }
-
-  const { data } = await query.throwOnError().single();
+  if (error) throw error;
 
   return {
     data,

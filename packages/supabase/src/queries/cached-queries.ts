@@ -8,7 +8,6 @@ import {
   getBusinessByIdQuery,
   getBusinessBySlugQuery,
   getBusinessMembersQuery,
-  getBusinessUserQuery,
   getCategoriesQuery,
   getPendingBusinessInvitesQueryForUser,
   getSubCategoriesQuery,
@@ -107,29 +106,8 @@ export const getPendingBusinessInvites = async () => {
   )();
 };
 
-export const getBusinessUser = async (slug?: string) => {
-  const supabase = createClient();
-  const user = await getUser();
-  const businessId = user?.business_id!;
-
-  return unstable_cache(
-    async () => {
-      return getBusinessUserQuery(supabase, {
-        userId: user!.id,
-        businessId,
-        slug,
-      });
-    },
-    ["business", "user", user!.id],
-    {
-      tags: [`business_user_${user!.id}`],
-      revalidate: 180,
-    },
-  )();
-};
-
 export const getBusinessMembers = async () => {
-  const supabaseAdmin = createClientAdmin();
+  const supabase = createClient();
 
   const user = await getUser();
   const businessId = user?.business_id;
@@ -140,7 +118,7 @@ export const getBusinessMembers = async () => {
 
   return unstable_cache(
     async () => {
-      return getBusinessMembersQuery(supabaseAdmin, businessId);
+      return getBusinessMembersQuery(supabase, businessId);
     },
     ["business_members", businessId],
     {

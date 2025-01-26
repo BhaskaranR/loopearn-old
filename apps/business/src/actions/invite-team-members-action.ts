@@ -50,7 +50,6 @@ export const inviteTeamMembersAction = authActionClient
           },
         );
       }
-
       const { data: invtesData, error } = await supabase
         .from("user_invites")
         .upsert(data, {
