@@ -62,7 +62,7 @@ export function CreateTeamForm({
         <div>
           <label htmlFor="name" className="flex items-center space-x-2">
             <p className="block text-sm font-medium text-gray-700">
-              Business Name
+              Organization Name
             </p>
             <InfoTooltip
               content={`This is the name of your business on ${process.env.NEXT_PUBLIC_APP_NAME}.`}

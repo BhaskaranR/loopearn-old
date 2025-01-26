@@ -5,9 +5,15 @@ import { z } from "zod";
 export const signUpSchema = z.object({
   firstName: z.string().min(2).max(32),
   lastName: z.string().min(2).max(32),
-  companyName: z.string().min(2).max(32),
+  // companyName: z.string().min(2).max(32).optional(),
   email: z.string().email(),
-  slug: z.string().optional(),
+  // slug: z.string().optional(),
+});
+
+// sign up schema with first name, last name, company name, email & ein number
+export const signInSchema = z.object({
+  email: z.string().email(),
+  inviteCode: z.string().optional(),
 });
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
@@ -138,6 +144,10 @@ export const updaterMenuSchema = z.array(
 export const changeBusinessSchema = z.object({
   businessId: z.string(),
   redirectTo: z.string(),
+});
+
+export const joinTeamSchema = z.object({
+  code: z.string(),
 });
 
 export const createBusinessSchema = z.object({
@@ -284,6 +294,7 @@ export const verifyOtpSchema = z.object({
   token: z.string(),
   phone: z.string().optional(),
   email: z.string().optional(),
+  redirectTo: z.string().optional(),
 });
 
 export const searchSchema = z.object({

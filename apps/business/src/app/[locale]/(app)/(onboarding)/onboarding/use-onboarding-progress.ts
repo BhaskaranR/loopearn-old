@@ -42,7 +42,10 @@ export function useOnboardingProgress() {
       execute({
         onboardingStep: step,
       });
-
+      if (!slug) {
+        router.push(`/onboarding/${step}`);
+        return;
+      }
       const queryParams = `?slug=${providedSlug || slug}`;
       router.push(`/onboarding/${step}${queryParams}`);
     },
@@ -54,7 +57,7 @@ export function useOnboardingProgress() {
       onboardingStep: "completed",
     });
 
-    router.push(slug ? `/${slug}?onboarded=true` : "/");
+    router.push(slug ? "/?onboarded=true" : "/");
   }, [execute, router, slug]);
 
   return {

@@ -1,21 +1,13 @@
+import { CreateTeamForm } from "@/components/forms/create-team-form";
 import { getBusinessBySlug } from "@loopearn/supabase/cached-queries";
 import { redirect } from "next/navigation";
 import { StepPage } from "../step-page";
-import { OnboardTeamForm } from "./onboard-team-form";
 
 export default async function Workspace({
   searchParams,
 }: {
   searchParams: { slug: string };
 }) {
-  const slug = searchParams.slug;
-
-  const { data: business } = await getBusinessBySlug(slug);
-
-  if (!business) {
-    redirect("/not-found");
-  }
-
   return (
     <StepPage
       title="What’s the name of your company or team?"
@@ -26,17 +18,12 @@ export default async function Workspace({
           className="transition-colors hover:text-gray-700" // Removed 'underline'
           rel="noreferrer"
         >
-          Learn more about what a company or team is and how it can help
-          organize your business operations effectively.
+          This will be the name of your LoopEarn team — choose something that
+          your team will recognize.
         </a>
       }
     >
-      <OnboardTeamForm
-        id={business.id.toString()}
-        name={business.business_name}
-        slug={business.slug}
-        continueTo={"/onboarding/category"}
-      />
+      <CreateTeamForm continueTo="/onboarding/category" />
     </StepPage>
   );
 }

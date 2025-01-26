@@ -3,31 +3,23 @@ import { SystemBanner } from "@/components/system-banner";
 import { createClient } from "@loopearn/supabase/client";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { useQueryState } from "nuqs";
-import ReferredSection from "./components/ReferralSection";
 import SignUpForm from "./components/SignUpForm";
 
 interface IProps {
   searchParams?: {
-    returnPath: string;
-    inviteCode?: string;
+    return_to: string;
   };
 }
 
 export default async function SignupPage({ searchParams }: IProps) {
-  const cookiestore = cookies();
-  const supabase = createClient();
-  const referralCode = searchParams?.inviteCode;
-  // // check if referral code is present in transaction_invitees table
-  // const { data: inviteeData } = await supabase
-  // 	.from("transaction_invitees")
-  // 	.select("*")
-  // 	.eq("invite_code", referralCode ?? "");
+  const queryString = new URLSearchParams(searchParams).toString();
+  const loginUrl = `/login${queryString ? `?${queryString}` : ""}`;
+  const redirectTo = `/${queryString ? `?${queryString}` : ""}`;
 
-  // if (!inviteeData || inviteeData.length === 0) {
-  // 	return redirect("/login");
-  // }
+  let inviteCode = "";
+  if (searchParams?.return_to?.startsWith("teams/invite/")) {
+    inviteCode = searchParams.return_to.split("teams/invite/")[1];
+  }
 
   return (
     <>
@@ -48,15 +40,13 @@ export default async function SignupPage({ searchParams }: IProps) {
             <div className="flex w-full flex-col relative">
               <div className="pointer-events-auto my-6 flex flex-col">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-                  <ReferredSection />
-
                   <div className="flex flex-col space-y-2 text-center">
                     <h1 className="text-2xl font-semibold tracking-tight">
                       Create an business account
                     </h1>
                   </div>
                   <div className="flex flex-col gap-5">
-                    <SignUpForm referralCode={referralCode} />
+                    <SignUpForm redirectTo={redirectTo} />
                   </div>
 
                   <div className="my-8 self-center text-sm">
@@ -64,7 +54,7 @@ export default async function SignupPage({ searchParams }: IProps) {
                       Have an account?
                     </span>{" "}
                     <Link
-                      href="/login"
+                      href={loginUrl}
                       className="hover:text-foreground-light text-foreground underline transition"
                     >
                       Sign in now

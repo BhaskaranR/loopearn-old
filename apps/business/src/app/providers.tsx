@@ -19,17 +19,15 @@ type ProviderProps = {
 
 export function Providers({ locale, children }: ProviderProps) {
   return (
-    <TooltipProvider>
-      <I18nProviderClient locale={locale}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </I18nProviderClient>
-    </TooltipProvider>
+    <I18nProviderClient locale={locale}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <TooltipProvider>{children}</TooltipProvider>
+      </ThemeProvider>
+    </I18nProviderClient>
   );
 }

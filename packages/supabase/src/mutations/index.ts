@@ -1,39 +1,44 @@
-import { getCurrentUserBusinessQuery, getUserInviteQuery } from "../queries";
+import { createClient as createAdminClient } from "../clients/admin";
+import {
+  getCurrentUserBusinessQuery,
+  getUserInviteQuery,
+  getUserInviteQueryByCode,
+} from "../queries";
 import type { Client } from "../types";
 
 export async function updateUser(supabase: Client, data: any) {
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (!user) {
     return;
   }
 
   return supabase
     .from("users")
     .update(data)
-    .eq("id", session.user.id)
+    .eq("id", user.id)
     .select()
     .single();
 }
 
 export async function deleteUser(supabase: Client) {
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (!user) {
     return;
   }
 
   await Promise.all([
-    supabase.auth.admin.deleteUser(session.user.id),
-    supabase.from("users").delete().eq("id", session.user.id),
+    supabase.auth.admin.deleteUser(user.id),
+    supabase.from("users").delete().eq("id", user.id),
     supabase.auth.signOut(),
   ]);
 
-  return session.user.id;
+  return user.id;
 }
 
 export async function updateBusiness(supabase: Client, data) {
@@ -98,6 +103,7 @@ export async function deleteTeamMember(
 type CreateBusinessParams = {
   name: string;
   slug: string;
+  email: string;
 };
 
 export async function createBusiness(
@@ -107,6 +113,7 @@ export async function createBusiness(
   const { data, error } = await supabase.rpc("create_business", {
     business_name: params.name,
     slug: params.slug,
+    business_email: params.email,
   });
   console.log(error);
   return data;
@@ -132,22 +139,23 @@ export async function leaveBusiness(
 
 export async function joinTeamByInviteCode(supabase: Client, code: string) {
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session?.user.email) {
+  if (!user?.email) {
     return;
   }
 
   const { data: inviteData } = await getUserInviteQuery(supabase, {
     code,
-    email: session.user.email,
+    email: user.email,
   });
 
   if (inviteData) {
-    // Add user team
-    await supabase.from("business_users").insert({
-      user_id: session.user.id,
+    // Add user team todo change this to use normal supabase
+    const supabaseAdmin = createAdminClient();
+    await supabaseAdmin.from("business_users").insert({
+      user_id: user.id,
       business_id: inviteData?.business_id,
       role: inviteData.role,
     });
@@ -158,7 +166,7 @@ export async function joinTeamByInviteCode(supabase: Client, code: string) {
       .update({
         business_id: inviteData?.business_id,
       })
-      .eq("id", session.user.id)
+      .eq("id", user.id)
       .select()
       .single();
 
@@ -169,4 +177,12 @@ export async function joinTeamByInviteCode(supabase: Client, code: string) {
   }
 
   return null;
+}
+
+export async function canJoinTeamByInviteCode(supabase: Client, code: string) {
+  const { data: inviteData } = await getUserInviteQueryByCode(supabase, {
+    code,
+  });
+
+  return inviteData;
 }

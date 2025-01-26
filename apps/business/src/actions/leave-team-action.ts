@@ -41,7 +41,7 @@ export const leaveTeamAction = authActionClient
       });
 
       revalidateTag(`user_${user.id}`);
-      revalidateTag(`teams_${businessId}`);
+      revalidateTag(`teams_${user.id}`);
 
       if (revalidatePath) {
         revalidatePathFunc(revalidatePath);

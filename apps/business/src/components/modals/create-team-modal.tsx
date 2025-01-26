@@ -16,8 +16,10 @@ import {
   FormItem,
   FormMessage,
 } from "@loopearn/ui/form";
+
 import { Input } from "@loopearn/ui/input";
 import { InfoTooltip } from "@loopearn/ui/tooltip";
+import slugify from "@sindresorhus/slugify";
 import { Loader2 } from "lucide-react";
 import { AlertCircle } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
@@ -44,7 +46,7 @@ export function CreateTeamModal({ onOpenChange }: Props) {
     defaultValues: {
       name: "",
       slug: "",
-      redirectTo: "/",
+      redirectTo: "/onboarding/category",
     },
   });
 
@@ -52,6 +54,7 @@ export function CreateTeamModal({ onOpenChange }: Props) {
     createBusiness.execute({
       name: values.name,
       slug: values.slug,
+      redirectTo: `/onboarding/category?slug=${values.slug}`,
     });
   }
 
@@ -59,9 +62,10 @@ export function CreateTeamModal({ onOpenChange }: Props) {
     <DialogContent className="max-w-[455px]">
       <div className="p-4 space-y-4 gap-4">
         <DialogHeader>
-          <DialogTitle>Create organization</DialogTitle>
+          <DialogTitle>What’s the name of your company or team?</DialogTitle>
           <DialogDescription>
-            For example, you can use the name of your company.
+            This will be the name of your LoopEarn team — choose something that
+            your team will recognize.
           </DialogDescription>
         </DialogHeader>
 
@@ -95,6 +99,11 @@ export function CreateTeamModal({ onOpenChange }: Props) {
                         autoCapitalize="none"
                         autoCorrect="off"
                         spellCheck="false"
+                        onChange={(e) => {
+                          const slug = slugify(e.target.value);
+                          field.onChange(e.target.value); // Update the name field
+                          form.setValue("slug", slug); // Update the slug field
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -107,7 +116,7 @@ export function CreateTeamModal({ onOpenChange }: Props) {
               <label htmlFor="slug" className="flex items-center space-x-2">
                 <p className="block text-sm font-medium text-gray-700">Slug</p>
                 <InfoTooltip
-                  content={`This is your organization's unique slug on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
+                  content={`This is your organization's unique slug on ${env.NEXT_PUBLIC_APP_DOMAIN}.`}
                 />
               </label>
 

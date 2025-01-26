@@ -1,8 +1,19 @@
 import { Logo } from "@/components/logo";
+import { getBusinessBySlug } from "@loopearn/supabase/cached-queries";
 // import { Wordmark } from "@loopearn/ui/wordmark";
 import { NextButton } from "../next-button";
 
-export default async function Welcome() {
+export default async function Welcome({
+  searchParams,
+}: {
+  searchParams: { slug: string };
+}) {
+  const slug = searchParams.slug;
+
+  const { data: business } = await getBusinessBySlug(slug);
+
+  const nextStep = business ? "category" : "teams";
+
   return (
     <>
       <div className="relative mx-auto mt-24 flex max-w-sm flex-col items-center px-3 text-center md:mt-32 md:px-8 lg:mt-48">
@@ -28,7 +39,7 @@ export default async function Welcome() {
           LoopEarn gives you a way to give your customers a way to earn rewards.
         </p>
         <div className="animate-slide-up-fade mt-10 w-full [--offset:10px] [animation-delay:750ms] [animation-duration:1s] [animation-fill-mode:both]">
-          <NextButton text="Get started" step="workspace" />
+          <NextButton text="Get started" step={nextStep} />
         </div>
       </div>
     </>

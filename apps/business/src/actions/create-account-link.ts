@@ -2,7 +2,6 @@
 
 import { env } from "@/env.mjs";
 import { stripe } from "@/stripe";
-import { client as RedisClient } from "@loopearn/kv/client";
 import { authActionClient } from "./safe-action";
 import { setOnboardingProgress } from "./set-onboarding-progress";
 

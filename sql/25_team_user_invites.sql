@@ -37,6 +37,9 @@ alter table "public"."user_invites" add constraint "user_invites_invited_by_fkey
 ALTER TABLE user_invites
 ADD CONSTRAINT unique_email_business_id UNIQUE (email, business_id);
 
+CREATE POLICY "Enable select for users based on email" ON "public"."user_invites" FOR SELECT USING ((("auth"."jwt"() ->> 'email'::"text") = "email"));
+
+
 alter table "public"."user_invites" add constraint "user_invites_business_id_fkey" foreign key ("business_id") references "public"."business"("id") on delete set null;
 CREATE OR REPLACE FUNCTION "private"."get_invites_for_authenticated_user"() RETURNS SETOF "uuid"
     LANGUAGE "sql" STABLE SECURITY DEFINER

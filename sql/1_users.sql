@@ -4,11 +4,6 @@ CREATE TYPE public.user_status AS enum(
   'OFFLINE'
 );
 
-CREATE TYPE public.onboarding_status AS enum(
-  'pending',
-  'complete'
-);
-
 -- USERS
 CREATE TABLE public.users(
   -- UUID from auth.users
@@ -19,7 +14,6 @@ CREATE TABLE public.users(
   address jsonb,
   phone text,
   metadata jsonb,
-  onboarding_status onboarding_status DEFAULT 'pending' ::public.onboarding_status,
   status user_status DEFAULT 'OFFLINE' ::public.user_status,
   referral_code text UNIQUE,
   source text,
@@ -27,11 +21,7 @@ CREATE TABLE public.users(
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   locale text DEFAULT 'en'
 );
-
-ALTER TABLE public.users ADD COLUMN business_id uuid references public.business(id) default null;
-
 COMMENT ON TABLE public.users IS 'Profile data for each user.';
-
 COMMENT ON COLUMN public.users.id IS 'References the internal Supabase Auth user.';
 
 -- Set up Storage!
@@ -82,37 +72,5 @@ ALTER TABLE public.users REPLICA IDENTITY
 ALTER publication supabase_realtime
   ADD TABLE public.users;
 
-CREATE OR REPLACE FUNCTION get_user_id_by_email(user_email text)
-  RETURNS uuid
-  AS $$
-DECLARE
-  user_id uuid;
-BEGIN
-  SELECT
-    id
-  FROM
-    auth.users
-  WHERE
-    email = user_email INTO user_id;
-  RETURN user_id;
-END;
-$$
-LANGUAGE plpgsql
-SECURITY INVOKER;
-
 GRANT ALL ON auth.users TO service_role;
 
-CREATE TYPE user_referral AS (
-  email text
-);
-
-CREATE OR REPLACE FUNCTION get_user_referrals(user_id text)
-  RETURNS SETOF user_referral
-  AS $$
-    var json_result = plv8.execute(
-    "select email from auth.users where raw_user_meta_data->>'invited_by'= $1",
-      [user_id]
-    );
-    return json_result;
-$$
-LANGUAGE plv8;

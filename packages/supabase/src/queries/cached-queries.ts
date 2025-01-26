@@ -2,6 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
+import { createClient as createClientAdmin } from "../clients/admin";
 import { createClient } from "../clients/server";
 import {
   getBusinessByIdQuery,
@@ -9,6 +10,7 @@ import {
   getBusinessMembersQuery,
   getBusinessUserQuery,
   getCategoriesQuery,
+  getPendingBusinessInvitesQueryForUser,
   getSubCategoriesQuery,
   getTeamsByUserIdQuery,
   getUserInvitesQuery,
@@ -18,14 +20,14 @@ import {
 export const getSession = cache(async () => {
   const supabase = createClient();
 
-  return supabase.auth.getSession();
+  return supabase.auth.getUser();
 });
 
 export const getUser = async () => {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
-  const userId = session?.user?.id;
+  const userId = user?.id;
 
   if (!userId) {
     return null;
@@ -79,6 +81,27 @@ export const getTeams = async () => {
     ["teams", userId],
     {
       tags: [`teams_${userId}`],
+      revalidate: 10,
+    },
+  )();
+};
+
+export const getPendingBusinessInvites = async () => {
+  const supabase = createClient();
+  const user = await getUser();
+  const userId = user?.id;
+
+  if (!userId) {
+    return;
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPendingBusinessInvitesQueryForUser(supabase, user!.username!);
+    },
+    ["pending_business_invites", user!.username!],
+    {
+      tags: [`pending_business_invites_${userId}`],
       revalidate: 180,
     },
   )();
@@ -106,7 +129,7 @@ export const getBusinessUser = async (slug?: string) => {
 };
 
 export const getBusinessMembers = async () => {
-  const supabase = createClient();
+  const supabaseAdmin = createClientAdmin();
 
   const user = await getUser();
   const businessId = user?.business_id;
@@ -117,12 +140,12 @@ export const getBusinessMembers = async () => {
 
   return unstable_cache(
     async () => {
-      return getBusinessMembersQuery(supabase, businessId);
+      return getBusinessMembersQuery(supabaseAdmin, businessId);
     },
     ["business_members", businessId],
     {
       tags: [`business_members_${businessId}`],
-      revalidate: 180,
+      revalidate: 10,
     },
   )();
 };

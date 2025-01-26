@@ -44,6 +44,7 @@ export type Database = {
           stripe_id: string | null
           tags: string[] | null
           updated_at: string | null
+          website_url: string | null
         }
         Insert: {
           address_line_1?: string | null
@@ -79,6 +80,7 @@ export type Database = {
           stripe_id?: string | null
           tags?: string[] | null
           updated_at?: string | null
+          website_url?: string | null
         }
         Update: {
           address_line_1?: string | null
@@ -114,6 +116,7 @@ export type Database = {
           stripe_id?: string | null
           tags?: string[] | null
           updated_at?: string | null
+          website_url?: string | null
         }
         Relationships: []
       }
@@ -259,6 +262,7 @@ export type Database = {
             | null
           phone: string | null
           referral_code: string | null
+          source: string | null
           status: Database["public"]["Enums"]["user_status"] | null
           updated_at: string
           username: string | null
@@ -276,6 +280,7 @@ export type Database = {
             | null
           phone?: string | null
           referral_code?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
           username?: string | null
@@ -293,6 +298,7 @@ export type Database = {
             | null
           phone?: string | null
           referral_code?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
           username?: string | null
@@ -312,13 +318,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      create_business: {
-        Args: {
-          business_name: string
-          slug: string
-        }
-        Returns: string
-      }
+      create_business:
+        | {
+            Args: {
+              business_name: string
+              slug: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              business_name: string
+              slug: string
+              business_email: string
+            }
+            Returns: string
+          }
       custom_access_token_hook: {
         Args: {
           event: Json

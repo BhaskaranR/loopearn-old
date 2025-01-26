@@ -1,8 +1,10 @@
 "use client";
 
 import { verifyOtpAction } from "@/actions/verify-otp-action";
+import { env } from "@/env.mjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@loopearn/supabase/client";
+
 import { Button } from "@loopearn/ui/button";
 import { cn } from "@loopearn/ui/cn";
 import { Form, FormControl, FormField, FormItem } from "@loopearn/ui/form";
@@ -27,14 +29,21 @@ const formSchema = z.object({
 
 type Props = {
   className?: string;
+  inviteCode?: string;
+  email?: string;
 };
 
-export function OTPSignIn({ className }: Props) {
+export function OTPSignIn({
+  className,
+  inviteCode,
+  email: defaultEmail,
+}: Props) {
   const verifyOtp = useAction(verifyOtpAction);
+
   const [isLoading, setLoading] = useState(false);
   const [isSent, setSent] = useState(false);
   const [phone, setPhone] = useState();
-  const [email, setEmail] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(defaultEmail);
   const [type, setType] = useState<"email" | "phone">("email");
   const supabase = createClient();
 
@@ -51,7 +60,6 @@ export function OTPSignIn({ className }: Props) {
     setLoading(true);
 
     setEmail(email);
-
     const emailExists = await checkEmailisBusiness(email);
     if (!emailExists) {
       toast({
@@ -63,11 +71,23 @@ export function OTPSignIn({ className }: Props) {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOtp({ email });
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        data: {
+          emailRedirectTo: env.NEXT_PUBLIC_BUSINESS_DOMAIN,
+        },
+        shouldCreateUser: false,
+      },
+    });
     if (error) {
-      console.error("Error signing in with OTP:", error.message);
-    } else {
-      console.log("OTP sent successfully!");
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
     }
 
     setSent(true);

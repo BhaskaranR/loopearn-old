@@ -98,7 +98,7 @@ const data = {
       icon: <CreditCard className="h-10 w-10" />,
     },
     {
-      name: "Teams",
+      name: "Members",
       url: "/settings/members",
       icon: <Users className="h-10 w-10" />,
     },

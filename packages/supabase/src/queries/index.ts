@@ -20,32 +20,33 @@ export async function getUserQuery(supabase: Client, userId: string) {
 
 export async function getCurrentUserBusinessQuery(supabase: Client) {
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (!user) {
     return;
   }
-  return getUserQuery(supabase, session.user?.id);
+  return getUserQuery(supabase, user.id);
 }
 
 export async function getBusinessMembersQuery(
   supabase: Client,
   businessId: string,
 ) {
-  const { data } = await supabase
+  console.log("getBusinessMembersQuery", businessId);
+  const { data, error } = await supabase
     .from("business_users")
     .select(
       `
       id,
       role,
-      business_id,
-      user:users(id, full_name, avatar_url, username)
+      business_id
     `,
     )
     .eq("business_id", businessId)
-    .order("created_at")
-    .throwOnError();
+    .order("created_at");
+
+  if (error) throw error;
 
   return {
     data,
@@ -113,10 +114,22 @@ export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {
     .from("business")
     .select(`
       *,
-
       business_users!inner(id, role, business_id)
     `)
     .eq("business_users.user_id", userId)
+    .throwOnError();
+}
+
+export async function getPendingBusinessInvitesQueryForUser(
+  supabase: Client,
+  email: string,
+) {
+  return supabase
+    .from("user_invites")
+    .select(
+      "id, email, code, role, user:invited_by(*), business:business_id(*)",
+    )
+    .eq("email", email)
     .throwOnError();
 }
 
@@ -145,8 +158,21 @@ export async function getUserInvitesQuery(supabase: Client, email: string) {
 
 type GetUserInviteQueryParams = {
   code: string;
-  email: string;
+  email?: string;
 };
+
+export async function getUserInviteQueryByCode(
+  supabase: Client,
+  params: GetUserInviteQueryParams,
+) {
+  return supabase
+    .from("user_invites")
+    .select(
+      "*, user:invited_by(full_name, avatar_url), business:business_id(id, business_name, avatar_url) ",
+    )
+    .eq("code", params.code)
+    .single();
+}
 
 export async function getUserInviteQuery(
   supabase: Client,
@@ -156,7 +182,7 @@ export async function getUserInviteQuery(
     .from("user_invites")
     .select("*")
     .eq("code", params.code)
-    .eq("email", params.email)
+    .eq("email", params.email!)
     .single();
 }
 

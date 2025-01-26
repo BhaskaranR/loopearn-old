@@ -43,7 +43,7 @@ export default async function CreateTeam() {
             </p>
           </div>
 
-          <CreateTeamForm />
+          <CreateTeamForm continueTo="/onboarding/category" />
         </div>
       </div>
     </TooltipProvider>
