@@ -1,11 +1,11 @@
 import { stripe } from "@/stripe";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { accountUpdated } from "./account-updated";
+import { accountUpdated } from "../account-updated";
 
 const relevantEvents = new Set(["account.updated"]);
 
-// POST /api/stripe/connect/webhook – listen to Stripe Connect webhooks (for connected accounts)
+// POST /api/stripe/webhook – listen to Stripe webhooks
 export const POST = async (req: Request) => {
   const buf = await req.text();
   const sig = req.headers.get("Stripe-Signature") as string;
@@ -34,11 +34,6 @@ export const POST = async (req: Request) => {
         break;
     }
   } catch (error) {
-    // log to slack
-    // await log({
-    //   message: `Stripe webhook failed. Error: ${error.message}`,
-    //   type: "errors",
-    // });
     return new Response('Webhook error: "Webhook handler failed. View logs."', {
       status: 400,
     });

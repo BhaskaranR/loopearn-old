@@ -5,8 +5,15 @@ import { z } from "zod";
 export const signUpSchema = z.object({
   firstName: z.string().min(2).max(32),
   lastName: z.string().min(2).max(32),
-  companyName: z.string().min(2).max(32),
+  // companyName: z.string().min(2).max(32).optional(),
   email: z.string().email(),
+  // slug: z.string().optional(),
+});
+
+// sign up schema with first name, last name, company name, email & ein number
+export const signInSchema = z.object({
+  email: z.string().email(),
+  inviteCode: z.string().optional(),
 });
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
@@ -122,42 +129,6 @@ export const sendFeedbackSchema = z.object({
   feedback: z.string(),
 });
 
-export const completeTransactionSchema = z.object({
-  id: z.string(),
-  workflow_id: z.string(),
-  isBuyer: z.boolean(),
-});
-
-export type CompleteTransactionValues = z.infer<
-  typeof completeTransactionSchema
->;
-
-export const updateTransactionSchema = z.object({
-  id: z.string(),
-  note: z.string().optional().nullable(),
-  buyer_attorney_metadata: z
-    .object({
-      id: z.string().uuid().optional(),
-      full_name: z.string().optional(),
-      avatar_url: z.string().url().optional(),
-    })
-    .optional(),
-  owner_attorney_metadata: z
-    .object({
-      id: z.string().uuid().optional(),
-      full_name: z.string().optional(),
-      avatar_url: z.string().url().optional(),
-    })
-    .optional(),
-  status: z.enum(["deleted", "excluded", "posted", "completed"]).optional(),
-});
-
-export type UpdateTransactionValues = z.infer<typeof updateTransactionSchema>;
-
-export const deleteTransactionSchema = z.object({
-  ids: z.array(z.string()),
-});
-
 export const deleteCategoriesSchema = z.object({
   ids: z.array(z.string()),
   revalidatePath: z.string(),
@@ -175,9 +146,16 @@ export const changeBusinessSchema = z.object({
   redirectTo: z.string(),
 });
 
+export const joinTeamSchema = z.object({
+  code: z.string(),
+});
+
 export const createBusinessSchema = z.object({
   name: z.string().min(2, {
     message: "Business name must be at least 2 characters.",
+  }),
+  slug: z.string().min(4, {
+    message: "Slug must be at least 4 characters.",
   }),
   redirectTo: z.string().optional(),
 });
@@ -207,6 +185,7 @@ export const deleteBusinessSchema = z.object({
 });
 
 export const inviteTeamMembersSchema = z.object({
+  saveOnly: z.boolean().optional(),
   invites: z.array(
     z.object({
       email: z.string().email().optional(),
@@ -245,6 +224,7 @@ export const createCompanySchema = z.object({
   billable: z.boolean().optional().default(false),
   rate: z.number().min(1).optional(),
   currency: z.string().optional(),
+  country: z.string().optional(),
   status: z.enum(["in_progress", "completed"]).optional(),
 });
 
@@ -252,15 +232,35 @@ export const createCompanySchema = z.object({
 
 export const updateCompanySchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1).optional(),
+  slug: z.string().optional(),
+  business_name: z.string().min(1).optional(),
+  country: z.string().optional(),
+  category: z.string().optional(),
+  tags: z.array(z.string()).optional(),
   avatar_url: z.string().url().optional(),
   description: z.string().optional(),
-  estimate: z.number().optional(),
-  billable: z.boolean().optional().default(false),
-  rate: z.number().min(1).optional(),
-  currency: z.string().optional(),
-  status: z.enum(["in_progress", "completed"]).optional(),
   revalidatePath: z.string().optional(),
+  redirectTo: z.string().optional(),
+});
+
+export const updateCompanyProfileSchema = z.object({
+  id: z.string().uuid(),
+  address_line_1: z.string().optional(),
+  address_line_2: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  contact_name: z.string().optional(),
+  postal_code: z.string().optional(),
+  country: z.string().optional(),
+  revalidatePath: z.string().optional(),
+  redirectTo: z.string().optional(),
+});
+
+export const upgradePlanSchema = z.object({
+  plan: z.string(),
+  period: z.string(),
+  baseUrl: z.string().url(),
+  onboarding: z.boolean(),
 });
 
 export const deleteProjectSchema = z.object({
@@ -294,6 +294,7 @@ export const verifyOtpSchema = z.object({
   token: z.string(),
   phone: z.string().optional(),
   email: z.string().optional(),
+  redirectTo: z.string().optional(),
 });
 
 export const searchSchema = z.object({

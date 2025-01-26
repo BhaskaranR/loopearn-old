@@ -1,7 +1,13 @@
 import { AI } from "@/actions/ai/chat";
 import { Header } from "@/components/header";
+import Toolbar from "@/components/onboarding/toolbar";
+import { getOnboardingStep } from "@/utils/get-onboarding-step";
 import { setupAnalytics } from "@loopearn/events/server";
-import { getUser } from "@loopearn/supabase/cached-queries";
+import {
+  getPendingBusinessInvites,
+  getTeams,
+  getUser,
+} from "@loopearn/supabase/cached-queries";
 import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
@@ -18,8 +24,24 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const user = await getUser();
+  const teams = await getTeams();
 
-  if (!user?.business_id) {
+  const pendingInvites = await getPendingBusinessInvites();
+  if (!teams?.data?.length && !pendingInvites?.data?.length) {
+    redirect("/onboarding/welcome");
+  }
+
+  if (user?.business_id) {
+    const key = `${user?.business_id}`;
+    const onboardingStep = await getOnboardingStep(key);
+    if (
+      !(onboardingStep === "stripe-pending" || onboardingStep === "completed")
+    ) {
+      redirect(`/onboarding?slug=${user.business.slug}`);
+    }
+  }
+
+  if (!user?.business_id && user?.business_users.length === 0) {
     redirect("/teams");
   }
 
@@ -31,6 +53,7 @@ export default async function Layout({
     <AI initialAIState={{ user: user, messages: [], chatId: nanoid() }}>
       <ClientSidebarWrapper headerContent={<Header />}>
         {children}
+        <Toolbar show={["onboarding"]} />
       </ClientSidebarWrapper>
     </AI>
   );

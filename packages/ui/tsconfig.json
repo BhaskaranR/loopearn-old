@@ -5,7 +5,9 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true
   },
   "include": ["src"],
   "exclude": ["node_modules"]

@@ -14,7 +14,7 @@ import Link from "next/link";
 import { SignOut } from "./sign-out";
 import { ThemeSwitch } from "./theme-switch";
 
-export async function UserMenu({ onlySignOut }) {
+export async function UserMenu({ onlySignOut = false }) {
   const userData = await getUser();
 
   return (
@@ -56,27 +56,30 @@ export async function UserMenu({ onlySignOut }) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuGroup>
-          <Link prefetch href="/account">
-            <DropdownMenuItem>
-              Account
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </Link>
+        {!onlySignOut && (
+          <DropdownMenuGroup>
+            <Link prefetch href="/account">
+              <DropdownMenuItem>
+                Account
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
 
-          <Link prefetch href="/account/support">
-            <DropdownMenuItem>Support</DropdownMenuItem>
-          </Link>
+            <Link prefetch href="/account/support">
+              <DropdownMenuItem>Support</DropdownMenuItem>
+            </Link>
 
-          <Link prefetch href="/account/teams">
-            <DropdownMenuItem>
-              Teams
-              <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </Link>
-        </DropdownMenuGroup>
+            <Link prefetch href="/account/teams">
+              <DropdownMenuItem>
+                Teams
+                <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuGroup>
+        )}
 
         <DropdownMenuSeparator />
+
         <div className="flex flex-row justify-between items-center p-2">
           <p className="text-sm">Theme</p>
           <ThemeSwitch />

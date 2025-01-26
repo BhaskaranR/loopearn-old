@@ -6,10 +6,14 @@ export * from "./db";
 export * from "./jwtPayload";
 
 export const ONBOARDING_STEPS = [
+  "teams",
   "workspace",
-  "invite",
+  "category",
+  "subcategory",
+  "profile",
   "plan",
   "verify",
+  "stripe-pending",
   "completed",
 ] as const;
 

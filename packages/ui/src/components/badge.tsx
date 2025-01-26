@@ -1,35 +1,37 @@
 import { type VariantProps, cva } from "class-variance-authority";
-import type * as React from "react";
-import { cn } from "../utils";
+import { cn } from "../utils/cn";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "max-w-fit rounded-full border px-2 py-px text-xs font-medium whitespace-nowrap",
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-        tag: "font-mono text-[#878787] bg-[#F2F1EF] text-[10px] dark:bg-[#1D1D1D] border-none font-normal rounded-none",
+        default: "border-gray-400 text-gray-500",
+        violet: "border-violet-600 bg-violet-600 text-white",
+        blue: "border-blue-500 bg-blue-500 text-white",
+        sky: "border-sky-900 bg-sky-900 text-white",
+        black: "border-black bg-black text-white",
+        gray: "border-gray-200 bg-gray-100 text-gray-800",
+        neutral: "border-gray-400 text-gray-500",
+        blueGradient:
+          "bg-gradient-to-r from-blue-100 via-blue-100/50 to-blue-100 border border-blue-200 text-blue-900",
+        rainbow:
+          "bg-gradient-to-r from-violet-600 to-pink-600 text-white border-transparent",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "neutral",
     },
   },
 );
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+interface BadgeProps
+  extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <span className={cn(badgeVariants({ variant }), className)} {...props} />
   );
 }
 

@@ -1,6 +1,7 @@
 import { logger } from "@/utils/logger";
 import { setupAnalytics } from "@loopearn/events/server";
 import { client as RedisClient } from "@loopearn/kv/client";
+import { createClient as createAdminClient } from "@loopearn/supabase/admin";
 import { getUser } from "@loopearn/supabase/cached-queries";
 import { createClient } from "@loopearn/supabase/server";
 import * as Sentry from "@sentry/nextjs";

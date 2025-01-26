@@ -2,10 +2,16 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
+import { createClient as createClientAdmin } from "../clients/admin";
 import { createClient } from "../clients/server";
 import {
+  getBusinessByIdQuery,
+  getBusinessBySlugQuery,
   getBusinessMembersQuery,
   getBusinessUserQuery,
+  getCategoriesQuery,
+  getPendingBusinessInvitesQueryForUser,
+  getSubCategoriesQuery,
   getTeamsByUserIdQuery,
   getUserInvitesQuery,
   getUserQuery,
@@ -14,14 +20,14 @@ import {
 export const getSession = cache(async () => {
   const supabase = createClient();
 
-  return supabase.auth.getSession();
+  return supabase.auth.getUser();
 });
 
 export const getUser = async () => {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
-  const userId = session?.user?.id;
+  const userId = user?.id;
 
   if (!userId) {
     return null;
@@ -36,9 +42,26 @@ export const getUser = async () => {
     ["user", userId],
     {
       tags: [`user_${userId}`],
-      revalidate: 1,
+      revalidate: 180,
     },
   )();
+};
+
+export const getBusinessBySlug = async (slug: string) => {
+  const supabase = createClient();
+  const user = await getUser();
+  const userId = user?.id;
+
+  if (!userId) {
+    return;
+  }
+
+  return getBusinessBySlugQuery(supabase, userId, slug);
+};
+
+export const getBusinessById = async (businessId: string) => {
+  const supabase = createClient();
+  return getBusinessByIdQuery(supabase, businessId);
 };
 
 export const getTeams = async () => {
@@ -58,12 +81,33 @@ export const getTeams = async () => {
     ["teams", userId],
     {
       tags: [`teams_${userId}`],
+      revalidate: 10,
+    },
+  )();
+};
+
+export const getPendingBusinessInvites = async () => {
+  const supabase = createClient();
+  const user = await getUser();
+  const userId = user?.id;
+
+  if (!userId) {
+    return;
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPendingBusinessInvitesQueryForUser(supabase, user!.username!);
+    },
+    ["pending_business_invites", user!.username!],
+    {
+      tags: [`pending_business_invites_${userId}`],
       revalidate: 180,
     },
   )();
 };
 
-export const getBusinessUser = async () => {
+export const getBusinessUser = async (slug?: string) => {
   const supabase = createClient();
   const user = await getUser();
   const businessId = user?.business_id!;
@@ -73,6 +117,7 @@ export const getBusinessUser = async () => {
       return getBusinessUserQuery(supabase, {
         userId: user!.id,
         businessId,
+        slug,
       });
     },
     ["business", "user", user!.id],
@@ -84,7 +129,7 @@ export const getBusinessUser = async () => {
 };
 
 export const getBusinessMembers = async () => {
-  const supabase = createClient();
+  const supabaseAdmin = createClientAdmin();
 
   const user = await getUser();
   const businessId = user?.business_id;
@@ -95,12 +140,12 @@ export const getBusinessMembers = async () => {
 
   return unstable_cache(
     async () => {
-      return getBusinessMembersQuery(supabase, businessId);
+      return getBusinessMembersQuery(supabaseAdmin, businessId);
     },
     ["business_members", businessId],
     {
       tags: [`business_members_${businessId}`],
-      revalidate: 180,
+      revalidate: 10,
     },
   )();
 };
@@ -141,6 +186,36 @@ export const getUserInvites = async () => {
     {
       tags: [`user_invites_${email}`],
       revalidate: 180,
+    },
+  )();
+};
+
+export const getCategories = async () => {
+  const supabase = createClient();
+
+  return unstable_cache(
+    async () => {
+      return getCategoriesQuery(supabase);
+    },
+    ["categories"],
+    {
+      tags: ["categories"],
+      revalidate: 86400,
+    },
+  )();
+};
+
+export const getSubCategories = async (categoryId: string) => {
+  const supabase = createClient();
+
+  return unstable_cache(
+    async () => {
+      return getSubCategoriesQuery(supabase, categoryId);
+    },
+    ["subcategories", categoryId],
+    {
+      tags: [`subcategories_${categoryId}`],
+      revalidate: 86400,
     },
   )();
 };

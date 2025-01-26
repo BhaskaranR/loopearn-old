@@ -18,8 +18,9 @@ export async function TeamsTable() {
   return (
     <DataTable
       data={[
-        ...teams?.data,
-        ...invites?.data?.map((invite) => ({ ...invite, isInvite: true })),
+        ...(teams?.data ?? []),
+        ...(invites?.data?.map((invite) => ({ ...invite, isInvite: true })) ??
+          []),
       ]}
     />
   );

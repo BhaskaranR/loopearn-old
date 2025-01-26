@@ -1,5 +1,7 @@
 import { ArchiveIcon } from "@radix-ui/react-icons";
-import { Check, Copy, Loader2, LogOut } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+import type { ComponentType, SVGProps } from "react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FiGithub } from "react-icons/fi";
 import {
@@ -159,7 +161,6 @@ export { default as Heart } from "./heart";
 export { default as InfinityIcon } from "./infinity";
 export { default as Link } from "./link";
 export { default as Lock } from "./lock";
-export { default as Logout } from "./logout";
 export { default as Message } from "./message";
 export { default as QR } from "./qr";
 export { default as Random } from "./random";
@@ -174,8 +175,6 @@ export { default as X } from "./x";
 export { default as XCircleFill } from "./x-circle-fill";
 
 export const Icons = {
-  SignOut: LogOut,
-  Loader: Loader2,
   LogoSmall: (props: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -857,3 +856,13 @@ export const Icons = {
   Straighten: MdOutlineSquareFoot,
   Files: MdOutlineInventory2,
 };
+
+export * from "./nucleo";
+
+export type Icon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
+
+export { default as ExpandingArrow } from "./expanding-arrow";
+export { ProductHunt } from "./product-hunt";
+export { Twitter } from "./twitter";
+export { LinkedIn } from "./linkedin";
+export { Google } from "./google";

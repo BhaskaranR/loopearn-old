@@ -2,28 +2,35 @@ import { ConsentBanner } from "@/components/consent-banner";
 import { DesktopCommandMenuSignIn } from "@/components/desktop-command-menu-sign-in";
 import { Logo } from "@/components/logo";
 import { OTPSignIn } from "@/components/otp-sign-in";
-import { Cookies } from "@/utils/constants";
 import type { Metadata } from "next";
-import { cookies, headers } from "next/headers";
 import Link from "next/link";
-import { userAgent } from "next/server";
 
 export const metadata: Metadata = {
   title: "Login | LoopEarn",
 };
 
-export default async function Page(params) {
-  if (params?.searchParams?.return_to === "desktop/command") {
+interface PageProps {
+  searchParams: {
+    return_to?: string;
+    invite_code?: string;
+  };
+}
+export default async function Page({ searchParams }: PageProps) {
+  if (searchParams?.return_to === "desktop/command") {
     return <DesktopCommandMenuSignIn />;
   }
 
-  const cookieStore = cookies();
-  const preferred = cookieStore.get(Cookies.PreferredSignInProvider);
-
-  const moreSignInOptions = null;
   const preferredSignInOption = (
-    <OTPSignIn className="border-t-[1px] border-border pt-8" />
+    <OTPSignIn
+      className="border-t-[1px] border-border pt-8"
+      email={searchParams?.email}
+      inviteCode={searchParams?.invite_code}
+    />
   );
+
+  const queryString = new URLSearchParams(searchParams).toString();
+
+  const signupUrl = `/signup${queryString ? `?${queryString}` : ""}`;
 
   return (
     <div>
@@ -31,9 +38,9 @@ export default async function Page(params) {
         <div className="ml-5 mt-4 md:ml-10 md:mt-10">
           <Link
             href="https://loopearn.com"
-            className="items-center gap-6 space-x-2 md:flex keychainify-checked"
+            className="inline-flex items-center"
           >
-            <Logo className="hidden font-semibold sm:inline-block" />
+            <Logo className="h-8 w-auto" />
           </Link>
         </div>
       </header>
@@ -54,7 +61,7 @@ export default async function Page(params) {
             </div>
             <div className="my-4 text-center text-sm">
               Don't have an account?{" "}
-              <Link href="/signup" className="underline">
+              <Link href={signupUrl} className="underline">
                 Sign up
               </Link>
             </div>

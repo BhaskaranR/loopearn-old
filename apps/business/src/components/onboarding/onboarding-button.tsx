@@ -1,8 +1,10 @@
 "use client";
 
-import { Button, Popover, useLocalStorage, useMediaQuery } from "@loopearn/ui";
+import { Button } from "@loopearn/ui/button";
+import { useLocalStorage, useMediaQuery } from "@loopearn/ui/hooks";
 import { CheckCircleFill, ThreeDots } from "@loopearn/ui/icons";
 import { CircleDotted, ExpandingArrow } from "@loopearn/ui/icons";
+import { OnboardingPopover } from "@loopearn/ui/onboarding-popover";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -33,24 +35,30 @@ function OnboardingButtonInner({
 }) {
   const { slug } = useParams() as { slug: string };
 
-  const { data: domainsCount, loading: domainsLoading } = useDomainsCount({
-    ignoreParams: true,
-  });
-  const { data: linksCount, loading: linksLoading } = useLinksCount<number>({
-    ignoreParams: true,
-  });
-  const { users, loading: usersLoading } = useUsers();
-  const { users: invites, loading: invitesLoading } = useUsers({
-    invites: true,
-  });
+  const loading = false;
+  // const { data: domainsCount, loading: domainsLoading } = useDomainsCount({
+  //   ignoreParams: true,
+  // });
+  // const { data: linksCount, loading: linksLoading } = useLinksCount<number>({
+  //   ignoreParams: true,
+  // });
+  // const { users, loading: usersLoading } = useUsers();
+  // const { users: invites, loading: invitesLoading } = useUsers({
+  //   invites: true,
+  // });
 
-  const loading =
-    domainsLoading || linksLoading || usersLoading || invitesLoading;
+  // const loading =
+  //   domainsLoading || linksLoading || usersLoading || invitesLoading;
+
+  const domainsCount = 0;
+  const linksCount = 0;
+  const users = [];
+  const invites = [];
 
   const tasks = useMemo(() => {
     return [
       {
-        display: "Create a new Dub link",
+        display: "Create a new LoopEarn link",
         cta: `/${slug}`,
         checked: linksCount > 0,
       },
@@ -72,7 +80,7 @@ function OnboardingButtonInner({
   const completedTasks = tasks.filter((task) => task.checked).length;
 
   return loading || completedTasks === tasks.length ? null : (
-    <Popover
+    <OnboardingPopover
       align="end"
       popoverContentClassName="rounded-xl"
       content={
@@ -82,7 +90,7 @@ function OnboardingButtonInner({
               <div>
                 <span className="text-base font-medium">Getting Started</span>
                 <p className="mt-1 text-sm text-gray-300">
-                  Get familiar with Dub by completing the{" "}
+                  Get familiar with LoopEarn by completing the{" "}
                   <br className="hidden sm:block" />
                   following tasks
                 </p>
@@ -141,7 +149,7 @@ function OnboardingButtonInner({
           {Math.round((completedTasks / tasks.length) * 100)}% complete
         </span>
       </button>
-    </Popover>
+    </OnboardingPopover>
   );
 }
 
@@ -162,16 +170,13 @@ function OnboardingMenu({ onHideForever }: { onHideForever: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Popover
+    <OnboardingPopover
       align="end"
       content={
         <div className="p-1">
-          <Button
-            onClick={onHideForever}
-            variant="outline"
-            text="Dismiss forever"
-            className="h-9"
-          />
+          <Button onClick={onHideForever} variant="outline" className="h-9">
+            Dismiss forever
+          </Button>
         </div>
       }
       openPopover={isOpen}
@@ -180,6 +185,6 @@ function OnboardingMenu({ onHideForever }: { onHideForever: () => void }) {
       <MiniButton>
         <ThreeDots className="size-4" />
       </MiniButton>
-    </Popover>
+    </OnboardingPopover>
   );
 }

@@ -1,10 +1,10 @@
 "use server";
-
 import { updateBusiness } from "@loopearn/supabase/mutations";
 import {
   revalidatePath as revalidatePathFunc,
   revalidateTag,
 } from "next/cache";
+import { redirect } from "next/navigation";
 import { authActionClient } from "./safe-action";
 import { updateCompanySchema } from "./schema";
 
@@ -15,16 +15,25 @@ export const updateTeamAction = authActionClient
   })
   .action(
     async ({
-      parsedInput: { revalidatePath, ...data },
+      parsedInput: { revalidatePath, redirectTo, id, ...data },
       ctx: { user, supabase },
     }) => {
-      const team = await updateBusiness(supabase, data);
+      const { data: team, error } = await updateBusiness(supabase, data);
+
+      if (error) {
+        throw error;
+      }
 
       if (revalidatePath) {
         revalidatePathFunc(revalidatePath);
       }
 
       revalidateTag(`user_${user.id}`);
+      revalidateTag(`team_${id}`);
+
+      if (redirectTo) {
+        redirect(redirectTo);
+      }
 
       return team;
     },

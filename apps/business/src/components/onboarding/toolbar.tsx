@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { HelpButton } from "./help-button";
 import { OnboardingButton } from "./onboarding-button";
 
 const toolbarItems = ["onboarding", "help"] as const;
@@ -18,9 +17,9 @@ export default function Toolbar(props: ToolbarProps) {
   );
 }
 
-async function ToolbarRSC({ show = ["onboarding", "help"] }: ToolbarProps) {
+async function ToolbarRSC({ show = ["onboarding"] }: ToolbarProps) {
   const { popularHelpArticles, allHelpArticles } = await fetch(
-    "https://dub.co/api/content",
+    "https://loopearn.com/api/content",
     {
       next: {
         revalidate: 60 * 60 * 24, // cache for 24 hours
@@ -37,17 +36,17 @@ async function ToolbarRSC({ show = ["onboarding", "help"] }: ToolbarProps) {
     <div className="flex items-center gap-3">
       {show.includes("onboarding") && (
         <div className="shrink-0">
-          <OnboardingButton />
+          <OnboardingButton />{" "}
         </div>
       )}
-      {show.includes("help") && (
+      {/* {show.includes("help") && (
         <div className="shrink-0">
           <HelpButton
             popularHelpArticles={popularHelpArticles}
             allHelpArticles={allHelpArticles}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

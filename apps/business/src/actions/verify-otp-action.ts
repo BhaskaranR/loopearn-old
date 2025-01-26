@@ -10,27 +10,29 @@ import { verifyOtpSchema } from "./schema";
 
 export const verifyOtpAction = actionClient
   .schema(verifyOtpSchema)
-  .action(async ({ parsedInput: { type, email, token, phone } }) => {
-    const supabase = createClient();
+  .action(
+    async ({ parsedInput: { type, email, token, phone, redirectTo } }) => {
+      const supabase = createClient();
 
-    const options =
-      type === "email"
-        ? {
-            email: email!, // Ensure email is defined
-            token,
-            type: "email",
-          }
-        : {
-            phone: phone!, // Ensure phone is defined
-            token,
-            type: "sms",
-          };
+      const options =
+        type === "email"
+          ? {
+              email: email!, // Ensure email is defined
+              token,
+              type: "email",
+            }
+          : {
+              phone: phone!, // Ensure phone is defined
+              token,
+              type: "sms",
+            };
 
-    const { data, error } = await supabase.auth.verifyOtp(options);
-    console.log(data, error);
-    cookies().set(Cookies.PreferredSignInProvider, "otp", {
-      expires: addYears(new Date(), 1),
-    });
+      const { data, error } = await supabase.auth.verifyOtp(options);
+      console.log(data, error);
+      cookies().set(Cookies.PreferredSignInProvider, "otp", {
+        expires: addYears(new Date(), 1),
+      });
 
-    redirect("/");
-  });
+      redirect(redirectTo ?? "/");
+    },
+  );

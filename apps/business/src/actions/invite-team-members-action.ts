@@ -5,6 +5,7 @@ import { resend } from "@/utils/resend";
 import InviteEmail from "@loopearn/email/emails/invite";
 import { getI18n } from "@loopearn/email/locales";
 import { LogEvents } from "@loopearn/events/events";
+import { client as RedisClient } from "@loopearn/kv/client";
 import type { Database } from "@loopearn/supabase/db";
 import { render } from "@react-email/render";
 import { revalidatePath as revalidatePathFunc } from "next/cache";
@@ -26,7 +27,7 @@ export const inviteTeamMembersAction = authActionClient
   })
   .action(
     async ({
-      parsedInput: { invites, redirectTo, revalidatePath },
+      parsedInput: { saveOnly, invites, redirectTo, revalidatePath },
       ctx: { user, supabase },
     }) => {
       const { t } = getI18n({ locale: user.locale || "en" });
@@ -40,7 +41,17 @@ export const inviteTeamMembersAction = authActionClient
         invited_by: user.id,
       }));
 
-      const { data: invtesData } = await supabase
+      if (saveOnly) {
+        await RedisClient.set(
+          `invites:${user?.business_users[0]?.business_id}`,
+          data,
+          {
+            ex: 60 * 60 * 24 * 15, // 15 days
+          },
+        );
+      }
+
+      const { data: invtesData, error } = await supabase
         .from("user_invites")
         .upsert(data, {
           onConflict: "email, business_id",
@@ -48,11 +59,13 @@ export const inviteTeamMembersAction = authActionClient
         })
         .select("email, code, user:invited_by(*), business:business_id(*)");
 
+      console.log(error);
+
       const emails = invtesData?.map(async (invites) => {
-        const user = invites
-          .user[0] as Database["public"]["Tables"]["users"]["Row"];
-        const business = invites
-          .business[0] as Database["public"]["Tables"]["business"]["Row"];
+        const user =
+          invites.user as Database["public"]["Tables"]["users"]["Row"];
+        const business =
+          invites.business as Database["public"]["Tables"]["business"]["Row"];
         return {
           from: "LoopEarn <support@loopearn.com>",
           to: [invites.email],

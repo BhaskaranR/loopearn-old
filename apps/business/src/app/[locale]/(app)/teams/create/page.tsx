@@ -2,6 +2,7 @@ import { CreateTeamForm } from "@/components/forms/create-team-form";
 import { Logo } from "@/components/logo";
 import { UserMenu } from "@/components/user-menu";
 import { Icons } from "@loopearn/ui/icons";
+import { TooltipProvider } from "@loopearn/ui/tooltip";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -12,14 +13,11 @@ export const metadata: Metadata = {
 
 export default async function CreateTeam() {
   return (
-    <>
+    <TooltipProvider>
       <header className="w-full absolute left-0 right-0 flex justify-between items-center">
         <div className="ml-5 mt-4 md:ml-10 md:mt-10">
-          <Link
-            href="/"
-            className="items-center gap-6 space-x-2 md:flex keychainify-checked"
-          >
-            <Logo className="hidden font-semibold sm:inline-block" />
+          <Link href="/" className="inline-flex items-center">
+            <Logo className="font-semibold h-8 w-auto" />
           </Link>
         </div>
 
@@ -45,9 +43,9 @@ export default async function CreateTeam() {
             </p>
           </div>
 
-          <CreateTeamForm />
+          <CreateTeamForm continueTo="/onboarding/category" />
         </div>
       </div>
-    </>
+    </TooltipProvider>
   );
 }

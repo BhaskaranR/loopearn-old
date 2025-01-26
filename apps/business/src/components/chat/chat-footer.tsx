@@ -28,7 +28,7 @@ export function ChatFooter({ onSubmit, showFeedback }: Props) {
       <Popover>
         <PopoverTrigger>
           <div className="scale-50 opacity-50 -ml-2">
-            <Logo className="hidden font-semibold sm:inline-block" />
+            <Logo className="hidden sm:inline-flex items-center font-semibold h-8 w-auto" />
           </div>
         </PopoverTrigger>
 

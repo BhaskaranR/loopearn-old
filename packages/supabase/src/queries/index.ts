@@ -1,19 +1,16 @@
-import { type QueryData, QueryError, QueryResult } from "@supabase/supabase-js";
-import { addDays, isWithinInterval } from "date-fns";
 import type { Client } from "../types";
 
 export async function getUserQuery(supabase: Client, userId: string) {
   const cols = `
       *,
-      business:business_id(*)
+      business_users!user_id(*),
+      business:business_id(slug, business_name, avatar_url, payouts_enabled, stripe_connect_id, payouts_enabled)
     `;
   const { data, error } = await supabase
     .from("users")
     .select(cols)
     .eq("id", userId)
     .single();
-
-  console.log("Response:", { data, error });
 
   if (error) throw error;
   if (!data) throw new Error("User not found");
@@ -23,32 +20,33 @@ export async function getUserQuery(supabase: Client, userId: string) {
 
 export async function getCurrentUserBusinessQuery(supabase: Client) {
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (!user) {
     return;
   }
-  return getUserQuery(supabase, session.user?.id);
+  return getUserQuery(supabase, user.id);
 }
 
 export async function getBusinessMembersQuery(
   supabase: Client,
   businessId: string,
 ) {
-  const { data } = await supabase
+  console.log("getBusinessMembersQuery", businessId);
+  const { data, error } = await supabase
     .from("business_users")
     .select(
       `
       id,
       role,
-      business_id,
-      user:users(id, full_name, avatar_url, username)
+      business_id
     `,
     )
     .eq("business_id", businessId)
-    .order("created_at")
-    .throwOnError();
+    .order("created_at");
+
+  if (error) throw error;
 
   return {
     data,
@@ -56,7 +54,8 @@ export async function getBusinessMembersQuery(
 }
 
 type GetBusinessUserParams = {
-  businessId: string;
+  businessId?: string;
+  slug?: string;
   userId: string;
 };
 
@@ -64,24 +63,50 @@ export async function getBusinessUserQuery(
   supabase: Client,
   params: GetBusinessUserParams,
 ) {
-  const { data } = await supabase
+  const query = supabase
     .from("business_users")
     .select(
       `
       id,
       role,
       business_id,
+      business:business_id(id, slug, business_name, category, tags),
       user:users(id, full_name, avatar_url, username)
     `,
     )
-    .eq("business_id", params.businessId)
-    .eq("user_id", params.userId)
-    .throwOnError()
-    .single();
+    .eq("user_id", params.userId);
+
+  if (params.slug) {
+    query.eq("business.slug", params.slug);
+  } else if (params.businessId) {
+    query.eq("business_id", params.businessId);
+  }
+
+  const { data } = await query.throwOnError().single();
 
   return {
     data,
   };
+}
+
+export async function getBusinessByIdQuery(
+  supabase: Client,
+  businessId: string,
+) {
+  return supabase
+    .from("business")
+    .select("*")
+    .eq("id", businessId)
+    .throwOnError()
+    .single();
+}
+
+export async function getBusinessBySlugQuery(
+  supabase: Client,
+  userId: string,
+  slug: string,
+) {
+  return supabase.from("business").select("*").eq("slug", slug).single();
 }
 
 export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {
@@ -89,9 +114,22 @@ export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {
     .from("business")
     .select(`
       *,
-      business_users!inner(business_id)
+      business_users!inner(id, role, business_id)
     `)
     .eq("business_users.user_id", userId)
+    .throwOnError();
+}
+
+export async function getPendingBusinessInvitesQueryForUser(
+  supabase: Client,
+  email: string,
+) {
+  return supabase
+    .from("user_invites")
+    .select(
+      "id, email, code, role, user:invited_by(*), business:business_id(*)",
+    )
+    .eq("email", email)
     .throwOnError();
 }
 
@@ -120,8 +158,21 @@ export async function getUserInvitesQuery(supabase: Client, email: string) {
 
 type GetUserInviteQueryParams = {
   code: string;
-  email: string;
+  email?: string;
 };
+
+export async function getUserInviteQueryByCode(
+  supabase: Client,
+  params: GetUserInviteQueryParams,
+) {
+  return supabase
+    .from("user_invites")
+    .select(
+      "*, user:invited_by(full_name, avatar_url), business:business_id(id, business_name, avatar_url) ",
+    )
+    .eq("code", params.code)
+    .single();
+}
 
 export async function getUserInviteQuery(
   supabase: Client,
@@ -131,6 +182,20 @@ export async function getUserInviteQuery(
     .from("user_invites")
     .select("*")
     .eq("code", params.code)
-    .eq("email", params.email)
+    .eq("email", params.email!)
     .single();
+}
+
+export async function getCategoriesQuery(supabase: Client) {
+  return supabase.from("categories").select("*");
+}
+
+export async function getSubCategoriesQuery(
+  supabase: Client,
+  categoryId: string,
+) {
+  return supabase
+    .from("subcategories")
+    .select("*")
+    .eq("category_id", categoryId);
 }

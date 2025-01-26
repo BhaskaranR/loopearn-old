@@ -57,6 +57,7 @@ export async function updateSession(
 
   if (
     !user &&
+    !newUrl.pathname.startsWith("/teams/invite/") &&
     !newUrl.pathname.startsWith("/login") &&
     !newUrl.pathname.startsWith("/signup")
   ) {
@@ -70,17 +71,16 @@ export async function updateSession(
 
     return NextResponse.redirect(url);
   }
-
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user: userData },
+  } = await supabase.auth.getUser();
 
   // If authenticated but no full_name redirect to user setup page
   if (
     newUrl.pathname !== "/setup" &&
     newUrl.pathname !== "/teams/create" &&
-    session &&
-    !session?.user?.user_metadata?.full_name
+    userData &&
+    !userData?.user_metadata?.full_name
   ) {
     // Check if the URL contains an invite code
     const inviteCodeMatch = newUrl.pathname.startsWith("/teams/invite/");

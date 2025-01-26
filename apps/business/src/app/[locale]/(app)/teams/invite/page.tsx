@@ -15,11 +15,8 @@ export default async function InviteMembers() {
     <>
       <header className="w-full absolute left-0 right-0 flex justify-between items-center">
         <div className="ml-5 mt-4 md:ml-10 md:mt-10">
-          <Link
-            href="/"
-            className="items-center gap-6 space-x-2 md:flex keychainify-checked"
-          >
-            <Logo className="hidden font-semibold sm:inline-block" />
+          <Link href="/" className="inline-flex items-center">
+            <Logo className="font-semibold h-8 w-auto" />
           </Link>
         </div>
 

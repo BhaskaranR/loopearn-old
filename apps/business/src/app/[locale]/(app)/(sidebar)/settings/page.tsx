@@ -14,13 +14,13 @@ export default async function Account() {
   return (
     <div className="space-y-12">
       <TeamAvatar
-        teamId={user?.business?.id}
+        teamId={user?.business_id}
         name={user?.business?.business_name}
         logoUrl={user?.business?.avatar_url}
       />
 
       <TeamName name={user?.business?.business_name} />
-      <DeleteTeam teamId={user?.business?.id} />
+      <DeleteTeam teamId={user?.business_id} />
     </div>
   );
 }

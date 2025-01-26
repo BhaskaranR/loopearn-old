@@ -9,13 +9,14 @@ import {
   Frame,
   GalleryVerticalEnd,
   Home,
-  Moon,
+  Palette,
   PieChart,
   Settings2,
   Share2,
   Users,
 } from "lucide-react";
 import type React from "react";
+import { Suspense } from "react";
 
 import {
   Sidebar,
@@ -27,10 +28,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
   SidebarRail,
 } from "@loopearn/ui/sidebar";
 import { SidebarOptInForm } from "./sidebar-opt-in-form";
+import { TeamMenu } from "./team-menu";
 import { TeamSwitcher } from "./team-switcher";
+import { ThemeSwitch } from "./theme-switch";
+// import { UserSurveyButton } from "./user-survey";
 
 // Dynamically import NavProjects with no SSR
 
@@ -46,23 +51,7 @@ const data = {
     url: "/",
     icon: <PieChart className="h-10 w-10" />,
   },
-  teams: [
-    {
-      name: "Penelope & The Beauty Bar",
-      logo: GalleryVerticalEnd,
-      plan: "Beauty & Spa",
-    },
-    {
-      name: "European Rejuvenation Center.",
-      logo: AudioWaveform,
-      plan: "Health & Fitness",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Health & Fitness",
-    },
-  ],
+
   projects: [
     {
       name: "Dashboard",
@@ -109,14 +98,9 @@ const data = {
       icon: <CreditCard className="h-10 w-10" />,
     },
     {
-      name: "Teams",
+      name: "Members",
       url: "/settings/members",
       icon: <Users className="h-10 w-10" />,
-    },
-    {
-      name: "Theme",
-      url: "/theme",
-      icon: <Moon className="h-10 w-10" />,
     },
   ],
 };
@@ -125,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -172,10 +156,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+
+            <SidebarMenuItem key="theme">
+              <SidebarMenuButton>
+                <Palette className="h-10 w-10" />
+                <span>Theme</span>
+                <ThemeSwitch />
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        {/* <UserSurveyButton /> */}
         <div className="p-1">
           <SidebarOptInForm />
         </div>
