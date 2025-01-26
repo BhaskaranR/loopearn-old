@@ -75,7 +75,7 @@ export const columns = [
                 {row.original.user?.full_name}
               </span>
               <span className="text-sm text-[#606060]">
-                {row.original.user?.email}
+                {row.original.user?.username}
               </span>
             </div>
           </div>
