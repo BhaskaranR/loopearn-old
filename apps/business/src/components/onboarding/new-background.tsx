@@ -43,7 +43,7 @@ export function NewBackground(props: { showAnimation?: boolean }) {
           )}
         />
       </div>
-      {/* <BackgroundGradient className="opacity-100 mix-blend-soft-light" /> */}
+      <BackgroundGradient className="opacity-100 mix-blend-soft-light" />
     </div>
   );
 }
