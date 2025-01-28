@@ -1,8 +1,8 @@
 "use client";
 import { type SignUpFormValues, signUpSchema } from "@/actions/schema";
+import { verifyOtpAction } from "@/actions/verify-otp-action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@loopearn/supabase/client";
-import { Alert, AlertDescription, AlertTitle } from "@loopearn/ui/alert";
 import { Button } from "@loopearn/ui/button";
 
 import {
@@ -12,12 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@loopearn/ui/card";
+import { cn } from "@loopearn/ui/cn";
 import { Form, FormControl, FormField, FormItem } from "@loopearn/ui/form";
 import { Input } from "@loopearn/ui/input";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@loopearn/ui/input-otp";
 import { Label } from "@loopearn/ui/label";
 import { useToast } from "@loopearn/ui/use-toast";
-import slugify from "@sindresorhus/slugify";
 import { Loader2 } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
 import { useState } from "react";
 import { memo } from "react";
@@ -31,10 +33,16 @@ async function checkEmailUnique(email: string) {
 }
 
 // extend yup with password validation
-const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
+const SignUpForm = ({
+  referralCode,
+  className,
+}: { referralCode?: string; className?: string }) => {
+  const verifyOtp = useAction(verifyOtpAction);
   const { toast } = useToast();
   const [type, setType] = useState<"email" | "phone">();
   const [isLoading, setLoading] = useState(false);
+  const [phone, setPhone] = useState();
+  const [email, setEmail] = useState<string | null>(null);
   const [isSent, setSent] = useState(false);
   const supabase = createClient();
   // nuqs get referral code
@@ -44,8 +52,6 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
     defaultValues: {
       firstName: "",
       lastName: "",
-      companyName: "",
-      slug: "",
       email: "",
     },
   });
@@ -65,17 +71,15 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
       return;
     }
 
-    const slug = `${slugify(formData.companyName)}-${Math.random().toString(36).substring(2, 3)}`;
+    setEmail(formData.email);
 
     const { data, error } = await supabase.auth.signInWithOtp({
       email: formData.email,
       options: {
         data: {
-          emailRedirectTo: "https://business.loopearn.com",
+          emailRedirectTo: "https://app.relistex.com",
           full_name: `${formData.firstName} ${formData.lastName}`,
-          companyName: formData.companyName,
           referral_code: referralCode,
-          slug,
         },
         shouldCreateUser: true,
       },
@@ -95,21 +99,49 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
     setLoading(false);
   }
 
+  async function onComplete(token: string) {
+    if (type) {
+      verifyOtp.execute({
+        type,
+        token,
+        phone,
+        email,
+      });
+    }
+  }
+
   if (isSent) {
     return (
-      <div className="relative">
-        <div
-          className={`absolute top-0 w-full delay-300 duration-500 ${
-            isSent ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <Alert className="w-full" title="Check your email to confirm">
-            <AlertTitle> Check your email to confirm</AlertTitle>
-            <AlertDescription>
-              {`You've successfully signed up. Please check your email to confirm your account before
-            signing in to the LoopEarn`}
-            </AlertDescription>
-          </Alert>
+      <div className={cn("flex flex-col space-y-4 items-center", className)}>
+        <InputOTP
+          maxLength={6}
+          autoFocus
+          onComplete={onComplete}
+          disabled={verifyOtp.status === "executing"}
+          render={({ slots }) => (
+            <InputOTPGroup>
+              {slots.map((slot, index) => (
+                <InputOTPSlot
+                  key={index.toString()}
+                  {...slot}
+                  className="w-[62px] h-[62px]"
+                />
+              ))}
+            </InputOTPGroup>
+          )}
+        />
+
+        <div className="flex space-x-2">
+          <span className="text-sm text-[#878787]">
+            Didn't receive the email?
+          </span>
+          <button
+            onClick={() => setSent(false)}
+            type="button"
+            className="text-sm text-primary underline font-medium"
+          >
+            Resend code
+          </button>
         </div>
       </div>
     );
@@ -177,30 +209,6 @@ const SignUpForm = ({ referralCode }: { referralCode?: string }) => {
                       )}
                     />
                   </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="business-name">Business name</Label>
-                  <FormField
-                    control={form.control}
-                    name="companyName"
-                    render={({ field, fieldState: { error } }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            id="business-name"
-                            placeholder="Your business name"
-                            {...field}
-                            required
-                          />
-                        </FormControl>
-                        {error && (
-                          <p className="text-red-500 text-sm mt-1">
-                            {error.message}
-                          </p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
