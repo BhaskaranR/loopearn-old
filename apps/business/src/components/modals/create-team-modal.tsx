@@ -16,9 +16,10 @@ import {
   FormItem,
   FormMessage,
 } from "@loopearn/ui/form";
+import { InfoIcon } from "lucide-react";
 
 import { Input } from "@loopearn/ui/input";
-import { InfoTooltip } from "@loopearn/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@loopearn/ui/tooltip";
 import slugify from "@sindresorhus/slugify";
 import { Loader2 } from "lucide-react";
 import { AlertCircle } from "lucide-react";
@@ -79,9 +80,15 @@ export function CreateTeamModal({ onOpenChange }: Props) {
                 <p className="block text-sm font-medium text-gray-700">
                   Organization Name
                 </p>
-                <InfoTooltip
-                  content={`This is the name of your organization on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
-                />
+                <Tooltip>
+                  <TooltipTrigger>
+                    <InfoIcon className="h-4 w-4 text-gray-500" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    This is the name of your organization on{" "}
+                    {process.env.NEXT_PUBLIC_APP_NAME}.
+                  </TooltipContent>
+                </Tooltip>
               </label>
 
               <FormField
@@ -115,9 +122,15 @@ export function CreateTeamModal({ onOpenChange }: Props) {
             <div>
               <label htmlFor="slug" className="flex items-center space-x-2">
                 <p className="block text-sm font-medium text-gray-700">Slug</p>
-                <InfoTooltip
-                  content={`This is your organization's unique slug on ${env.NEXT_PUBLIC_APP_DOMAIN}.`}
-                />
+                <Tooltip>
+                  <TooltipTrigger>
+                    <InfoIcon className="h-4 w-4 text-gray-500" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    This is your organization's unique slug on{" "}
+                    {env.NEXT_PUBLIC_APP_DOMAIN}.
+                  </TooltipContent>
+                </Tooltip>
               </label>
 
               <FormField
