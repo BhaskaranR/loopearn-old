@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
+    "@loopearn/app-store": "workspace:*",
     "@loopearn/analytics": "workspace:*",
     "@loopearn/events": "workspace:*",
     "@loopearn/kv": "workspace:*",
