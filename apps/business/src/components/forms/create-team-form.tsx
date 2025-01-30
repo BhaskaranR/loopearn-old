@@ -12,12 +12,14 @@ import {
   FormMessage,
 } from "@loopearn/ui/form";
 import { Input } from "@loopearn/ui/input";
-import { InfoTooltip } from "@loopearn/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@loopearn/ui/tooltip";
 import slugify from "@sindresorhus/slugify";
 import { Loader2 } from "lucide-react";
 import { AlertCircle } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
+
 import type { z } from "zod";
 
 async function checkSlugUnique(slug: string) {
@@ -64,9 +66,15 @@ export function CreateTeamForm({
             <p className="block text-sm font-medium text-gray-700">
               Organization Name
             </p>
-            <InfoTooltip
-              content={`This is the name of your business on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
-            />
+            <Tooltip>
+              <TooltipTrigger>
+                <InfoIcon className="h-4 w-4 text-gray-500" />
+              </TooltipTrigger>
+              <TooltipContent>
+                This is the name of your business on{" "}
+                {process.env.NEXT_PUBLIC_APP_NAME}.
+              </TooltipContent>
+            </Tooltip>
           </label>
 
           <FormField
@@ -102,9 +110,15 @@ export function CreateTeamForm({
             <p className="block text-sm font-medium text-gray-700">
               Business Slug
             </p>
-            <InfoTooltip
-              content={`This is your business's unique slug on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
-            />
+            <Tooltip>
+              <TooltipTrigger>
+                <InfoIcon className="h-4 w-4 text-gray-500" />
+              </TooltipTrigger>
+              <TooltipContent>
+                This is your business's unique slug on{" "}
+                {process.env.NEXT_PUBLIC_APP_NAME}.
+              </TooltipContent>
+            </Tooltip>
           </label>
 
           <FormField

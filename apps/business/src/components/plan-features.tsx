@@ -2,7 +2,6 @@ import { STAGGER_CHILD_VARIANTS } from "@/utils/framer-motion";
 import { SELF_SERVE_PAID_PLANS } from "@/utils/pricing";
 import { cn } from "@loopearn/ui/cn";
 import { CheckCircleFill } from "@loopearn/ui/icons";
-import { SimpleTooltipContent, Tooltip } from "@loopearn/ui/tooltip";
 import { motion } from "framer-motion";
 
 export function PlanFeatures({
@@ -46,24 +45,7 @@ export function PlanFeatures({
           className="flex items-center space-x-2 text-sm text-gray-500"
         >
           <CheckCircleFill className="h-5 w-5 text-green-500" />
-
-          {footnote ? (
-            <Tooltip
-              content={
-                typeof footnote === "string" ? (
-                  footnote
-                ) : (
-                  <SimpleTooltipContent {...footnote} />
-                )
-              }
-            >
-              <p className="cursor-help text-gray-600 underline decoration-dotted underline-offset-2">
-                {text}
-              </p>
-            </Tooltip>
-          ) : (
-            <p className="text-gray-600">{text}</p>
-          )}
+          <p className="text-gray-600">{text}</p>
         </motion.div>
       ))}
     </motion.div>

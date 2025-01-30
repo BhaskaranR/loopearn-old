@@ -27,6 +27,8 @@ export const env = createEnv({
     STRIPE_SECRET_KEY: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
     STRIPE_CONNECT_WEBHOOK_SECRET: z.string(),
+    SLACK_CLIENT_SECRET: z.string(),
+    SLACK_SIGNING_SECRET: z.string(),
   },
   /**
    * Specify your client-side environment variables schema here.
@@ -42,6 +44,9 @@ export const env = createEnv({
     NEXT_PUBLIC_BUSINESS_DOMAIN: z.string(),
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
     NEXT_PUBLIC_GOOGLE_API_KEY: z.string(),
+    NEXT_PUBLIC_SLACK_CLIENT_ID: z.string(),
+    NEXT_PUBLIC_SLACK_OAUTH_REDIRECT_URL: z.string(),
+    NEXT_PUBLIC_SLACK_STATE_SECRET: z.string(),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -75,6 +80,12 @@ export const env = createEnv({
     NEXT_PUBLIC_GOOGLE_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     STRIPE_CONNECT_WEBHOOK_SECRET: process.env.STRIPE_CONNECT_WEBHOOK_SECRET,
+    NEXT_PUBLIC_SLACK_CLIENT_ID: process.env.NEXT_PUBLIC_SLACK_CLIENT_ID,
+    SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET,
+    NEXT_PUBLIC_SLACK_OAUTH_REDIRECT_URL:
+      process.env.NEXT_PUBLIC_SLACK_OAUTH_REDIRECT_URL,
+    NEXT_PUBLIC_SLACK_STATE_SECRET: process.env.NEXT_PUBLIC_SLACK_STATE_SECRET,
+    SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });

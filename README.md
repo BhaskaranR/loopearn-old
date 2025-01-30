@@ -4,11 +4,7 @@
 <p align="center">
 	<h1 align="center"><b>Create v1</b></h1>
 <p align="center">
-    An open-source starter kit based on <a href="https://midday.ai">Midday</a>.
-    <br />
-    <br />
     <a href="https://v1.run"><strong>Website</strong></a> · 
-    <a href="https://github.com/midday-ai/v1/issues"><strong>Issues</strong></a> · 
     <a href="#whats-included"><strong>What's included</strong></a> ·
     <a href="#prerequisites"><strong>Prerequisites</strong></a> ·
     <a href="#getting-started"><strong>Getting Started</strong></a> ·
@@ -83,7 +79,7 @@ OpenPanel<br>
 Clone this repo locally with the following command:
 
 ```bash
-bunx degit midday-ai/v1 v1
+bunx degit loopearn-ai/v1 v1
 ```
 
 1. Install dependencies using bun:
