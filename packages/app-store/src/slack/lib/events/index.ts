@@ -1,7 +1,7 @@
 import { createSlackWebClient } from "@loopearn/app-store/slack";
 import type { SlackEvent } from "@slack/bolt";
 import { waitUntil } from "@vercel/functions";
-import { assistantThreadMessage, assistantThreadStarted } from "./thread";
+import { assistantThreadMessage } from "./thread";
 
 export async function handleSlackEvent(
   event: SlackEvent,
@@ -10,11 +10,6 @@ export async function handleSlackEvent(
   const client = createSlackWebClient({
     token: options.token,
   });
-
-  if (event.type === "assistant_thread_started") {
-    waitUntil(assistantThreadStarted(event, client));
-    return;
-  }
 
   if (
     event.text &&
