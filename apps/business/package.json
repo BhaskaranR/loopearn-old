@@ -12,9 +12,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.2.0",
     "@hookform/resolvers": "^3.9.1",
-    "@loopearn/app-store": "workspace:*",
     "@loopearn/analytics": "workspace:*",
+    "@loopearn/app-store": "workspace:*",
     "@loopearn/events": "workspace:*",
     "@loopearn/kv": "workspace:*",
     "@loopearn/location": "workspace:*",
