@@ -1,0 +1,30 @@
+{
+  "description": "Supabase Migrations Best Practices",
+  "globs": ["supabase/migrations/**"],
+  "rules": {
+    "Migration Naming Conventions": [
+      "Migrations must be named in the format 'YYYYMMDDHHmmss_short_description.sql'.",
+      "Use proper casing for months, minutes, and seconds in UTC time."
+    ],
+    "General Guidelines": [
+      "Include a header comment describing the migration.",
+      "Ensure all SQL statements are valid PostgreSQL.",
+      "Enable Row Level Security (RLS) for new tables."
+    ],
+    "SQL Formatting": [
+      "Use lowercase for SQL reserved words.",
+      "Use snake_case for table and column names.",
+      "Prefer plural table names and singular column names."
+    ],
+    "Performance Considerations": [
+      "Use indexes on columns used frequently in queries.",
+      "Optimize schema changes to prevent downtime."
+    ],
+    "Example Templates": {
+      "Create Table": [
+        "CREATE TABLE public.users ( id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name text NOT NULL, created_at timestamptz DEFAULT now() );"
+      ],
+      "Enable RLS": ["ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;"]
+    }
+  }
+}
