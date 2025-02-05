@@ -25,7 +25,6 @@
     "wrangler": "^3.93.0"
   },
   "exports": {
-    "./client": "./src/client/index.ts",
-    "./gocardless/utils": "./src/providers/gocardless/utils.ts"
+    "./client": "./src/client/index.ts"
   }
 }

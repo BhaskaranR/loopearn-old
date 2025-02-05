@@ -3,6 +3,7 @@ CREATE TABLE coupons (
     coupon_code TEXT NOT NULL UNIQUE,
     player_unique_id TEXT NOT NULL,
     transaction_id TEXT,
+    business_id UUID NOT NULL,
     status TEXT NOT NULL,
     expiration_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
