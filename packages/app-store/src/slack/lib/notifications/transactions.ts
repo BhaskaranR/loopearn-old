@@ -75,7 +75,7 @@ export async function sendSlackTransactionNotifications({
                 type: "plain_text",
                 text: "View transactions",
               },
-              url: "https://app.midday.ai/transactions",
+              url: "https://app.loopearn.com/transactions",
               action_id: "button_click",
             },
           ],

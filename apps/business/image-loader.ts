@@ -4,7 +4,7 @@ interface ImageLoaderParams {
   quality?: number;
 }
 
-const CDN_URL = "https://loopearn.ai";
+const CDN_URL = "https://loopearn.com";
 
 export default function imageLoader({
   src,
@@ -12,7 +12,7 @@ export default function imageLoader({
   quality = 80,
 }: ImageLoaderParams): string {
   if (src.startsWith("/_next")) {
-    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/https://app.loopearn.ai${src}`;
+    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/https://app.loopearn.com${src}`;
   }
   return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${src}`;
 }

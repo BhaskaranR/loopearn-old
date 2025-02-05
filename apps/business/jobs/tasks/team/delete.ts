@@ -1,4 +1,4 @@
-import { client } from "@midday/engine/client";
+import { client } from "@loopearn/engine/client";
 import { logger, schemaTask } from "@trigger.dev/sdk/v3";
 import { z } from "zod";
 
