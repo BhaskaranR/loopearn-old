@@ -1,6 +1,6 @@
 {
   "description": "Supabase Migrations Best Practices",
-  "globs": ["supabase/migrations/**"],
+  "globs": ["apps/api/supabase/migrations/**"],
   "rules": {
     "Migration Naming Conventions": [
       "Migrations must be named in the format 'YYYYMMDDHHmmss_short_description.sql'.",

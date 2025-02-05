@@ -11,8 +11,7 @@
     <a href="#how-to-use"><strong>How to use</strong></a>
   </p>
 </p>
-
-Everything you need to build a production ready SaaS, it's a opinionated stack based on learnings from building Midday using the latest Next.js framework, it's a monorepo with a focus on code reuse and best practices that will grow with your business.
+ it's a monorepo with a focus on code reuse and best practices that will grow with your business.
 
 ## What's included
 

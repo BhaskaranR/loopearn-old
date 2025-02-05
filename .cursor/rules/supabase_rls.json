@@ -1,6 +1,6 @@
 {
   "description": "Supabase Row-Level Security (RLS) Best Practices",
-  "globs": ["apps/api/supabase/migrations/**"],
+  "globs": ["apps/api/supabase/migrations/**", "apps/api/sql/**"],
   "rules": {
     "General Guidelines": [
       "The generated SQL must be valid and use CREATE POLICY or ALTER POLICY queries only.",
