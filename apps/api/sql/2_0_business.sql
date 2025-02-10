@@ -1,15 +1,15 @@
-CREATE TABLE teams(
+CREATE TABLE business(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   avatar_url varchar(255),
   slug text unique default null,
   contact_name varchar(255),
-  team_name varchar(255) NOT NULL,
-  team_email varchar(255),
-  team_phone varchar(255),
-  team_url text,
-  team_image text,
-  team_meta jsonb,
-  team_currency text,
+  business_name varchar(255) NOT NULL,
+  business_email varchar(255),
+  business_phone varchar(255),
+  business_url text,
+  business_image text,
+  business_meta jsonb,
+  business_currency text,
   team__description text,
   website_url text,
   category text,
@@ -37,107 +37,121 @@ CREATE TABLE teams(
 
 
 -- add status
-CREATE TABLE users_on_teams(
+CREATE TABLE business_users(
   id serial PRIMARY KEY,
-  team_id uuid REFERENCES teams(id),
+  business_id uuid REFERENCES business(id),
   user_id uuid REFERENCES public.users(id),
   role VARCHAR(255),
   is_active BOOLEAN DEFAULT TRUE,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE public.teams ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.business ENABLE ROW LEVEL SECURITY;
 
 -- team account read only to the business_users associated with the teams account
-CREATE POLICY "Allow team logged-in read access" ON public.teams
+CREATE POLICY "Allow business logged-in read access" ON public.business
   FOR SELECT
     USING (auth.role() = 'authenticated');
 
-ALTER TABLE public.users_on_teams ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.business_users ENABLE ROW LEVEL SECURITY;
 
 -- ... existing code ...
-DROP POLICY IF EXISTS "Allow team individual update access" ON public.teams;
+DROP POLICY IF EXISTS "Allow business individual update access" ON public.business;
 
 CREATE INDEX idx_business_users_lookup ON business_users (user_id, business_id, role, is_active);
 
-CREATE POLICY "Allow team owner update access" ON public.teams
-  FOR UPDATE
-    USING (
-      EXISTS (
-        SELECT 1 FROM users_on_teams
-        WHERE user_id = auth.uid()
-        AND team_id = public.teams.id
-        AND role = 'owner'
-        AND is_active = true
-      )
-    );
 
 grant usage on schema public to supabase_auth_admin;
 
-
 grant all
-  on table public.teams
+  on table public.business
 to supabase_auth_admin;
 
 grant all
-  on table public.users_on_teams
+  on table public.business_users
 to supabase_auth_admin;
-
-CREATE OR REPLACE FUNCTION public.get_user_team_id() RETURNS text
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    user_team_id text;
-BEGIN
-    SELECT team_id INTO user_team_id
-    FROM public.users_on_teams
-    WHERE user_id = auth.uid()
-    LIMIT 1; -- Assuming a user can be associated with only one business at a time
-
-    RAISE NOTICE 'User ID: %, Business ID: %', auth.uid(), user_team_id;
-    RETURN user_team_id;
-END;
-$$;
-
 
 -- Grant execute permission on the function to the necessary roles
-GRANT EXECUTE ON FUNCTION public.get_user_team_id() TO authenticated;
-GRANT EXECUTE ON FUNCTION public.get_user_team_id() TO service_role;
+GRANT EXECUTE ON FUNCTION public.get_user_business_id() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.get_user_business_id() TO service_role;
+
+-- business account read only to the business_users associated with the business account
+CREATE POLICY "Allow business logged-in read access" ON public.business
+  FOR SELECT
+  USING (auth.role() = 'authenticated');
+
+ALTER TABLE public.business_users ENABLE ROW LEVEL SECURITY;
+
+grant usage on schema public to supabase_auth_admin;
+grant all on table public.business to supabase_auth_admin;
+grant all on table public.business_users to service_role;
+grant all on table public.business_users to supabase_auth_admin;
+
+CREATE INDEX idx_business_users_lookup ON business_users (user_id, business_id, role, is_active);
+
+CREATE INDEX idx_business_users_business_id ON business_users (business_id, user_id);
 
 
+-- ... existing code ...
+DROP POLICY IF EXISTS "Allow business owner update access" ON public.business;
+CREATE POLICY "Allow business owner update access" ON public.business
+  FOR UPDATE
+  USING (
+    public.is_user_in_business(id) AND 
+    public.get_user_role_in_business(id) = 'owner'
+  );
 
--- Update the policy to use the new function
-CREATE POLICY "Allow users_on_teams logged-in read access" ON public.users_on_teams
-FOR SELECT
-USING (public.get_user_team_id() = team_id::text);
+DROP POLICY IF EXISTS "Allow business owner delete access" ON public.business;
+CREATE POLICY "Allow business owner delete access" ON public.business
+  FOR DELETE
+  TO authenticated
+  USING (
+    public.get_user_role_in_business(id) = 'owner'
+  );
+
+DROP POLICY IF EXISTS "Allow business_users logged-in read access" ON public.business_users;
+CREATE POLICY "Allow business_users logged-in read access" ON public.business_users
+  FOR SELECT
+  TO authenticated
+  USING (
+    public.is_user_in_business(business_id)
+  );
+
+DROP POLICY IF EXISTS "Allow business_users owner delete access" ON public.business_users;
+CREATE POLICY "Allow business_users owner delete access" ON public.business_users
+  FOR DELETE
+  TO authenticated
+  USING (
+    public.get_user_role_in_business(business_id) = 'owner'
+  );
 
 GRANT EXECUTE ON FUNCTION public.get_jwt() TO authenticated;
 
-CREATE OR REPLACE FUNCTION "public"."create_team"("team_name" character varying, "slug" character varying, "team_email" character varying) RETURNS "uuid"
+CREATE OR REPLACE FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying, "business_email" character varying) RETURNS "uuid"
       LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
 declare
-    new_team_id uuid;
+    new_business_id uuid;
 begin
-    insert into teams (team_name, slug, team_email) values (team_name, slug, team_email) returning id into new_team_id;
-    insert into users_on_teams (user_id, team_id, role) values (auth.uid(), new_team_id, 'owner');
+    insert into business (business_name, slug, business_email) values (business_name, slug, business_email) returning id into new_business_id;
+    insert into business_users (user_id, business_id, role) values (auth.uid(), new_business_id, 'owner');
 
-    return new_team_id;
+      return new_business_id;
 end;
 $$;
 
-ALTER FUNCTION "public"."create_team"("team_name" character varying, "slug" character varying, "team_email" character varying) OWNER TO "postgres";
+ALTER FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying, "business_email" character varying) OWNER TO "postgres";
 
-GRANT ALL ON FUNCTION "public"."create_team"("team_name" character varying, "slug" character varying, "team_email" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."create_team"("team_name" character varying, "slug" character varying, "team_email" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."create_team"("team_name" character varying, "slug" character varying, "team_email" character varying) TO "service_role";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying, "business_email" character varying) TO "anon";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying, "business_email" character varying) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_business"("business_name" character varying, "slug" character varying, "business_email" character varying) TO "service_role";
 
 -- First drop the existing policy
-DROP POLICY IF EXISTS "Users can view their own users_on_teams" ON public.users_on_teams;
+DROP POLICY IF EXISTS "Users can view their own business_users" ON public.business_users;
 
 -- Then create the new policy
-CREATE POLICY "Users can view their own users_on_teams"
-ON public.users_on_teams
+CREATE POLICY "Users can view their own business_users"
+ON public.business_users
 FOR SELECT
 USING (auth.uid() = user_id);
