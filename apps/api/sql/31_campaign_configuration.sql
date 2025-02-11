@@ -87,3 +87,35 @@ CREATE POLICY customer_view_active_campaigns ON campaigns
         )
     );
 
+-- ✅ Business Can Manage Their Own Campaign Rewards
+CREATE POLICY business_manage_campaign_rewards ON campaign_rewards
+    FOR ALL
+    USING (EXISTS (
+        SELECT 1 FROM campaigns 
+        WHERE campaigns.id = campaign_rewards.campaign_id 
+        AND is_user_in_business(campaigns.business_id)
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM campaigns 
+        WHERE campaigns.id = campaign_rewards.campaign_id 
+        AND is_user_in_business(campaigns.business_id)
+    ));
+
+
+-- ✅ Customers can only view campaign rewards they have earned based on events
+CREATE POLICY customer_view_earned_rewards ON campaign_rewards
+    FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM events 
+            WHERE events.customer_id = auth.uid()
+            AND events.campaign_id = campaign_rewards.campaign_id
+        )
+    );
+
+
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON campaign_rewards TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON campaigns TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON campaign_eligibility TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON campaign_activation TO authenticated;

@@ -132,3 +132,16 @@ BEGIN
     RETURN COALESCE(customer_tier, 'Bronze');
 END;
 $$;
+
+
+
+-- ✅ Customers can see only the rewards for their own tier
+CREATE POLICY customer_view_own_tier_rewards ON tiers
+    FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM customer_progress 
+            WHERE customer_progress.customer_id = auth.uid()
+            AND customer_progress.tier_id = tiers.id
+        )
+    );

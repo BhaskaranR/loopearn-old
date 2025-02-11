@@ -109,3 +109,4 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON events TO authenticated;
 --     FOR EACH ROW
 --     EXECUTE FUNCTION validate_event_properties();
 
+
