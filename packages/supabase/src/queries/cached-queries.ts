@@ -8,6 +8,8 @@ import {
   getBusinessByIdQuery,
   getBusinessBySlugQuery,
   getBusinessMembersQuery,
+  getCampaignActionRewardsQuery,
+  getCampaignsQuery,
   getCategoriesQuery,
   getPendingBusinessInvitesQueryForUser,
   getSubCategoriesQuery,
@@ -194,6 +196,36 @@ export const getSubCategories = async (categoryId: string) => {
     {
       tags: [`subcategories_${categoryId}`],
       revalidate: 86400,
+    },
+  )();
+};
+
+export const getCampaigns = async () => {
+  const supabase = createClient();
+
+  return unstable_cache(
+    async () => {
+      return getCampaignsQuery(supabase);
+    },
+    ["campaigns"],
+    {
+      tags: ["campaigns"],
+      revalidate: 180,
+    },
+  )();
+};
+
+export const getCampaignActionReward = async (id: string) => {
+  const supabase = createClient();
+
+  return unstable_cache(
+    async () => {
+      return getCampaignActionRewardsQuery(supabase, id);
+    },
+    ["campaign_action_reward", id],
+    {
+      tags: [`campaign_action_reward_${id}`],
+      revalidate: 180,
     },
   )();
 };

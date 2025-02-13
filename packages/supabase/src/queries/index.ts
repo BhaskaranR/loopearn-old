@@ -164,3 +164,32 @@ export async function getSubCategoriesQuery(
     .select("*")
     .eq("category_id", categoryId);
 }
+
+export async function getCampaignsQuery(supabase: Client) {
+  return supabase
+    .from("campaigns")
+    .select(`
+      *,
+      campaign_action_rewards(
+        id,
+        reward_type,
+        reward_value,
+        reward_unit,
+        action_type,
+        action_details,
+        coupon_code,
+        created_at
+      )
+    `)
+    .throwOnError();
+}
+
+export async function getCampaignActionRewardsQuery(
+  supabase: Client,
+  id: string,
+) {
+  return supabase
+    .from("campaign_action_rewards")
+    .select("*")
+    .eq("campaign_id", id);
+}

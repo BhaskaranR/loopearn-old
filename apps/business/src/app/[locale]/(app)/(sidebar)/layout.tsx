@@ -27,7 +27,7 @@ export default async function Layout({
   const teams = await getTeams();
 
   const pendingInvites = await getPendingBusinessInvites();
-  if (!teams?.data?.length && !pendingInvites?.data?.length) {
+  if (teams?.data?.length === 0 && pendingInvites?.data?.length === 0) {
     redirect("/onboarding/welcome");
   }
 
