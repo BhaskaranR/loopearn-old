@@ -1,0 +1,10 @@
+{
+  "campaigns": {
+    "workflow": {
+      "empty": {
+        "title": "Start Building Your Workflow",
+        "description": "Drag and drop activities from the sidebar to create your automation workflow. Start with a trigger, add control steps, and finish with actions."
+      }
+    }
+  }
+}

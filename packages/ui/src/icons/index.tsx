@@ -164,7 +164,6 @@ export { default as Lock } from "./lock";
 export { default as Message } from "./message";
 export { default as QR } from "./qr";
 export { default as Random } from "./random";
-export { default as Repeat } from "./repeat";
 export { default as Save } from "./save";
 export { default as Search } from "./search";
 export { default as Sort } from "./sort";
@@ -857,8 +856,6 @@ export const Icons = {
   Files: MdOutlineInventory2,
 };
 
-export * from "./nucleo";
-
 export type Icon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
 export { default as ExpandingArrow } from "./expanding-arrow";
@@ -866,3 +863,7 @@ export { ProductHunt } from "./product-hunt";
 export { Twitter } from "./twitter";
 export { LinkedIn } from "./linkedin";
 export { Google } from "./google";
+export { Tiktok } from "./tiktok";
+export { Pinterest } from "./pinterest";
+export { Threads } from "./threads";
+export { Mastodon } from "./mastodon";

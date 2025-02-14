@@ -6,10 +6,12 @@ CREATE TABLE campaigns (
     type TEXT CHECK (type IN ('SignUp', 'Reward Campaign', 'Other')) NOT NULL, -- Campaign type
     is_repeatable BOOLEAN DEFAULT FALSE, -- Can the campaign be repeated?
     max_achievement INT DEFAULT 1, -- Max times a customer can achieve the campaign (-1 for unlimited)
+    min_tier INT DEFAULT 1, -- Minimum customer tier required
     visibility TEXT CHECK (visibility IN ('AlwaysVisible', 'NotVisible')) DEFAULT 'AlwaysVisible', -- Visibility setting
+    status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active', -- Campaign status
     start_date TIMESTAMP, -- Campaign start time
     end_date TIMESTAMP, -- Campaign end time
-    min_tier INT DEFAULT 1, -- Minimum customer tier required
+    is_live_on_marketplace BOOLEAN DEFAULT FALSE, -- Is the campaign live on the marketplace?
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now()
 );
@@ -30,7 +32,6 @@ CREATE TABLE campaign_action_rewards (
     created_at TIMESTAMP DEFAULT now()
 );
 
-
 -- ✅ Get Campaigns for a Customer's Tier
 -- SELECT c.*
 -- FROM campaigns c
@@ -42,7 +43,6 @@ CREATE TABLE campaign_action_rewards (
 
 
 -- 6. RLS for Campaigns
-
 ALTER TABLE campaigns ENABLE ROW LEVEL SECURITY;
 ALTER TABLE campaign_action_rewards ENABLE ROW LEVEL SECURITY;
 

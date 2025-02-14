@@ -267,11 +267,13 @@ export type Database = {
           description: string | null
           end_date: string
           id: string
+          is_live_on_marketplace: boolean | null
           is_repeatable: boolean | null
           max_achievement: number | null
           min_tier: number | null
           name: string
           start_date: string
+          status: string | null
           type: string
           updated_at: string | null
           visibility: string | null
@@ -282,11 +284,13 @@ export type Database = {
           description?: string | null
           end_date: string
           id?: string
+          is_live_on_marketplace?: boolean | null
           is_repeatable?: boolean | null
           max_achievement?: number | null
           min_tier?: number | null
           name: string
           start_date: string
+          status?: string | null
           type: string
           updated_at?: string | null
           visibility?: string | null
@@ -297,11 +301,13 @@ export type Database = {
           description?: string | null
           end_date?: string
           id?: string
+          is_live_on_marketplace?: boolean | null
           is_repeatable?: boolean | null
           max_achievement?: number | null
           min_tier?: number | null
           name?: string
           start_date?: string
+          status?: string | null
           type?: string
           updated_at?: string | null
           visibility?: string | null

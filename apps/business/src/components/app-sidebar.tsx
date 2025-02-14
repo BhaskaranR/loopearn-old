@@ -31,6 +31,7 @@ import {
   SidebarMenuSkeleton,
   SidebarRail,
 } from "@loopearn/ui/sidebar";
+import { Logo } from "./logo";
 import { SidebarOptInForm } from "./sidebar-opt-in-form";
 import { TeamMenu } from "./team-menu";
 import { TeamSwitcher } from "./team-switcher";
@@ -93,6 +94,11 @@ const data = {
       icon: <Settings2 className="h-10 w-10" />,
     },
     {
+      name: "Social Accounts",
+      url: "/social-accounts",
+      icon: <CreditCard className="h-10 w-10" />,
+    },
+    {
       name: "Subscription",
       url: "/subscription",
       icon: <CreditCard className="h-10 w-10" />,
@@ -108,7 +114,8 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="gap-4">
+        <Logo className="font-semibold h-8 w-auto" />
         <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
