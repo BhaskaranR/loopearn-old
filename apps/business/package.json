@@ -38,6 +38,7 @@
     "@trigger.dev/sdk": "3.3.7",
     "@uidotdev/usehooks": "^2.4.1",
     "@upstash/ratelimit": "^2.0.4",
+    "@xyflow/react": "^12.4.3",
     "@zip.js/zip.js": "2.7.52",
     "ai": "3.4.9",
     "change-case": "^5.4.4",

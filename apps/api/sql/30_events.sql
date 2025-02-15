@@ -5,6 +5,7 @@ CREATE TABLE events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
     event_name TEXT NOT NULL,
+    campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE,
     event_properties JSONB,
     created_at TIMESTAMP DEFAULT now()
 );

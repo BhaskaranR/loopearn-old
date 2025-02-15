@@ -1,6 +1,7 @@
--- Create or replace the function
-CREATE OR REPLACE FUNCTION public.is_user_in_business(p_business_id uuid) RETURNS boolean
-LANGUAGE plpgsql
+// ... existing code ...
+CREATE OR REPLACE FUNCTION is_user_in_business(p_business_id uuid)
+RETURNS boolean
+SECURITY DEFINER
 AS $$
 BEGIN
     RETURN EXISTS (
@@ -9,14 +10,17 @@ BEGIN
         WHERE user_id = auth.uid() AND business_id = p_business_id
     );
 END;
-$$;
+$$ LANGUAGE plpgsql;
+// ... existing code ...
 
 GRANT EXECUTE ON FUNCTION public.is_user_in_business(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_user_in_business(uuid) TO anon;
 GRANT EXECUTE ON FUNCTION public.is_user_in_business(uuid) TO service_role;
 
 
-CREATE OR REPLACE FUNCTION public.get_user_role_in_business(p_business_id uuid) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_user_role_in_business(p_business_id uuid) 
+RETURNS text
+SECURITY DEFINER
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -31,8 +35,6 @@ $$;
 GRANT EXECUTE ON FUNCTION public.get_user_role_in_business(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.get_user_role_in_business(uuid) TO anon;
 GRANT EXECUTE ON FUNCTION public.get_user_role_in_business(uuid) TO service_role;
-
-
 
 CREATE OR REPLACE FUNCTION "private"."get_businesses_for_authenticated_user"() RETURNS SETOF "uuid"
     LANGUAGE "sql" STABLE SECURITY DEFINER

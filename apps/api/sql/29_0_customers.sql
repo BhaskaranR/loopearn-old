@@ -28,8 +28,22 @@ CREATE TABLE customer_progress (
     updated_at TIMESTAMP DEFAULT now()
 );
 
+
+CREATE TABLE customer_action_progress (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_id UUID REFERENCES customers(id) ON DELETE CASCADE, -- Links to customer
+    campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE, -- Links to campaign
+    campaign_action_reward_id UUID REFERENCES campaign_action_rewards(id) ON DELETE CASCADE, -- Links to campaign action reward
+    action_type TEXT CHECK (action_type IN ('write_review', 'follow_instagram', 'other')) NOT NULL, -- Type of action
+    completed BOOLEAN DEFAULT FALSE, -- Whether the action has been completed
+    completed_at TIMESTAMP -- When the action was completed
+);
+
 -- Enable RLS on customers table
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+
+-- Enable RLS on customer_action_progress table
+ALTER TABLE customer_action_progress ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies first
 DROP POLICY IF EXISTS select_customers ON customers;
@@ -145,3 +159,59 @@ CREATE POLICY customer_view_own_tier_rewards ON tiers
             AND customer_progress.tier_id = tiers.id
         )
     );
+
+
+-- Enable RLS on customer_action_progress table
+ALTER TABLE customer_action_progress ENABLE ROW LEVEL SECURITY;
+
+-- Create policy for customer_action_progress based on customer's business
+CREATE POLICY manage_customer_action_progress ON customer_action_progress
+    FOR ALL
+    USING (
+        EXISTS (
+            SELECT 1 FROM customers
+            WHERE customers.id = customer_action_progress.customer_id
+            AND is_user_in_business(customers.business_id)
+        )
+    );
+
+-- Policy for customers to view, insert, and update their own action progress
+CREATE POLICY customer_manage_own_action_progress ON customer_action_progress
+    FOR SELECT, INSERT, UPDATE
+    USING (
+        EXISTS (
+            SELECT 1 FROM customers
+            WHERE customers.id = customer_action_progress.customer_id
+            AND customers.id = auth.uid() -- Customer can access their own records
+        )
+    )
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM customers
+            WHERE customers.id = customer_action_progress.customer_id
+            AND customers.id = auth.uid() -- Customer can modify their own records
+        )
+    );
+
+-- Policy for business team members to view, insert, update, and delete action progress
+CREATE POLICY team_manage_action_progress ON customer_action_progress
+    FOR ALL
+    USING (
+        EXISTS (
+            SELECT 1 FROM business_users
+            JOIN campaigns ON campaigns.business_id = business_users.business_id
+            WHERE business_users.user_id = auth.uid()
+            AND campaigns.id = customer_action_progress.campaign_id
+        )
+    )
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM business_users
+            JOIN campaigns ON campaigns.business_id = business_users.business_id
+            WHERE business_users.user_id = auth.uid()
+            AND campaigns.id = customer_action_progress.campaign_id
+        )
+    );
+
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON customer_action_progress TO authenticated;
