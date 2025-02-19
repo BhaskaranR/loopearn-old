@@ -24,7 +24,8 @@ BEGIN
     status,
     start_date,
     end_date,
-    is_live_on_marketplace
+    is_live_on_marketplace,
+    expires_after
   )
   SELECT
     (campaign_data->>'business_id')::uuid,
@@ -38,7 +39,8 @@ BEGIN
     campaign_data->>'status',
     COALESCE((campaign_data->>'start_date')::timestamp, NULL),
     COALESCE((campaign_data->>'end_date')::timestamp, NULL),
-    (campaign_data->>'is_live_on_marketplace')::boolean
+    (campaign_data->>'is_live_on_marketplace')::boolean,
+    (campaign_data->>'expires_after')::int
   RETURNING * INTO new_campaign;
 
   -- Insert reward
@@ -53,8 +55,7 @@ BEGIN
     action_type,
     action_details,
     uses_per_customer,
-    minimum_purchase_amount,
-    expires_after
+    minimum_purchase_amount
   )
   SELECT
     new_campaign.id,
@@ -67,8 +68,7 @@ BEGIN
     reward_data->>'action_type',
     reward_data->>'action_details',
     (reward_data->>'uses_per_customer')::int,
-    (reward_data->>'minimum_purchase_amount')::int,
-    (reward_data->>'expires_after')::int;
+    (reward_data->>'minimum_purchase_amount')::int;
 
   RETURN new_campaign;
 END;
@@ -101,7 +101,8 @@ BEGIN
       status = COALESCE((campaign_data->>'status'), status),
       start_date = COALESCE((campaign_data->>'start_date')::timestamp, start_date),
       end_date = COALESCE((campaign_data->>'end_date')::timestamp, end_date),
-      is_live_on_marketplace = COALESCE((campaign_data->>'is_live_on_marketplace')::boolean, is_live_on_marketplace)
+      is_live_on_marketplace = COALESCE((campaign_data->>'is_live_on_marketplace')::boolean, is_live_on_marketplace),
+      expires_after = COALESCE((campaign_data->>'expires_after')::int, expires_after)
     WHERE id = campaign_id
     RETURNING * INTO updated_campaign;
   END IF;
@@ -119,8 +120,7 @@ BEGIN
       action_type = COALESCE((reward_data->>'action_type'), action_type),
       action_details = COALESCE((reward_data->>'action_details'), action_details),
       uses_per_customer = COALESCE((reward_data->>'uses_per_customer')::int, uses_per_customer),
-      minimum_purchase_amount = COALESCE((reward_data->>'minimum_purchase_amount')::int, minimum_purchase_amount),
-      expires_after = COALESCE((reward_data->>'expires_after')::int, expires_after)
+      minimum_purchase_amount = COALESCE((reward_data->>'minimum_purchase_amount')::int, minimum_purchase_amount)
     WHERE campaign_id = campaign_id;
   END IF;
 

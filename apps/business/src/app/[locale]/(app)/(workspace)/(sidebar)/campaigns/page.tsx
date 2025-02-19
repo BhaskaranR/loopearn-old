@@ -1,11 +1,11 @@
-import { getCampaigns } from "@loopearn/supabase/cached-queries";
+import { getCampaignsForBusiness } from "@loopearn/supabase/cached-queries";
 import { Button } from "@loopearn/ui/button";
 import Link from "next/link";
 import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table";
 
 export default async function Page() {
-  const { data } = await getCampaigns();
+  const { data } = await getCampaignsForBusiness();
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">

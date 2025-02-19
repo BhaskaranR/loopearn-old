@@ -340,6 +340,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           end_date: string | null
+          expires_after: number | null
           id: string
           is_live_on_marketplace: boolean | null
           is_repeatable: boolean | null
@@ -357,6 +358,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           end_date?: string | null
+          expires_after?: number | null
           id?: string
           is_live_on_marketplace?: boolean | null
           is_repeatable?: boolean | null
@@ -374,6 +376,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           end_date?: string | null
+          expires_after?: number | null
           id?: string
           is_live_on_marketplace?: boolean | null
           is_repeatable?: boolean | null
@@ -1066,6 +1069,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           end_date: string | null
+          expires_after: number | null
           id: string
           is_live_on_marketplace: boolean | null
           is_repeatable: boolean | null
@@ -1267,6 +1271,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           end_date: string | null
+          expires_after: number | null
           id: string
           is_live_on_marketplace: boolean | null
           is_repeatable: boolean | null

@@ -7,7 +7,7 @@ import {
   deleteCampaign as deleteCampaignMutation,
   updateCampaign as updateCampaignMutation,
 } from "@loopearn/supabase/mutations";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { authActionClient } from "./safe-action";
@@ -32,12 +32,14 @@ export const createCampaignAction = authActionClient
         name: parsedInput.name,
         type: parsedInput.type,
         visibility: parsedInput.visibility,
+        expires_after: null,
         reward: {
           ...parsedInput.reward,
           reward_type: parsedInput.reward.reward_type,
           action_type: parsedInput.trigger.action_type,
           action_details: parsedInput.trigger.social_link,
           uses_per_customer: parsedInput.reward.uses_per_customer,
+          minimum_purchase_amount: parsedInput.reward.minimum_purchase_amount,
         },
         min_tier: parsedInput.min_tier,
       };
@@ -45,6 +47,7 @@ export const createCampaignAction = authActionClient
         throw new Error("Invalid business_id format");
       }
       await createCampaignMutation(supabase, params);
+      revalidateTag(`campaigns_${user.business_id}`);
       redirect("/campaigns");
     } catch (error) {
       console.error("Failed to create campaign", error);

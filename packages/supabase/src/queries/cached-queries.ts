@@ -200,16 +200,22 @@ export const getSubCategories = async (categoryId: string) => {
   )();
 };
 
-export const getCampaigns = async () => {
+export const getCampaignsForBusiness = async () => {
   const supabase = createClient();
+  const user = await getUser();
+  const businessId = user?.business_id;
+
+  if (!businessId) {
+    return;
+  }
 
   return unstable_cache(
     async () => {
-      return getCampaignsQuery(supabase);
+      return getCampaignsQuery(supabase, businessId);
     },
-    ["campaigns"],
+    ["campaigns", businessId],
     {
-      tags: ["campaigns"],
+      tags: [`campaigns_${businessId}`],
       revalidate: 180,
     },
   )();
