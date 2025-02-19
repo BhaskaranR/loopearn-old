@@ -1,5 +1,7 @@
 "use client";
 
+import { WorkflowCanvas } from "@/components/campaign/workflow/workflow-canvas";
+import { WorkFlowSidebar } from "@/components/campaign/workflow/workflow-sidebar";
 import { Button } from "@loopearn/ui/button";
 import { Input } from "@loopearn/ui/input";
 import {
@@ -33,8 +35,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { WorkflowCanvas } from "../../components/workflow/workflow-canvas";
-import { WorkFlowSidebar } from "../../components/workflow/workflow-sidebar";
 export default function WorkflowPage() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const router = useRouter();

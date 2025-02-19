@@ -174,6 +174,12 @@ export const CampaignTemplates: Template[] = [
     usageCount: 267,
     items: [
       {
+        id: "like",
+        title: "Like",
+        icon: ThumbsUp,
+        description: "Reward customers for liking on Twitter",
+      },
+      {
         id: "share",
         title: "Share",
         icon: Share2,

@@ -351,3 +351,128 @@ export const filterVaultSchema = z.object({
     ),
   owners: z.array(z.string()).optional().describe("The owners to filter by"),
 });
+
+export const createCampaignSchema = z.object({
+  name: z.string().min(2, {
+    message: "Campaign name must be at least 2 characters.",
+  }),
+  description: z.string().min(2, {
+    message: "Campaign description must be at least 2 characters.",
+  }),
+  type: z.enum(["SignUp", "Reward Campaign", "Other"]),
+  is_repeatable: z.boolean().default(false),
+  max_achievement: z.number().default(1),
+  min_tier: z.number().default(1),
+  visibility: z.enum(["AlwaysVisible", "NotVisible"]).default("AlwaysVisible"),
+  status: z.enum(["active", "inactive"]).default("active"),
+  start_date: z.string().datetime().optional(),
+  end_date: z.string().datetime().optional(),
+  is_live_on_marketplace: z.boolean().default(false),
+
+  // Campaign Rules
+  audience: z.enum(["all", "specific"]).default("all"),
+  trigger: z.object({
+    action_type: z.enum([
+      "write_review",
+      "follow_instagram",
+      "share",
+      "like",
+      "comment",
+      "other",
+    ]),
+    social_link: z.string().url().optional(),
+  }),
+
+  // Reward Configuration
+  reward: z.object({
+    icon_url: z.string().url().optional(),
+    redirection_button_text: z.string().optional(),
+    redirection_button_link: z.string().url().optional(),
+    reward_type: z.enum([
+      "rank_points",
+      "wallet_points",
+      "wallet_multiplier",
+      "coupon",
+      "percentage_discount",
+      "fixed_amount_discount",
+      "free_product",
+      "free_shipping",
+    ]),
+    reward_value: z.number().min(0),
+    reward_unit: z.enum(["points", "%", "currency"]).default("points"),
+    applies_to: z.enum(["entire", "specific"]).default("entire"),
+
+    // Advanced Options
+    prefix: z.boolean().optional(),
+    expires_after: z.number().optional(), // Time in seconds
+    minimum_purchase_amount: z.number().optional(),
+    uses_per_customer: z.number().default(1),
+  }),
+});
+
+export type CreateCampaignFormValues = z.infer<typeof createCampaignSchema>;
+
+export const updateCampaignSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(2).optional(),
+  description: z.string().min(2).optional(),
+  type: z.enum(["SignUp", "Reward Campaign", "Other"]).optional(),
+  is_repeatable: z.boolean().optional(),
+  max_achievement: z.number().optional(),
+  min_tier: z.number().optional(),
+  visibility: z.enum(["AlwaysVisible", "NotVisible"]).optional(),
+  status: z.enum(["active", "inactive"]).optional(),
+  start_date: z.string().datetime().optional(),
+  end_date: z.string().datetime().optional(),
+  is_live_on_marketplace: z.boolean().optional(),
+
+  // Campaign Rules
+  audience: z.enum(["all", "specific"]).optional(),
+  trigger: z
+    .object({
+      action_type: z.enum([
+        "write_review",
+        "follow_instagram",
+        "share",
+        "like",
+        "comment",
+        "other",
+      ]),
+      social_link: z.string().url().optional(),
+    })
+    .optional(),
+
+  // Reward Configuration
+  reward: z
+    .object({
+      icon_url: z.string().url().optional(),
+      redirection_button_text: z.string().optional(),
+      redirection_button_link: z.string().url().optional(),
+      reward_type: z
+        .enum([
+          "rank_points",
+          "wallet_points",
+          "wallet_multiplier",
+          "coupon",
+          "percentage_discount",
+          "fixed_amount_discount",
+          "free_product",
+          "free_shipping",
+        ])
+        .optional(),
+      reward_value: z.number().min(0).optional(),
+      reward_unit: z.enum(["points", "%", "currency"]).optional(),
+      applies_to: z.enum(["entire", "specific"]).optional(),
+
+      // Advanced Options
+      prefix: z.boolean().optional(),
+      expires_after: z.number().optional(),
+      minimum_purchase_amount: z.number().optional(),
+      uses_per_customer: z.number().optional(),
+    })
+    .optional(),
+
+  revalidatePath: z.string().optional(),
+});
+
+export type UpdateCampaignFormValues = z.infer<typeof updateCampaignSchema>;
