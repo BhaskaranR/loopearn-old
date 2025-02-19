@@ -37,6 +37,7 @@ export const createCampaignAction = authActionClient
           reward_type: parsedInput.reward.reward_type,
           action_type: parsedInput.trigger.action_type,
           action_details: parsedInput.trigger.social_link,
+          uses_per_customer: parsedInput.reward.uses_per_customer,
         },
         min_tier: parsedInput.min_tier,
       };
