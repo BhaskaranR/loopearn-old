@@ -165,6 +165,74 @@ export type Database = {
         }
         Relationships: []
       }
+      business_social_accounts: {
+        Row: {
+          access_token: string | null
+          business_id: string | null
+          created_at: string | null
+          display_name: string | null
+          follower_count: number | null
+          following_count: number | null
+          id: string
+          instance_url: string | null
+          is_connected: boolean | null
+          metadata: Json | null
+          platform: Database["public"]["Enums"]["social_platform_type"]
+          platform_user_id: string | null
+          profile_image_url: string | null
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          business_id?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          follower_count?: number | null
+          following_count?: number | null
+          id?: string
+          instance_url?: string | null
+          is_connected?: boolean | null
+          metadata?: Json | null
+          platform: Database["public"]["Enums"]["social_platform_type"]
+          platform_user_id?: string | null
+          profile_image_url?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          business_id?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          follower_count?: number | null
+          following_count?: number | null
+          id?: string
+          instance_url?: string | null
+          is_connected?: boolean | null
+          metadata?: Json | null
+          platform?: Database["public"]["Enums"]["social_platform_type"]
+          platform_user_id?: string | null
+          profile_image_url?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_social_accounts_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_users: {
         Row: {
           business_id: string | null
@@ -216,11 +284,13 @@ export type Database = {
           created_at: string | null
           icon_url: string | null
           id: string
+          minimum_purchase_amount: number | null
           redirection_button_link: string | null
           redirection_button_text: string | null
           reward_type: string
           reward_unit: string | null
           reward_value: number | null
+          uses_per_customer: number | null
         }
         Insert: {
           action_details?: string | null
@@ -230,11 +300,13 @@ export type Database = {
           created_at?: string | null
           icon_url?: string | null
           id?: string
+          minimum_purchase_amount?: number | null
           redirection_button_link?: string | null
           redirection_button_text?: string | null
           reward_type: string
           reward_unit?: string | null
           reward_value?: number | null
+          uses_per_customer?: number | null
         }
         Update: {
           action_details?: string | null
@@ -244,11 +316,13 @@ export type Database = {
           created_at?: string | null
           icon_url?: string | null
           id?: string
+          minimum_purchase_amount?: number | null
           redirection_button_link?: string | null
           redirection_button_text?: string | null
           reward_type?: string
           reward_unit?: string | null
           reward_value?: number | null
+          uses_per_customer?: number | null
         }
         Relationships: [
           {
@@ -265,7 +339,7 @@ export type Database = {
           business_id: string | null
           created_at: string | null
           description: string | null
-          end_date: string
+          end_date: string | null
           id: string
           is_live_on_marketplace: boolean | null
           is_repeatable: boolean | null
@@ -282,7 +356,7 @@ export type Database = {
           business_id?: string | null
           created_at?: string | null
           description?: string | null
-          end_date: string
+          end_date?: string | null
           id?: string
           is_live_on_marketplace?: boolean | null
           is_repeatable?: boolean | null
@@ -299,7 +373,7 @@ export type Database = {
           business_id?: string | null
           created_at?: string | null
           description?: string | null
-          end_date?: string
+          end_date?: string | null
           id?: string
           is_live_on_marketplace?: boolean | null
           is_repeatable?: boolean | null
@@ -567,7 +641,7 @@ export type Database = {
       customer_progress: {
         Row: {
           created_at: string | null
-          current_tier: string | null
+          current_tier: number | null
           customer_id: string | null
           id: string
           points_balance: number | null
@@ -577,7 +651,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          current_tier?: string | null
+          current_tier?: number | null
           customer_id?: string | null
           id?: string
           points_balance?: number | null
@@ -587,7 +661,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          current_tier?: string | null
+          current_tier?: number | null
           customer_id?: string | null
           id?: string
           points_balance?: number | null
@@ -706,6 +780,65 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      points_configuration: {
+        Row: {
+          all_products_eligible: boolean | null
+          business_id: string | null
+          collection_based_earning_enabled: boolean | null
+          collection_ids: string[] | null
+          created_at: string | null
+          currency: string | null
+          customer_tier: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          points_expiry_days: number | null
+          points_expiry_enabled: boolean | null
+          points_per_currency: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          all_products_eligible?: boolean | null
+          business_id?: string | null
+          collection_based_earning_enabled?: boolean | null
+          collection_ids?: string[] | null
+          created_at?: string | null
+          currency?: string | null
+          customer_tier?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          points_expiry_days?: number | null
+          points_expiry_enabled?: boolean | null
+          points_per_currency?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          all_products_eligible?: boolean | null
+          business_id?: string | null
+          collection_based_earning_enabled?: boolean | null
+          collection_ids?: string[] | null
+          created_at?: string | null
+          currency?: string | null
+          customer_tier?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          points_expiry_days?: number | null
+          points_expiry_enabled?: boolean | null
+          points_per_currency?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "points_configuration_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "business"
             referencedColumns: ["id"]
           },
         ]
@@ -923,6 +1056,29 @@ export type Database = {
             }
             Returns: string
           }
+      create_campaign: {
+        Args: {
+          campaign_data: Json
+          reward_data: Json
+        }
+        Returns: {
+          business_id: string | null
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          is_live_on_marketplace: boolean | null
+          is_repeatable: boolean | null
+          max_achievement: number | null
+          min_tier: number | null
+          name: string
+          start_date: string
+          status: string | null
+          type: string
+          updated_at: string | null
+          visibility: string | null
+        }
+      }
       custom_access_token_hook: {
         Args: {
           event: Json
@@ -944,12 +1100,56 @@ export type Database = {
         Args: {
           customer_uuid: string
         }
-        Returns: string
+        Returns: number
       }
       get_jwt: {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_points_configuration:
+        | {
+            Args: {
+              p_business_id: string
+            }
+            Returns: {
+              all_products_eligible: boolean | null
+              business_id: string | null
+              collection_based_earning_enabled: boolean | null
+              collection_ids: string[] | null
+              created_at: string | null
+              currency: string | null
+              customer_tier: string | null
+              id: string
+              is_active: boolean | null
+              metadata: Json | null
+              points_expiry_days: number | null
+              points_expiry_enabled: boolean | null
+              points_per_currency: number | null
+              updated_at: string | null
+            }
+          }
+        | {
+            Args: {
+              p_business_id: string
+              p_customer_tier: string
+            }
+            Returns: {
+              all_products_eligible: boolean | null
+              business_id: string | null
+              collection_based_earning_enabled: boolean | null
+              collection_ids: string[] | null
+              created_at: string | null
+              currency: string | null
+              customer_tier: string | null
+              id: string
+              is_active: boolean | null
+              metadata: Json | null
+              points_expiry_days: number | null
+              points_expiry_enabled: boolean | null
+              points_per_currency: number | null
+              updated_at: string | null
+            }
+          }
       get_user_id_by_email: {
         Args: {
           user_email: string
@@ -997,6 +1197,13 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      is_social_account_connected: {
+        Args: {
+          p_business_id: string
+          p_platform: Database["public"]["Enums"]["social_platform_type"]
+        }
+        Returns: boolean
       }
       is_user_in_business: {
         Args: {
@@ -1049,11 +1256,45 @@ export type Database = {
         }
         Returns: unknown
       }
+      update_campaign: {
+        Args: {
+          campaign_id: string
+          campaign_data: Json
+          reward_data: Json
+        }
+        Returns: {
+          business_id: string | null
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          is_live_on_marketplace: boolean | null
+          is_repeatable: boolean | null
+          max_achievement: number | null
+          min_tier: number | null
+          name: string
+          start_date: string
+          status: string | null
+          type: string
+          updated_at: string | null
+          visibility: string | null
+        }
+      }
     }
     Enums: {
       kyc_status: "pending" | "verified" | "rejected"
       onboarding_status: "pending" | "complete"
       profile_status: "pending" | "incomplete" | "complete"
+      social_platform_type:
+        | "instagram"
+        | "facebook"
+        | "twitter"
+        | "tiktok"
+        | "threads"
+        | "linkedin"
+        | "youtube"
+        | "bluesky"
+        | "mastodon"
       teamRoles: "owner" | "member"
       user_status: "ONLINE" | "OFFLINE"
     }

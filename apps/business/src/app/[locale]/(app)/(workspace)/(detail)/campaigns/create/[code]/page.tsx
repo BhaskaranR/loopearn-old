@@ -30,15 +30,6 @@ export default function CampaignCreatePage({
 
   return (
     <div className="flex h-full">
-      <div className="absolute right-0 top-0">
-        <Link
-          href="/campaigns"
-          className="group flex items-center gap-1 p-3 pr-7 text-sm text-black/50 transition-colors enabled:hover:text-black/80"
-        >
-          Exit
-          <ExpandingArrow className="size-3" />
-        </Link>
-      </div>
       <SidebarProvider defaultOpen>
         <CampaignSidebar
           selectedType={selectedType}

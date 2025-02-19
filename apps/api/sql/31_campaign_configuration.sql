@@ -10,11 +10,13 @@ CREATE TABLE campaigns (
     visibility TEXT CHECK (visibility IN ('AlwaysVisible', 'NotVisible')) DEFAULT 'AlwaysVisible', -- Visibility setting
     status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active', -- Campaign status
     start_date TIMESTAMP, -- Campaign start time
-    end_date TIMESTAMP, -- Campaign end time
+    end_date TIMESTAMP , -- Campaign end time
     is_live_on_marketplace BOOLEAN DEFAULT FALSE, -- Is the campaign live on the marketplace?
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now()
 );
+
+ALTER TABLE campaigns ALTER COLUMN end_date DROP NOT NULL;
 
 -- ✅ Campaign Action Rewards
 CREATE TABLE campaign_action_rewards (
@@ -29,6 +31,8 @@ CREATE TABLE campaign_action_rewards (
     action_type TEXT CHECK (action_type IN ('write_review', 'follow_instagram', 'other')) NOT NULL, -- Type of action
     action_details TEXT, -- Additional details about the action
     coupon_code TEXT, -- If the reward is a coupon, store code here
+    uses_per_customer INT DEFAULT 1, -- How many times a customer can use the reward
+    minimum_purchase_amount NUMERIC DEFAULT 0, -- Minimum purchase amount required to use the reward
     created_at TIMESTAMP DEFAULT now()
 );
 

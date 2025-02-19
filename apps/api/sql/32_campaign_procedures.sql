@@ -10,6 +10,7 @@ AS $$
 DECLARE
   new_campaign "campaigns";
 BEGIN
+
   -- Insert campaign
   INSERT INTO "campaigns" (
     business_id,
@@ -35,8 +36,8 @@ BEGIN
     (campaign_data->>'min_tier')::int,
     campaign_data->>'visibility',
     campaign_data->>'status',
-    (campaign_data->>'start_date')::timestamp,
-    (campaign_data->>'end_date')::timestamp,
+    COALESCE((campaign_data->>'start_date')::timestamp, NULL),
+    COALESCE((campaign_data->>'end_date')::timestamp, NULL),
     (campaign_data->>'is_live_on_marketplace')::boolean
   RETURNING * INTO new_campaign;
 
