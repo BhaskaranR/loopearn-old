@@ -106,7 +106,7 @@ export default function CampaignManager({
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <Link
-            href="/campaigns"
+            href="/campaigns/create"
             className="group flex items-center gap-1 p-3 pr-7 text-sm text-black/50 transition-colors enabled:hover:text-black/80"
           >
             <ArrowLeft className="h-4 w-4" />

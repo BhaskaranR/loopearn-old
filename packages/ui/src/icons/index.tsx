@@ -868,3 +868,5 @@ export { Pinterest } from "./pinterest";
 export { Threads } from "./threads";
 export { Mastodon } from "./mastodon";
 export { Facebook } from "./facebook";
+export { Instagram } from "./instagram";
+export { Youtube } from "./youtube";

@@ -14,7 +14,7 @@ CREATE TABLE campaigns (
     expires_after INT, -- Campaign expiration time in days
     is_live_on_marketplace BOOLEAN DEFAULT FALSE, -- Is the campaign live on the marketplace?
     created_at TIMESTAMP DEFAULT now(),
-    updated_at TIMESTAMP DEFAULT now()
+    updated_at TIMESTAMP DEFAULT now(),
 );
 
 ALTER TABLE campaigns ALTER COLUMN end_date DROP NOT NULL;
@@ -35,7 +35,7 @@ CREATE TABLE campaign_action_rewards (
     coupon_code TEXT, -- If the reward is a coupon, store code here
     uses_per_customer INT DEFAULT 1, -- How many times a customer can use the reward
     minimum_purchase_amount NUMERIC DEFAULT 0, -- Minimum purchase amount required to use the reward
-    created_at TIMESTAMP DEFAULT now()
+    created_at TIMESTAMP DEFAULT now(),
 );
 
 -- ✅ Get Campaigns for a Customer's Tier

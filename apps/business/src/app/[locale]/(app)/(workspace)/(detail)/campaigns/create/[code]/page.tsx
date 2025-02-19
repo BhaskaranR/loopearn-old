@@ -23,11 +23,9 @@ export default function CampaignCreatePage({
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const router = useRouter();
   const template = getCampaignTemplate(params.code.toString());
-
   if (!template) {
     redirect("/not-found");
   }
-
   return (
     <div className="flex h-full">
       <SidebarProvider defaultOpen>

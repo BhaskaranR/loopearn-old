@@ -5,6 +5,8 @@ export interface CampaignTemplate
   id: string;
   platform:
     | "facebook"
+    | "twitter"
+    | "youtube"
     | "instagram"
     | "tiktok"
     | "instagram_business"
@@ -15,6 +17,7 @@ export interface CampaignTemplate
   defaultDescription: string;
   availableActions: {
     action_type:
+      | "subscribe"
       | "write_review"
       | "follow_instagram"
       | "share"
@@ -137,6 +140,87 @@ export const campaignTemplates: CampaignTemplate[] = [
     ],
   },
   {
+    id: "twitter",
+    platform: "twitter",
+    icon: "twitter",
+    defaultName: "Twitter Campaign",
+    defaultDescription: "Engage with us on Twitter to earn rewards!",
+    type: "Reward Campaign",
+    is_repeatable: true,
+    max_achievement: 3,
+    min_tier: 1,
+    visibility: "AlwaysVisible",
+    status: "active",
+    is_live_on_marketplace: true,
+    audience: "all",
+    reward: {
+      reward_type: "percentage_discount",
+      reward_value: 10,
+      reward_unit: "%",
+      applies_to: "entire",
+      uses_per_customer: 1,
+    },
+    availableActions: [
+      {
+        action_type: "share",
+        name: "Share Post",
+        description: "Share our content on Twitter",
+      },
+      {
+        action_type: "like",
+        name: "Like Post",
+        description: "Like our post on Twitter",
+      },
+      {
+        action_type: "comment",
+        name: "Comment",
+        description: "Comment on our post",
+      },
+    ],
+  },
+  {
+    id: "youtube",
+    platform: "youtube",
+    icon: "youtube",
+    defaultName: "YouTube Campaign",
+    defaultDescription: "Engage with us on YouTube to earn rewards!",
+    type: "Reward Campaign",
+    is_repeatable: true,
+    max_achievement: 3,
+    min_tier: 1,
+    visibility: "AlwaysVisible",
+    status: "active",
+    is_live_on_marketplace: true,
+    audience: "all",
+    reward: {
+      reward_type: "percentage_discount",
+      reward_value: 10,
+      reward_unit: "%",
+    },
+    availableActions: [
+      {
+        action_type: "subscribe",
+        name: "Subscribe",
+        description: "Subscribe to our YouTube channel",
+      },
+      {
+        action_type: "share",
+        name: "Share Video",
+        description: "Share our video on YouTube",
+      },
+      {
+        action_type: "like",
+        name: "Like Video",
+        description: "Like our video on YouTube",
+      },
+      {
+        action_type: "comment",
+        name: "Comment",
+        description: "Comment on our video",
+      },
+    ],
+  },
+  {
     id: "review",
     platform: "review",
     icon: "star",
@@ -223,38 +307,6 @@ interface CampaignTypeGroupEntry {
   selectedAction: string;
 }
 
-export const CampaignTypeGroups: Record<string, CampaignTypeGroupEntry> = {
-  "facebook-share": { id: "facebook", selectedAction: "share" },
-  "facebook-like": { id: "facebook", selectedAction: "like" },
-  "facebook-comment": { id: "facebook", selectedAction: "comment" },
-  "facebook-follow": { id: "facebook", selectedAction: "follow" },
-  "instagram-share": { id: "instagram", selectedAction: "share" },
-  "instagram-like": { id: "instagram", selectedAction: "like" },
-  "instagram-comment": { id: "instagram", selectedAction: "comment" },
-  "instagram-follow": { id: "instagram", selectedAction: "follow" },
-  "twitter-share": { id: "twitter", selectedAction: "share" },
-  "twitter-like": { id: "twitter", selectedAction: "like" },
-  "twitter-follow": { id: "twitter", selectedAction: "follow" },
-  "threads-share": { id: "threads", selectedAction: "share" },
-  "threads-like": { id: "threads", selectedAction: "like" },
-  "threads-follow": { id: "threads", selectedAction: "follow" },
-  "threads-comment": { id: "threads", selectedAction: "comment" },
-  "tiktok-share": { id: "tiktok", selectedAction: "share" },
-  "tiktok-like": { id: "tiktok", selectedAction: "like" },
-  "tiktok-follow": { id: "tiktok", selectedAction: "follow" },
-  "tiktok-comment": { id: "tiktok", selectedAction: "comment" },
-  "youtube-share": { id: "youtube", selectedAction: "share" },
-  "youtube-like": { id: "youtube", selectedAction: "like" },
-  "youtube-follow": { id: "youtube", selectedAction: "follow" },
-  "pinterest-share": { id: "pinterest", selectedAction: "share" },
-  "vote-campaign": { id: "vote", selectedAction: "vote" },
-  "wheel-of-fortune": { id: "wheel", selectedAction: "spin" },
-  "slot-machine": { id: "slot", selectedAction: "spin" },
-  "scratch-and-win": { id: "scratch", selectedAction: "scratch" },
-  "daily-streak": { id: "daily", selectedAction: "daily" },
-  "quiz-master": { id: "quiz", selectedAction: "quiz" },
-};
-
 // Helper function to get templates by platform
 export function getCampaignTemplatesByPlatform(
   platform: CampaignTemplate["platform"],
@@ -271,25 +323,13 @@ export function getTemplateActions(templateId: string) {
 // Function to get a campaign template by ID
 export function getCampaignTemplate(id: string) {
   try {
-    const campaignGroupId = CampaignTypeGroups[id];
-    if (!campaignGroupId) {
-      throw new Error(`Campaign type group not found for ID: ${id}`);
-    }
-
     const campaignTemplate = campaignTemplates.find(
-      (template) => template.id === campaignGroupId.id,
+      (template) => template.id === id,
     );
-
     if (!campaignTemplate) {
-      throw new Error(
-        `Campaign template not found for ID: ${campaignGroupId.id}`,
-      );
+      throw new Error(`Campaign template not found for ID: ${id}`);
     }
-
-    return {
-      ...campaignTemplate,
-      selectedAction: campaignGroupId.selectedAction,
-    };
+    return campaignTemplate;
   } catch (error) {
     console.error("Error fetching campaign template:", error);
     return null;
