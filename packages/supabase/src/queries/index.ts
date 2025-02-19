@@ -165,7 +165,7 @@ export async function getSubCategoriesQuery(
     .eq("category_id", categoryId);
 }
 
-export async function getCampaignsQuery(supabase: Client) {
+export async function getCampaignsQuery(supabase: Client, businessId: string) {
   return supabase
     .from("campaigns")
     .select(`
@@ -181,6 +181,7 @@ export async function getCampaignsQuery(supabase: Client) {
         created_at
       )
     `)
+    .eq("business_id", businessId)
     .throwOnError();
 }
 

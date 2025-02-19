@@ -28,6 +28,10 @@ CREATE TABLE customer_progress (
     updated_at TIMESTAMP DEFAULT now()
 );
 
+ALTER TABLE customer_progress
+    ALTER COLUMN current_tier TYPE INTEGER USING current_tier::INTEGER,
+    ALTER COLUMN current_tier SET DEFAULT 1;
+
 
 CREATE TABLE customer_action_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -131,19 +135,19 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON customer_progress TO authenticated;
 
 -- ✅ Get Customer Tier
 CREATE OR REPLACE FUNCTION get_customer_tier(customer_uuid UUID) 
-RETURNS TEXT 
+RETURNS INTEGER 
 LANGUAGE plpgsql 
 AS $$
 DECLARE 
-    customer_tier TEXT;
+    customer_tier INTEGER;
 BEGIN
     -- Fetch the customer's tier from customer_progress
     SELECT current_tier INTO customer_tier 
     FROM customer_progress 
     WHERE customer_id = customer_uuid;
 
-    -- If no tier is found, default to 'Bronze' (or any default tier)
-    RETURN COALESCE(customer_tier, 'Bronze');
+    -- Return the integer value of the customer's tier
+    RETURN customer_tier;
 END;
 $$;
 

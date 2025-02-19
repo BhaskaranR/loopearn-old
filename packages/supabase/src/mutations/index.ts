@@ -5,6 +5,7 @@ import {
   getUserInviteQueryByCode,
 } from "../queries";
 import type { Client } from "../types";
+import type { Tables, TablesInsert, TablesUpdate } from "../types/db";
 
 export async function updateUser(supabase: Client, data: any) {
   const {
@@ -185,4 +186,65 @@ export async function canJoinTeamByInviteCode(supabase: Client, code: string) {
   });
 
   return inviteData;
+}
+
+// Campaign Types
+export interface CreateCampaignParams extends TablesInsert<"campaigns"> {
+  reward: TablesInsert<"campaign_action_rewards">;
+}
+
+interface UpdateCampaignParams extends TablesUpdate<"campaigns"> {
+  reward?: Partial<TablesUpdate<"campaign_action_rewards">>;
+}
+
+// Campaign Mutations
+export async function createCampaign(
+  supabase: Client,
+  params: CreateCampaignParams,
+): Promise<Tables<"campaigns"> | null> {
+  const { reward, ...campaignData } = params;
+
+  const { data, error } = await supabase.rpc("create_campaign", {
+    campaign_data: campaignData,
+    reward_data: reward,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
+export async function updateCampaign(
+  supabase: Client,
+  id: string,
+  params: UpdateCampaignParams,
+): Promise<Tables<"campaigns"> | null> {
+  const { reward, ...campaignData } = params;
+
+  const { data, error } = await supabase.rpc("update_campaign", {
+    campaign_id: id,
+    campaign_data: campaignData,
+    reward_data: reward!,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
+export async function deleteCampaign(
+  supabase: Client,
+  id: string,
+): Promise<{ success: boolean }> {
+  const { error } = await supabase.from("campaigns").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return { success: true };
 }

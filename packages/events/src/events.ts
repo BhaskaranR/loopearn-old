@@ -87,4 +87,16 @@ export const LogEvents = {
     name: "Update App Settings",
     channel: "app",
   },
+  CampaignCreate: {
+    name: "Campaign Create",
+    channel: "campaign",
+  },
+  CampaignUpdate: {
+    name: "Campaign Update",
+    channel: "campaign",
+  },
+  CampaignDelete: {
+    name: "Campaign Delete",
+    channel: "campaign",
+  },
 };

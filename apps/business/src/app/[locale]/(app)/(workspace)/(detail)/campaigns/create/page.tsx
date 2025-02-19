@@ -1,6 +1,7 @@
 "use client";
 
 import { CampaignTemplates } from "@/components/campaign-templates";
+import { CampaignSidebar } from "@/components/campaign/campaign-sidebar";
 import { Badge } from "@loopearn/ui/badge";
 import { Card } from "@loopearn/ui/card";
 import { cn } from "@loopearn/ui/cn";
@@ -10,7 +11,6 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
-import { CampaignSidebar } from "../components/campaign-sidebar";
 
 export default function CreateCampaignPage() {
   const router = useRouter();
@@ -76,7 +76,9 @@ export default function CreateCampaignPage() {
                     "p-6 cursor-pointer hover:border-primary transition-colors",
                     selectedType === template.id && "border-primary",
                   )}
-                  onClick={() => setSelectedType(template.id)}
+                  onClick={() =>
+                    router.push(`/campaigns/create/${template.id}`)
+                  }
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -92,9 +94,9 @@ export default function CreateCampaignPage() {
                         {template.description}
                       </p>
                     </div>
-                    {template.icon && (
-                      <template.icon className="h-8 w-8 text-muted-foreground" />
-                    )}
+                    <div className="h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <template.icon className="h-4 w-4 text-blue-600" />
+                    </div>
                   </div>
                 </Card>
               ))}

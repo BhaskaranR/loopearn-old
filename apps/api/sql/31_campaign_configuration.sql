@@ -10,11 +10,15 @@ CREATE TABLE campaigns (
     visibility TEXT CHECK (visibility IN ('AlwaysVisible', 'NotVisible')) DEFAULT 'AlwaysVisible', -- Visibility setting
     status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active', -- Campaign status
     start_date TIMESTAMP, -- Campaign start time
-    end_date TIMESTAMP, -- Campaign end time
+    end_date TIMESTAMP , -- Campaign end time
+    expires_after INT, -- Campaign expiration time in days
     is_live_on_marketplace BOOLEAN DEFAULT FALSE, -- Is the campaign live on the marketplace?
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now()
 );
+
+ALTER TABLE campaigns ALTER COLUMN end_date DROP NOT NULL;
+ALTER TABLE campaigns ADD COLUMN expires_after INT;
 
 -- ✅ Campaign Action Rewards
 CREATE TABLE campaign_action_rewards (
@@ -26,9 +30,11 @@ CREATE TABLE campaign_action_rewards (
     reward_type TEXT CHECK (reward_type IN ('rank_points', 'wallet_points', 'wallet_multiplier', 'coupon', 'percentage_discount', 'fixed_amount_discount')) NOT NULL, -- Reward type
     reward_value INT DEFAULT 0, -- Reward amount (points, multiplier, etc.)
     reward_unit TEXT CHECK (reward_unit IN ('points', '%', 'currency')) DEFAULT 'points', -- Unit of the reward
-    action_type TEXT CHECK (action_type IN ('write_review', 'follow_instagram', 'other')) NOT NULL, -- Type of action
+    action_type TEXT NOT NULL, -- Type of action
     action_details TEXT, -- Additional details about the action
     coupon_code TEXT, -- If the reward is a coupon, store code here
+    uses_per_customer INT DEFAULT 1, -- How many times a customer can use the reward
+    minimum_purchase_amount NUMERIC DEFAULT 0, -- Minimum purchase amount required to use the reward
     created_at TIMESTAMP DEFAULT now()
 );
 

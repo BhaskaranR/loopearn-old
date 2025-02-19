@@ -867,3 +867,4 @@ export { Tiktok } from "./tiktok";
 export { Pinterest } from "./pinterest";
 export { Threads } from "./threads";
 export { Mastodon } from "./mastodon";
+export { Facebook } from "./facebook";
