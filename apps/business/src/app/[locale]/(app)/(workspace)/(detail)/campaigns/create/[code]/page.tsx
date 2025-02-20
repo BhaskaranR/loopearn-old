@@ -3,6 +3,7 @@ import CampaignManager from "@/components/campaign/campaign-manager";
 import { CampaignSidebar } from "@/components/campaign/campaign-sidebar";
 import { getCampaignTemplate } from "@/utils/campaigns";
 import { ExpandingArrow } from "@loopearn/ui/icons";
+import { ScrollArea } from "@loopearn/ui/scroll-area";
 import { SidebarProvider } from "@loopearn/ui/sidebar";
 import Link from "next/link";
 import { notFound, redirect, useRouter } from "next/navigation";
@@ -36,13 +37,21 @@ export default function CampaignCreatePage({
             setSelectedType(type);
           }}
         />
-        <div className="flex-1 space-y-6 p-8 pt-6">
-          <CampaignManager
-            template={template}
-            defaultIcon={template.icon}
-            defaultPlatform={template.platform}
-          />
-        </div>
+
+        <ScrollArea
+          className="h-[calc(100vh-10px)]  bg-background flex w-full flex-col gap-4 text-left"
+          hideScrollbar
+        >
+          <div className="relative flex flex-col items-center min-h-screen justify-center">
+            <div className="flex w-full  md:max-w-3xl flex-col items-center justify-center">
+              <CampaignManager
+                template={template}
+                defaultIcon={template.icon}
+                defaultPlatform={template.platform}
+              />
+            </div>
+          </div>
+        </ScrollArea>
       </SidebarProvider>
     </div>
   );

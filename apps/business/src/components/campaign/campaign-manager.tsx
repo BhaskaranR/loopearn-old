@@ -8,6 +8,7 @@ import {
 import type { CampaignTemplate } from "@/utils/campaigns";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@loopearn/ui/button";
+import { Calendar } from "@loopearn/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@loopearn/ui/card";
 import {
   Form,
@@ -18,14 +19,16 @@ import {
   FormMessage,
 } from "@loopearn/ui/form";
 import {
-  Calendar,
+  Calendar as CalendarIcon,
   Disc,
   Facebook,
   Instagram,
   Star,
-  TikTok,
+  Tiktok,
 } from "@loopearn/ui/icons";
 import { Input } from "@loopearn/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@loopearn/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@loopearn/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -34,11 +37,15 @@ import {
   SelectValue,
 } from "@loopearn/ui/select";
 import { useToast } from "@loopearn/ui/use-toast";
+import { addDays, format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { ArrowLeft, Check, Edit2 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import React from "react";
+import type { DateRange } from "react-day-picker";
+import { Controller, useForm } from "react-hook-form";
+import { DatePickerWithRange } from "./date-picker-range";
 
 interface CampaignManagerProps {
   template?: CampaignTemplate;
@@ -52,6 +59,22 @@ export default function CampaignManager({
   defaultPlatform = "facebook",
 }: CampaignManagerProps) {
   const { toast } = useToast();
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
+    template?.start_date && template?.end_date
+      ? {
+          from: new Date(template.start_date),
+          to: new Date(template.end_date),
+        }
+      : undefined,
+  );
+
+  const [activation, setActivation] = React.useState<
+    "always-active" | "scheduled"
+  >(
+    !template?.start_date && !template?.end_date
+      ? "always-active"
+      : "scheduled",
+  );
 
   const action = useAction(createCampaignAction, {
     onError: ({ error }) => {
@@ -83,6 +106,8 @@ export default function CampaignManager({
           status: "active",
           is_live_on_marketplace: false,
           audience: "all",
+          start_date: new Date(),
+          end_date: addDays(new Date(), 30),
           trigger: {
             action_type: "share",
             social_link: "",
@@ -98,7 +123,7 @@ export default function CampaignManager({
   });
 
   async function onSubmit(data: CreateCampaignFormValues) {
-    await createCampaignAction(data);
+    action.execute(data);
   }
 
   return (
@@ -123,9 +148,6 @@ export default function CampaignManager({
               {defaultPlatform}
             </h1>
           </div>
-          <Button variant="ghost" size="icon">
-            <Edit2 className="h-4 w-4" />
-          </Button>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">Cancel</Button>
@@ -138,11 +160,10 @@ export default function CampaignManager({
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Campaign Details</CardTitle>
+              <CardTitle>Basic Information</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Basic Information</h3>
                 <FormField
                   control={form.control}
                   name="name"
@@ -201,8 +222,16 @@ export default function CampaignManager({
                     </FormItem>
                   )}
                 />
+              </div>
+            </CardContent>
+          </Card>
 
-                <h3 className="text-lg font-medium">Triggers</h3>
+          <Card>
+            <CardHeader>
+              <CardTitle>Triggers</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
                 <FormField
                   control={form.control}
                   name="trigger.action_type"
@@ -261,8 +290,16 @@ export default function CampaignManager({
                     </FormItem>
                   )}
                 />
+              </div>
+            </CardContent>
+          </Card>
 
-                <h3 className="text-lg font-medium">Rewards</h3>
+          <Card>
+            <CardHeader>
+              <CardTitle>Rewards</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
                 <FormField
                   control={form.control}
                   name="reward.reward_type"
@@ -377,6 +414,77 @@ export default function CampaignManager({
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>Activation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <RadioGroup
+                  defaultValue="scheduled"
+                  onValueChange={(value) => {
+                    setActivation(value as "always-active" | "scheduled");
+                    if (value === "always-active") {
+                      form.setValue("start_date", new Date().toISOString());
+                      form.setValue(
+                        "end_date",
+                        addDays(new Date(), 30).toISOString(),
+                      );
+                    }
+                  }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="always-active" id="always-active" />
+                    <label htmlFor="always-active" className="text-sm">
+                      Always Active
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="scheduled" id="scheduled" />
+                    <label htmlFor="scheduled" className="text-sm">
+                      Scheduled
+                    </label>
+                  </div>
+                </RadioGroup>
+
+                {activation === "scheduled" && (
+                  <Controller
+                    control={form.control}
+                    name="start_date"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Start Date</FormLabel>
+                        <DatePickerWithRange
+                          className="w-full"
+                          value={{
+                            from: new Date(field.value),
+                            to: new Date(form.getValues("end_date")),
+                          }}
+                          onChange={(range) => {
+                            setDateRange(range);
+                            if (range?.from) {
+                              form.setValue(
+                                "start_date",
+                                format(range.from, "yyyy-MM-dd"),
+                              );
+                            }
+                            if (range?.to) {
+                              form.setValue(
+                                "end_date",
+                                format(range.to, "yyyy-MM-dd"),
+                              );
+                            }
+                          }}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="mt-6 flex justify-end">
             <Button
               type="submit"
@@ -405,7 +513,7 @@ function DynamicIcon({
     case "instagram":
       return <Instagram className={className} />;
     case "tiktok":
-      return <TikTok className={className} />;
+      return <Tiktok className={className} />;
     case "star":
       return <Star className={className} />;
     case "wheel":

@@ -1,0 +1,16 @@
+@layer base {
+    :root {
+      --spin-wheel-segment-gap: 2px;
+      --spin-wheel-pointer-size: 1.5rem;
+      --spin-wheel-pointer-color: hsl(var(--primary));
+      --spin-wheel-border-width: 4px;
+      --spin-wheel-border-color: hsl(var(--border));
+      --spin-wheel-shadow: var(--shadow-xl);
+    }
+  
+    .dark {
+      --spin-wheel-border-color: hsl(var(--border));
+    }
+  }
+  
+  

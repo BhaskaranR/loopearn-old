@@ -23,36 +23,31 @@ export const createCampaignAction = authActionClient
     },
   })
   .action(async ({ parsedInput, ctx: { user, supabase } }) => {
-    try {
-      const params: CreateCampaignParams = {
-        ...parsedInput,
-        business_id: user.business_id,
-        start_date: parsedInput.start_date || new Date().toISOString(),
-        end_date: parsedInput.end_date || null,
-        name: parsedInput.name,
-        type: parsedInput.type,
-        visibility: parsedInput.visibility,
-        expires_after: null,
-        reward: {
-          ...parsedInput.reward,
-          reward_type: parsedInput.reward.reward_type,
-          action_type: parsedInput.trigger.action_type,
-          action_details: parsedInput.trigger.social_link,
-          uses_per_customer: parsedInput.reward.uses_per_customer,
-          minimum_purchase_amount: parsedInput.reward.minimum_purchase_amount,
-        },
-        min_tier: parsedInput.min_tier,
-      };
-      if (!isValidUUID(params.business_id)) {
-        throw new Error("Invalid business_id format");
-      }
-      await createCampaignMutation(supabase, params);
-      revalidateTag(`campaigns_${user.business_id}`);
-      redirect("/campaigns");
-    } catch (error) {
-      console.error("Failed to create campaign", error);
-      throw new Error("Failed to create campaign");
+    const params: CreateCampaignParams = {
+      ...parsedInput,
+      business_id: user.business_id,
+      start_date: parsedInput.start_date || new Date().toISOString(),
+      end_date: parsedInput.end_date || null,
+      name: parsedInput.name,
+      type: parsedInput.type,
+      visibility: parsedInput.visibility,
+      expires_after: null,
+      reward: {
+        ...parsedInput.reward,
+        reward_type: parsedInput.reward.reward_type,
+        action_type: parsedInput.trigger.action_type,
+        action_details: parsedInput.trigger.social_link,
+        uses_per_customer: parsedInput.reward.uses_per_customer,
+        minimum_purchase_amount: parsedInput.reward.minimum_purchase_amount,
+      },
+      min_tier: parsedInput.min_tier,
+    };
+    if (!isValidUUID(params.business_id)) {
+      throw new Error("Invalid business_id format");
     }
+    await createCampaignMutation(supabase, params);
+    revalidateTag(`campaigns_${user.business_id}`);
+    redirect("/campaigns");
   });
 
 export const updateCampaignAction = authActionClient
