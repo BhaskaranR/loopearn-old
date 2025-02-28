@@ -35,65 +35,54 @@ const actions: Action[] = [
 export function WorkFlowSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over) {
-      console.log(`Dropped ${active.id} over ${over.id}`);
-      // Handle the drop - you can implement your logic here
-    }
-  };
-
   return (
-    <DndContext onDragEnd={handleDragEnd}>
-      <Sidebar {...props}>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Action Based</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {CampaignTemplates.filter((t) => t.type === "action-based").map(
-                  (c) => (
-                    <DraggableMenuItem
-                      key={c.id}
-                      id={c.id}
-                      title={c.title}
-                      icon={c.icon}
-                    />
-                  ),
-                )}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarGroup>
-            <SidebarGroupLabel>
-              Game Based
-              <Badge variant="blue" className="text-xs ml-2">
-                Coming Soon
-              </Badge>
-            </SidebarGroupLabel>
-          </SidebarGroup>
-
-          <Separator />
-        </SidebarContent>
-        <SidebarRail />
-        <SidebarFooter>
-          <SidebarGroupLabel>Actions</SidebarGroupLabel>
+    <Sidebar className="border-r-0" {...props}>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Action Based</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {actions.map((action) => (
-                <DraggableMenuItem
-                  key={action.id}
-                  id={action.id}
-                  title={action.title}
-                  icon={action.icon}
-                />
-              ))}
+              {CampaignTemplates.filter((t) => t.type === "action-based").map(
+                (c) => (
+                  <DraggableMenuItem
+                    key={c.id}
+                    id={c.id}
+                    title={c.title}
+                    icon={c.icon}
+                  />
+                ),
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarFooter>
-      </Sidebar>
-    </DndContext>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            Game Based
+            <Badge variant="blue" className="text-xs ml-2">
+              Coming Soon
+            </Badge>
+          </SidebarGroupLabel>
+        </SidebarGroup>
+
+        <Separator />
+      </SidebarContent>
+      <SidebarRail />
+      <SidebarFooter>
+        <SidebarGroupLabel>Actions</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {actions.map((action) => (
+              <DraggableMenuItem
+                key={action.id}
+                id={action.id}
+                title={action.title}
+                icon={action.icon}
+              />
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarFooter>
+    </Sidebar>
   );
 }
