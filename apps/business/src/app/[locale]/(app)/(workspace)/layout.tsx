@@ -1,6 +1,4 @@
 import { AI } from "@/actions/ai/chat";
-import { Header } from "@/components/header";
-import Toolbar from "@/components/onboarding/toolbar";
 import { getOnboardingStep } from "@/utils/get-onboarding-step";
 import { setupAnalytics } from "@loopearn/events/server";
 import {
@@ -9,14 +7,7 @@ import {
   getUser,
 } from "@loopearn/supabase/cached-queries";
 import { nanoid } from "nanoid";
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
-
-const ClientSidebarWrapper = dynamic(
-  () =>
-    import("@/components/sidebar-wrapper").then((mod) => mod.SidebarWrapper),
-  { ssr: false },
-);
 
 export default async function Layout({
   children,
@@ -30,17 +21,13 @@ export default async function Layout({
   if (teams?.data?.length === 0 && pendingInvites?.data?.length === 0) {
     redirect("/onboarding/welcome");
   }
-
   if (user?.business_id) {
     const key = `${user?.business_id}`;
     const onboardingStep = await getOnboardingStep(key);
-    if (
-      !(onboardingStep === "stripe-pending" || onboardingStep === "completed")
-    ) {
+    if (onboardingStep !== "completed") {
       redirect(`/onboarding?slug=${user.business.slug}`);
     }
   }
-
   if (!user?.business_id && user?.business_users.length === 0) {
     redirect("/teams");
   }

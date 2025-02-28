@@ -1,7 +1,6 @@
 "use client";
 import { type SignUpFormValues, signUpSchema } from "@/actions/schema";
 import { verifyOtpAction } from "@/actions/verify-otp-action";
-import { Logo } from "@/components/logo";
 import { SystemBanner } from "@/components/system-banner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@loopearn/supabase/client";
@@ -18,6 +17,7 @@ import { Form, FormControl, FormField, FormItem } from "@loopearn/ui/form";
 import { Input } from "@loopearn/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@loopearn/ui/input-otp";
 import { Label } from "@loopearn/ui/label";
+import { Logo } from "@loopearn/ui/logo";
 import { useToast } from "@loopearn/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";

@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteCampaignAction } from "@/actions/campaign-actions";
 import { Button } from "@loopearn/ui/button";
 import {
   Select,
@@ -16,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@loopearn/ui/table";
+import { useToast } from "@loopearn/ui/use-toast";
 import {
   type ColumnDef,
   flexRender,
@@ -24,6 +26,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,11 +36,34 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
   columns,
-  data,
+  data: initialData,
 }: DataTableProps<TData, TValue>) {
+  const [data, setData] = useState(initialData);
+  const toast = useToast();
+
+  const deleteCampaign = useAction(deleteCampaignAction, {
+    onError: () => {
+      toast({
+        duration: 3500,
+        variant: "error",
+        title: "Something went wrong please try again.",
+      });
+    },
+  });
+  const handleDeleteCampaign = ({ id }) => {
+    setData((prev) => {
+      return prev.filter((item) => item.id !== id);
+    });
+
+    deleteCampaign.execute({ id });
+  };
+
   const table = useReactTable({
     data,
     columns,
+    meta: {
+      deleteCampaign: handleDeleteCampaign,
+    },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });

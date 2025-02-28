@@ -1,10 +1,29 @@
 "use client";
 
 import type { Database } from "@loopearn/supabase/db";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@loopearn/ui/alert-dialog";
 import { Badge } from "@loopearn/ui/badge";
 import { Button } from "@loopearn/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@loopearn/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Loader2 } from "lucide-react";
 import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
 export const columns: ColumnDef<
   Database["public"]["Tables"]["campaigns"]["Row"]
@@ -55,11 +74,59 @@ export const columns: ColumnDef<
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row, table }) => {
       return (
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+        <AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Link href={`/campaigns/create/${row.original.id}`}>
+                  Set live on LoopEarn
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href={`/campaigns/edit/${row.original.id}`}>Edit</Link>
+              </DropdownMenuItem>
+
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem className="text-destructive">
+                  Delete
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                transaction.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  table.options.meta?.deleteCampaign({
+                    id: row.original.id,
+                  });
+                }}
+              >
+                {table.options.meta?.deleteCampaign?.status === "executing" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Confirm"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       );
     },
   },

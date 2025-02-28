@@ -47,6 +47,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SLACK_CLIENT_ID: z.string(),
     NEXT_PUBLIC_SLACK_OAUTH_REDIRECT_URL: z.string(),
     NEXT_PUBLIC_SLACK_STATE_SECRET: z.string(),
+    NEXT_PUBLIC_SUPABASE_UPLOAD_URL: z.string(),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -86,6 +87,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_SLACK_OAUTH_REDIRECT_URL,
     NEXT_PUBLIC_SLACK_STATE_SECRET: process.env.NEXT_PUBLIC_SLACK_STATE_SECRET,
     SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
+    NEXT_PUBLIC_SUPABASE_UPLOAD_URL:
+      process.env.NEXT_PUBLIC_SUPABASE_UPLOAD_URL,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });

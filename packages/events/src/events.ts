@@ -99,4 +99,20 @@ export const LogEvents = {
     name: "Campaign Delete",
     channel: "campaign",
   },
+  UpdateMarketplace: {
+    name: "Update Marketplace",
+    channel: "marketplace",
+  },
+  DeleteMarketplace: {
+    name: "Delete Marketplace",
+    channel: "marketplace",
+  },
+  CreateMarketplace: {
+    name: "Create Marketplace",
+    channel: "marketplace",
+  },
+  AddMarketplaceAddress: {
+    name: "Add Marketplace Address",
+    channel: "marketplace",
+  },
 };

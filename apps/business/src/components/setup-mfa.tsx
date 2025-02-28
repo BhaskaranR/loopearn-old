@@ -3,9 +3,9 @@
 import { EnrollMFA } from "@/components/enroll-mfa";
 import { Button } from "@loopearn/ui/button";
 import { Icons } from "@loopearn/ui/icons";
+import { Logo } from "@loopearn/ui/logo";
 import Link from "next/link";
 import { useState } from "react";
-import { Logo } from "./logo";
 
 function MfaStart({ setEnroll }) {
   return (

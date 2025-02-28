@@ -30,7 +30,7 @@ export function LaterButton({
           !(isLoading || isSuccessful) && "opacity-0",
         )}
       />
-      {children || "I'll do this later"}
+      {children || "I'll continue with the free plan"}
       <div className="w-3" />
     </button>
   );

@@ -60,18 +60,32 @@ export async function getBusinessByIdQuery(
 ) {
   return supabase
     .from("business")
-    .select("*")
+    .select(
+      `
+      *,
+      business_address!inner(*)
+    `,
+    )
     .eq("id", businessId)
     .throwOnError()
     .single();
 }
 
-export async function getBusinessBySlugQuery(
-  supabase: Client,
-  userId: string,
-  slug: string,
-) {
-  return supabase.from("business").select("*").eq("slug", slug).single();
+export async function getBusinessBySlugQuery(supabase: Client, slug: string) {
+  const { data, error } = await supabase
+    .from("business")
+    .select(
+      `
+      *,
+      business_address(*)
+    `,
+    )
+    .eq("slug", slug)
+    .single();
+
+  if (error) throw error;
+
+  return data;
 }
 
 export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {

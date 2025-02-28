@@ -1,7 +1,7 @@
 import { InviteForm } from "@/components/forms/invite-form";
-import { Logo } from "@/components/logo";
 import { UserMenu } from "@/components/user-menu";
 import { Icons } from "@loopearn/ui/icons";
+import { Logo } from "@loopearn/ui/logo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";

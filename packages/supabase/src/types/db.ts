@@ -58,12 +58,13 @@ export type Database = {
         Row: {
           address_line_1: string | null
           address_line_2: string | null
+          amenities: Json | null
           avatar_url: string | null
           billing_cycle_start: number | null
           business_currency: string | null
           business_description: string | null
           business_email: string | null
-          business_image: string | null
+          business_logo: string | null
           business_meta: Json | null
           business_name: string
           business_phone: string | null
@@ -73,14 +74,25 @@ export type Database = {
           contact_name: string | null
           country: string | null
           created_at: string | null
+          description: Json | null
+          directions: Json | null
           document_classification: boolean | null
           id: string
           invoice_prefix: string | null
+          marketplace_listing_status:
+            | Database["public"]["Enums"]["listing_status"]
+            | null
+          marketplace_onboarding_step: string | null
           payment_failed_at: string | null
           payout_method_id: string | null
           payouts_enabled: boolean | null
           plan: string | null
           postal_code: string | null
+          profile_bio: string | null
+          profile_photos: string[] | null
+          profile_videos: string[] | null
+          profile_website_url: string | null
+          redemption_rules: Json | null
           referral_code: string | null
           shopify_store_id: string | null
           slug: string | null
@@ -88,18 +100,20 @@ export type Database = {
           stripe_connect_id: string | null
           stripe_id: string | null
           tags: string[] | null
+          terms_conditions: Json | null
           updated_at: string | null
           website_url: string | null
         }
         Insert: {
           address_line_1?: string | null
           address_line_2?: string | null
+          amenities?: Json | null
           avatar_url?: string | null
           billing_cycle_start?: number | null
           business_currency?: string | null
           business_description?: string | null
           business_email?: string | null
-          business_image?: string | null
+          business_logo?: string | null
           business_meta?: Json | null
           business_name: string
           business_phone?: string | null
@@ -109,14 +123,25 @@ export type Database = {
           contact_name?: string | null
           country?: string | null
           created_at?: string | null
+          description?: Json | null
+          directions?: Json | null
           document_classification?: boolean | null
           id?: string
           invoice_prefix?: string | null
+          marketplace_listing_status?:
+            | Database["public"]["Enums"]["listing_status"]
+            | null
+          marketplace_onboarding_step?: string | null
           payment_failed_at?: string | null
           payout_method_id?: string | null
           payouts_enabled?: boolean | null
           plan?: string | null
           postal_code?: string | null
+          profile_bio?: string | null
+          profile_photos?: string[] | null
+          profile_videos?: string[] | null
+          profile_website_url?: string | null
+          redemption_rules?: Json | null
           referral_code?: string | null
           shopify_store_id?: string | null
           slug?: string | null
@@ -124,18 +149,20 @@ export type Database = {
           stripe_connect_id?: string | null
           stripe_id?: string | null
           tags?: string[] | null
+          terms_conditions?: Json | null
           updated_at?: string | null
           website_url?: string | null
         }
         Update: {
           address_line_1?: string | null
           address_line_2?: string | null
+          amenities?: Json | null
           avatar_url?: string | null
           billing_cycle_start?: number | null
           business_currency?: string | null
           business_description?: string | null
           business_email?: string | null
-          business_image?: string | null
+          business_logo?: string | null
           business_meta?: Json | null
           business_name?: string
           business_phone?: string | null
@@ -145,14 +172,25 @@ export type Database = {
           contact_name?: string | null
           country?: string | null
           created_at?: string | null
+          description?: Json | null
+          directions?: Json | null
           document_classification?: boolean | null
           id?: string
           invoice_prefix?: string | null
+          marketplace_listing_status?:
+            | Database["public"]["Enums"]["listing_status"]
+            | null
+          marketplace_onboarding_step?: string | null
           payment_failed_at?: string | null
           payout_method_id?: string | null
           payouts_enabled?: boolean | null
           plan?: string | null
           postal_code?: string | null
+          profile_bio?: string | null
+          profile_photos?: string[] | null
+          profile_videos?: string[] | null
+          profile_website_url?: string | null
+          redemption_rules?: Json | null
           referral_code?: string | null
           shopify_store_id?: string | null
           slug?: string | null
@@ -160,10 +198,70 @@ export type Database = {
           stripe_connect_id?: string | null
           stripe_id?: string | null
           tags?: string[] | null
+          terms_conditions?: Json | null
           updated_at?: string | null
           website_url?: string | null
         }
         Relationships: []
+      }
+      business_address: {
+        Row: {
+          address_line_1: string
+          address_line_2: string | null
+          business_id: string | null
+          city: string
+          country: string
+          created_at: string | null
+          directions: string | null
+          geography: unknown | null
+          id: string
+          latitude: number
+          longitude: number
+          postal_code: string
+          state: string
+          updated_at: string | null
+        }
+        Insert: {
+          address_line_1: string
+          address_line_2?: string | null
+          business_id?: string | null
+          city: string
+          country: string
+          created_at?: string | null
+          directions?: string | null
+          geography?: unknown | null
+          id?: string
+          latitude: number
+          longitude: number
+          postal_code: string
+          state: string
+          updated_at?: string | null
+        }
+        Update: {
+          address_line_1?: string
+          address_line_2?: string | null
+          business_id?: string | null
+          city?: string
+          country?: string
+          created_at?: string | null
+          directions?: string | null
+          geography?: unknown | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          postal_code?: string
+          state?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_address_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       business_social_accounts: {
         Row: {
@@ -1288,6 +1386,13 @@ export type Database = {
     }
     Enums: {
       kyc_status: "pending" | "verified" | "rejected"
+      listing_status:
+        | "draft"
+        | "created"
+        | "reviewing"
+        | "document_required"
+        | "approved"
+        | "rejected"
       onboarding_status: "pending" | "complete"
       profile_status: "pending" | "incomplete" | "complete"
       social_platform_type:

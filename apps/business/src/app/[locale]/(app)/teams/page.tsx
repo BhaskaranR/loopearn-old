@@ -1,10 +1,10 @@
-import { Logo } from "@/components/logo";
 import { SelectTeamTable } from "@/components/tables/select-team/table";
 import { UserMenu } from "@/components/user-menu";
 import {
   getPendingBusinessInvites,
   getTeams,
 } from "@loopearn/supabase/cached-queries";
+import { Logo } from "@loopearn/ui/logo";
 import { TooltipProvider } from "@loopearn/ui/tooltip";
 import type { Metadata } from "next";
 import Link from "next/link";

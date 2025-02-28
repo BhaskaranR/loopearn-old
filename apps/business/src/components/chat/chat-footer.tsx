@@ -1,10 +1,10 @@
 import { useAssistantStore } from "@/store/assistant";
 import { Icons } from "@loopearn/ui/icons";
+import { Logo } from "@loopearn/ui/logo";
 import { Popover, PopoverContent, PopoverTrigger } from "@loopearn/ui/popover";
 import { app, platform } from "@todesktop/client-core";
 import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 import { useRouter } from "next/navigation";
-import { Logo } from "../logo";
 
 type Props = {
   onSubmit: () => void;

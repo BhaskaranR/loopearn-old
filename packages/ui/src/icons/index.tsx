@@ -870,3 +870,5 @@ export { Mastodon } from "./mastodon";
 export { Facebook } from "./facebook";
 export { Instagram } from "./instagram";
 export { Youtube } from "./youtube";
+export { CrazySpinner } from "./crazy-spinner";
+export { Magic } from "./magic";

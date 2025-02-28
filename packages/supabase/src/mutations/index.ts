@@ -248,3 +248,13 @@ export async function deleteCampaign(
 
   return { success: true };
 }
+
+export async function createBusinessAddress(supabase: Client, data: any) {
+  // delete existing address
+  await supabase
+    .from("business_address")
+    .delete()
+    .eq("business_id", data.business_id);
+
+  return supabase.from("business_address").insert(data).select("*").single();
+}

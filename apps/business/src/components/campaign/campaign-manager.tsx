@@ -94,6 +94,12 @@ export default function CampaignManager({
           name: template.defaultName,
           description: template.defaultDescription,
           ...template,
+          start_date: template.start_date
+            ? new Date(template.start_date).toISOString()
+            : undefined,
+          end_date: template.end_date
+            ? new Date(template.end_date).toISOString()
+            : undefined,
         }
       : {
           name: "",
@@ -106,8 +112,6 @@ export default function CampaignManager({
           status: "active",
           is_live_on_marketplace: false,
           audience: "all",
-          start_date: new Date(),
-          end_date: addDays(new Date(), 30),
           trigger: {
             action_type: "share",
             social_link: "",

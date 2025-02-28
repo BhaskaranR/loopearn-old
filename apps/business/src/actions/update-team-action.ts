@@ -29,7 +29,8 @@ export const updateTeamAction = authActionClient
       }
 
       revalidateTag(`user_${user.id}`);
-      revalidateTag(`team_${id}`);
+      revalidateTag(`teams_${id}`);
+      revalidateTag(`business_by_slug_${team.slug}`);
 
       if (redirectTo) {
         redirect(redirectTo);

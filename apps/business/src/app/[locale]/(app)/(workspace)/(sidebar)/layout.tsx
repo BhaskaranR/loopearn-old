@@ -1,16 +1,5 @@
-import { AI } from "@/actions/ai/chat";
 import { Header } from "@/components/header";
-import Toolbar from "@/components/onboarding/toolbar";
-import { getOnboardingStep } from "@/utils/get-onboarding-step";
-import { setupAnalytics } from "@loopearn/events/server";
-import {
-  getPendingBusinessInvites,
-  getTeams,
-  getUser,
-} from "@loopearn/supabase/cached-queries";
-import { nanoid } from "nanoid";
 import dynamic from "next/dynamic";
-import { redirect } from "next/navigation";
 
 const ClientSidebarWrapper = dynamic(
   () =>
@@ -26,7 +15,6 @@ export default async function Layout({
   return (
     <ClientSidebarWrapper headerContent={<Header />}>
       {children}
-      <Toolbar show={["onboarding"]} />
     </ClientSidebarWrapper>
   );
 }

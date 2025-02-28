@@ -25,7 +25,20 @@ CREATE TABLE business(
   country varchar(255),
   stripe_id text,
   stripe_connect_id text,
-  plan text default 'free',
+
+  profile_photos TEXT[],
+  profile_videos TEXT[],
+  profile_bio TEXT,
+  profile_website_url TEXT,
+  description JSONB,
+  terms_conditions JSONB,
+  directions JSONB,
+  redemption_rules JSONB,
+  amenities JSONB,
+  marketplace_onboarding_step text DEFAULT null,
+  marketplace_listing_status listing_status DEFAULT 'draft',
+
+  plan text default 'free_plus',
   payouts_enabled boolean default false,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   referral_code text UNIQUE,
@@ -37,6 +50,7 @@ CREATE TABLE business(
   invoice_prefix text,
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP;
 );
+
 
 -- Add columns from business_loopearn_profile to business
 -- Drop columns from business table
@@ -348,17 +362,7 @@ CREATE TYPE listing_status AS enum(
 CREATE TABLE business_marketplace (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   business_id UUID REFERENCES business(id) ON DELETE CASCADE,
-  profile_photos TEXT[],
-  profile_videos TEXT[],
-  profile_bio TEXT,
-  profile_website_url TEXT,
-  description JSONB,
-  terms_conditions JSONB,
-  directions JSONB,
-  redemption_rules JSONB,
-  amenities JSONB,
-  step text DEFAULT 'description',
-  status listing_status DEFAULT 'draft',
+ 
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -401,3 +405,4 @@ CREATE POLICY "Allow only admins to delete marketplace places" ON business_marke
 
 -- Ensure the policies are applied
 ALTER TABLE business_marketplace FORCE ROW LEVEL SECURITY;
+

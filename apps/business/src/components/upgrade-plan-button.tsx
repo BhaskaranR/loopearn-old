@@ -45,37 +45,35 @@ export function UpgradePlanButton({
     {
       onSuccess: async (res) => {
         setClicked(false);
-        const { url } = res.data;
-        router.push(url);
-        // if (currentPlan === "free") {
-        //   const sessionId = "your_test_session_id"; // Replace with a valid test session ID
-        //   console.log("Using session ID:", sessionId); // Log the session ID
-        //   const stripe = await getStripe();
-        //   if (stripe) {
-        //     stripe.redirectToCheckout({ sessionId }).then((result) => {
-        //       if (result.error) {
-        //         console.error("Stripe checkout error:", result.error.message);
-        //         toast({
-        //           title: "Checkout Error",
-        //           description: result.error.message,
-        //           variant: "destructive",
-        //         });
-        //       } else {
-        //         console.log("Redirecting to checkout...");
-        //       }
-        //     });
-        //   } else {
-        //     console.error("Stripe not loaded");
-        //     toast({
-        //       title: "Stripe Error",
-        //       description: "Stripe could not be loaded. Please try again.",
-        //       variant: "destructive",
-        //     });
-        //   }
-        // } else {
-        //   const { url } = res.data;
-        //   router.push(url);
-        // }
+        if (currentPlan === "free_plus") {
+          const sessionId = "your_test_session_id"; // Replace with a valid test session ID
+          console.log("Using session ID:", sessionId); // Log the session ID
+          const stripe = await getStripe();
+          if (stripe) {
+            stripe.redirectToCheckout({ sessionId }).then((result) => {
+              if (result.error) {
+                console.error("Stripe checkout error:", result.error.message);
+                toast({
+                  title: "Checkout Error",
+                  description: result.error.message,
+                  variant: "destructive",
+                });
+              } else {
+                console.log("Redirecting to checkout...");
+              }
+            });
+          } else {
+            console.error("Stripe not loaded");
+            toast({
+              title: "Stripe Error",
+              description: "Stripe could not be loaded. Please try again.",
+              variant: "destructive",
+            });
+          }
+        } else {
+          const { url } = res.data;
+          router.push(url);
+        }
       },
       onError: ({ error }) => {
         setClicked(false);

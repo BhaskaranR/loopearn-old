@@ -40,8 +40,6 @@ export const sendSupportSchema = z.object({
 export const updateBusinessSchema = z.object({
   name: z.string().min(2).max(32).optional(),
   email: z.string().email().optional(),
-  inbox_email: z.string().email().optional().nullable(),
-  inbox_forwarding: z.boolean().optional().nullable(),
   logo_url: z.string().url().optional(),
   document_classification: z.boolean().optional(),
   revalidatePath: z.string().optional(),
@@ -501,3 +499,66 @@ export const updateCampaignSchema = z
   );
 
 export type UpdateCampaignFormValues = z.infer<typeof updateCampaignSchema>;
+
+export const marketplaceProfileSchema = z.object({
+  slug: z.string().optional(),
+  profile_photos: z.array(z.string()).optional(),
+  profile_videos: z.array(z.string()).optional(),
+  profile_bio: z
+    .string()
+    .min(300, { message: "Description must be at least 300 characters" })
+    .max(10000, { message: "Description cannot exceed 10000 characters" })
+    .optional(),
+  profile_website_url: z.string().url().optional(),
+  description: z.record(z.any()).optional(), // JSONB can be any JSON object
+  terms_conditions: z.record(z.any()).optional(),
+  directions: z.record(z.any()).optional(),
+  redemption_rules: z.record(z.any()).optional(),
+  amenities: z.record(z.any()).optional(),
+  marketplace_onboarding_step: z.string().optional(),
+  created_at: z
+    .string()
+    .datetime()
+    .default(() => new Date().toISOString()),
+  updated_at: z
+    .string()
+    .datetime()
+    .default(() => new Date().toISOString()),
+  redirectTo: z.string().optional(),
+});
+
+export type MarketplaceProfileFormValues = z.infer<
+  typeof marketplaceProfileSchema
+>;
+
+export const updateAddressSchema = z.object({
+  business_id: z.string(),
+  address_line_1: z.string(),
+  address_line_2: z.string().optional(),
+  city: z.string(),
+  state: z.string(),
+  postal_code: z.string(),
+  country: z.string(),
+  slug: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  redirectTo: z.string().optional(),
+  marketplace_onboarding_step: z.string().optional(),
+});
+
+export type UpdateAddressFormValues = z.infer<typeof updateAddressSchema>;
+
+export const addMarketplaceAddressSchema = z.object({
+  business_id: z.string(),
+  address_line_1: z.string(),
+  address_line_2: z.string().optional(),
+  city: z.string(),
+  state: z.string(),
+  postal_code: z.string(),
+  country: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  revalidatePath: z.string().optional(),
+  redirectTo: z.string().optional(),
+  marketplace_onboarding_step: z.string().optional(),
+});

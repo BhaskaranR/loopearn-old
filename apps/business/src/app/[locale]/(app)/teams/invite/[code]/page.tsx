@@ -1,10 +1,10 @@
-import { Logo } from "@/components/logo";
 import { UserMenu } from "@/components/user-menu";
 import { createClient } from "@loopearn/supabase/admin";
 import { canJoinTeamByInviteCode } from "@loopearn/supabase/mutations";
 import { Avatar, AvatarFallback, AvatarImageNext } from "@loopearn/ui/avatar";
 import { Button } from "@loopearn/ui/button";
 import { Card, CardContent, CardFooter } from "@loopearn/ui/card";
+import { Logo } from "@loopearn/ui/logo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";

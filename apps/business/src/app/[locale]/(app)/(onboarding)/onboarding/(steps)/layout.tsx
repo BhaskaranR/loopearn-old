@@ -1,6 +1,5 @@
-import { Logo } from "@/components/logo";
+import { Logo } from "@loopearn/ui/logo";
 import type { PropsWithChildren } from "react";
-import { ExitButton } from "./exit-button";
 
 export default async function Layout({ children }: PropsWithChildren) {
   return (
