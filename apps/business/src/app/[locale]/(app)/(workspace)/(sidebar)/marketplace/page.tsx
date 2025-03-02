@@ -4,16 +4,12 @@ import { CompleteListingButton } from "@/components/complete-listing-button";
 import { ImageGallery } from "@/components/images/image-gallery";
 import { ImagesList } from "@/components/images/image-list";
 import { NoVerificationState } from "@/components/no-verification-state";
-import {
-  getBusinessMarketplace,
-  getUser,
-} from "@loopearn/supabase/cached-queries";
+import { getBusinessById, getUser } from "@loopearn/supabase/cached-queries";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@loopearn/ui/breadcrumb";
 import { Button } from "@loopearn/ui/button";
@@ -23,13 +19,17 @@ import { redirect } from "next/navigation";
 export default async function Marketplace() {
   // get business marketplace
 
-  const marketplace = await getBusinessMarketplace();
   const user = await getUser();
+  const businessId = user?.business_id;
+  const { data: marketplace, error } = await getBusinessById(businessId);
 
   const isVerified = user?.business.payouts_enabled;
   const slug = user?.business?.slug;
 
-  if (!marketplace || (marketplace && marketplace.status !== "approved")) {
+  if (
+    !marketplace ||
+    (marketplace && marketplace.marketplace_listing_status !== "approved")
+  ) {
     return (
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">

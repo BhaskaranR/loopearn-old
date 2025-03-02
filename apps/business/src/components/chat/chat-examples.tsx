@@ -23,7 +23,21 @@ const itemVariant = {
   show: { y: 0, opacity: 1 },
 };
 
-export function ChatExamples({ onSubmit }) {
+interface ChatExamplesProps {
+  onSubmit: (message: string) => void;
+  examples?: string[];
+}
+
+export const DEFAULT_EXAMPLES = [
+  "What are the best practices for customer retention?",
+  "How can I increase my store's conversion rate?",
+  "What marketing strategies work best for small businesses?",
+];
+
+export function ChatExamples({
+  onSubmit,
+  examples = DEFAULT_EXAMPLES,
+}: ChatExamplesProps) {
   const items = useMemo(() => shuffle(chatExamples), []);
   const ref = useRef<HTMLDivElement>(null);
   const { events } = useDraggable(ref as MutableRefObject<HTMLDivElement>);
@@ -33,29 +47,20 @@ export function ChatExamples({ onSubmit }) {
   }, 0);
 
   return (
-    <div
-      className="absolute z-10 bottom-[100px] left-0 right-0 overflow-scroll scrollbar-hide cursor-grabbing hidden md:block"
-      {...events}
-      ref={ref}
-    >
-      <motion.ul
-        variants={listVariant}
-        initial="hidden"
-        animate="show"
-        className="flex space-x-4 ml-4 items-center"
-        style={{ width: `${totalLength}px` }}
-      >
-        {items.map((example) => (
-          <button key={example} type="button" onClick={() => onSubmit(example)}>
-            <motion.li
-              variants={itemVariant}
-              className="font-mono text-[#878787] bg-[#F2F1EF] text-xs dark:bg-[#1D1D1D] px-3 py-2 rounded-full cursor-default"
-            >
-              {example}
-            </motion.li>
+    <div className="px-4 py-2 space-y-2">
+      <p className="text-xs text-muted-foreground">Try asking:</p>
+      <div className="flex flex-wrap gap-2">
+        {examples.map((example) => (
+          <button
+            key={example}
+            type="button"
+            onClick={() => onSubmit(example)}
+            className="text-xs px-2 py-1 rounded-md bg-muted hover:bg-muted/80 transition-colors"
+          >
+            {example}
           </button>
         ))}
-      </motion.ul>
+      </div>
     </div>
   );
 }

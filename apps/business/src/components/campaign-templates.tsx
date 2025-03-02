@@ -1,4 +1,5 @@
 "use client";
+
 import {
   ExpandingArrow,
   Google,
@@ -8,6 +9,7 @@ import {
   Twitter,
   Youtube,
 } from "@loopearn/ui/icons";
+import { Award, Calendar, Gift, PlusCircle } from "lucide-react";
 import {
   Calculator,
   CircleDot,
@@ -336,4 +338,9 @@ export const CampaignTemplates: Template[] = [
     comingSoon: true,
     usageCount: 156,
   },
+];
+
+export const actions = [
+  { id: "reward-coupon", title: "Reward a Coupon", icon: Gift },
+  { id: "add-points", title: "Add Points", icon: PlusCircle },
 ];

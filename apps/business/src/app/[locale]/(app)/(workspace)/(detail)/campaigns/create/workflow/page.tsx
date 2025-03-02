@@ -1,8 +1,16 @@
 "use client";
 
+import { CampaignTemplates, actions } from "@/components/campaign-templates";
 import { WorkflowCanvas } from "@/components/campaign/workflow/workflow-canvas";
+import { WorkflowItem } from "@/components/campaign/workflow/workflow-item";
 import { WorkFlowSidebar } from "@/components/campaign/workflow/workflow-sidebar";
-import { DndContext, type DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { Button } from "@loopearn/ui/button";
 import { Input } from "@loopearn/ui/input";
 import {
@@ -37,82 +45,81 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+interface WorkflowItemType {
+  id: string;
+  title: string;
+  icon?: React.ElementType;
+  type: "trigger" | "reward";
+}
+
 export default function WorkflowPage() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<WorkflowItemType | null>(
+    null,
+  );
+  const [triggerItems, setTriggerItems] = useState<WorkflowItemType[]>([]);
+  const [rewardItems, setRewardItems] = useState<WorkflowItemType[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const router = useRouter();
 
-  const sidebarItems = [
-    {
-      icon: <Webhook className="h-4 w-4" />,
-      label: "Send Webhook",
-      color: "bg-green-600",
-    },
-    {
-      icon: <Mail className="h-4 w-4" />,
-      label: "Send Email",
-      color: "bg-green-600",
-    },
-    {
-      icon: <Phone className="h-4 w-4" />,
-      label: "Send Mobile Push",
-      color: "bg-green-600",
-    },
-    {
-      icon: <MessageSquare className="h-4 w-4" />,
-      label: "Send Web Message",
-      color: "bg-green-600",
-    },
-    {
-      icon: <MessageSquare className="h-4 w-4" />,
-      label: "SMS",
-      color: "bg-green-600/50",
-    },
-    {
-      icon: <Star className="h-4 w-4" />,
-      label: "Reward a Coupon",
-      color: "bg-green-600",
-    },
-    {
-      icon: <Crown className="h-4 w-4" />,
-      label: "Reward a Badge",
-      color: "bg-green-600",
-    },
-    {
-      icon: <PlusCircle className="h-4 w-4" />,
-      label: "Add points",
-      color: "bg-green-600",
-    },
-    {
-      icon: <MinusCircle className="h-4 w-4" />,
-      label: "Deduct Points",
-      color: "bg-green-600",
-    },
-    {
-      icon: <Tag className="h-4 w-4" />,
-      label: "Add Tag",
-      color: "bg-green-600",
-    },
-    {
-      icon: <Tag className="h-4 w-4" />,
-      label: "Remove Tag",
-      color: "bg-green-600",
-    },
-  ];
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveId(null);
 
-    if (over) {
-      console.log(`Dropped ${active.id} over ${over.id}`);
-      // Handle the drop - you can implement your logic here
+    if (!over) return;
+
+    if (over.id === "triggers-container") {
+      // Item was dropped in triggers container
+      const draggedItem = CampaignTemplates.find(
+        (item) => item.id === active.id,
+      );
+      if (draggedItem) {
+        setTriggerItems((items) => [...items, { ...draggedItem }]);
+      }
+    } else if (over.id === "rewards-container") {
+      // Item was dropped in rewards container
+      const draggedItem = actions.find((item) => item.id === active.id);
+      if (draggedItem) {
+        setRewardItems((items) => [...items, { ...draggedItem }]);
+      }
+    } else {
+      // Handle reordering within containers
+      const container = over.id.includes("triggers")
+        ? triggerItems
+        : rewardItems;
+      const setItems = over.id.includes("triggers")
+        ? setTriggerItems
+        : setRewardItems;
+
+      const oldIndex = container.findIndex((item) => item.id === active.id);
+      const newIndex = container.findIndex((item) => item.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        setItems((items) => arrayMove(items, oldIndex, newIndex));
+      }
     }
+  };
+
+  const activeItem = activeId
+    ? [...CampaignTemplates, ...triggerItems, ...rewardItems].find(
+        (item) => item.id === activeId,
+      )
+    : null;
+
+  const handleConfigure = (item: WorkflowItemType) => {
+    setSelectedItem(item);
+    setIsSheetOpen(true);
   };
 
   return (
     <SidebarProvider>
       <div className="h-screen w-full flex flex-col">
         {/* Header */}
-        <header className="border-b bg-background p-4">
+        <header className="border-b bg-background p-4 z-30">
           <div className="flex items-center justify-between max-w-[1400px] mx-auto">
             <div className="flex items-center gap-4">
               <Button
@@ -146,55 +153,50 @@ export default function WorkflowPage() {
           </div>
         </header>
 
-        {/* Sidebar and Main Content */}
-        <div className="relative  flex">
-          <DndContext onDragEnd={handleDragEnd}>
-            <WorkFlowSidebar className="absolute" />
-            <SidebarInset className="p-0">
-              <div className="flex-1 flex">
-                <div className="flex-1 bg-dot-pattern">
-                  <WorkflowCanvas />
-                </div>
-
-                {/* Right Sidebar */}
+        {/* Main content */}
+        <div className="flex-1">
+          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <div className="flex h-full">
+              <WorkFlowSidebar className="h-full py-10" />
+              <div className="flex-1 p-4 bg-dot-pattern">
+                <WorkflowCanvas
+                  triggerItems={triggerItems}
+                  rewardItems={rewardItems}
+                  onConfigure={handleConfigure}
+                />
               </div>
-            </SidebarInset>
+            </div>
 
-            {/* Coupon Sheet */}
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Reward a Coupon</SheetTitle>
-                </SheetHeader>
-                <div className="mt-6">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Coupon Type</label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="free-product">
-                            Free Product
-                          </SelectItem>
-                          <SelectItem value="free-shipping">
-                            Free Shipping
-                          </SelectItem>
-                          <SelectItem value="fixed-amount">
-                            Fixed Amount-based Discount
-                          </SelectItem>
-                          <SelectItem value="percentage">
-                            Percentage-based Discount
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+            <DragOverlay>
+              {activeItem ? (
+                <WorkflowItem
+                  id={activeItem.id}
+                  title={activeItem.title}
+                  icon={activeItem.icon}
+                />
+              ) : null}
+            </DragOverlay>
           </DndContext>
+
+          {/* Coupon Sheet */}
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>
+                  {selectedItem?.title || "Configure Item"}
+                </SheetTitle>
+              </SheetHeader>
+              <div className="mt-6">
+                <div className="space-y-4">
+                  {selectedItem?.type === "trigger" ? (
+                    <div>Trigger</div>
+                  ) : (
+                    <div>Reward</div>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </SidebarProvider>

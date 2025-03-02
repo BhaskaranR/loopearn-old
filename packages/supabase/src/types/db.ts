@@ -422,9 +422,110 @@ export type Database = {
           reward_value?: number | null
           uses_per_customer?: number | null
         }
+        Relationships: []
+      }
+      campaign_actions: {
+        Row: {
+          action_details: string | null
+          action_type: string
+          campaign_id: string | null
+          created_at: string | null
+          icon_url: string | null
+          id: string
+          is_mandatory: boolean | null
+          order_index: number | null
+          platform: string | null
+          redirection_button_link: string | null
+          redirection_button_text: string | null
+          required_count: number | null
+          social_link: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          action_details?: string | null
+          action_type: string
+          campaign_id?: string | null
+          created_at?: string | null
+          icon_url?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          order_index?: number | null
+          platform?: string | null
+          redirection_button_link?: string | null
+          redirection_button_text?: string | null
+          required_count?: number | null
+          social_link?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          action_details?: string | null
+          action_type?: string
+          campaign_id?: string | null
+          created_at?: string | null
+          icon_url?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          order_index?: number | null
+          platform?: string | null
+          redirection_button_link?: string | null
+          redirection_button_text?: string | null
+          required_count?: number | null
+          social_link?: string | null
+          updated_at?: string | null
+        }
         Relationships: [
           {
-            foreignKeyName: "campaign_action_rewards_campaign_id_fkey"
+            foreignKeyName: "campaign_actions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_rewards: {
+        Row: {
+          campaign_id: string | null
+          coupon_code: string | null
+          created_at: string | null
+          expires_after: number | null
+          id: string
+          minimum_purchase_amount: number | null
+          reward_type: string
+          reward_unit: string | null
+          reward_value: number | null
+          updated_at: string | null
+          uses_per_customer: number | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          expires_after?: number | null
+          id?: string
+          minimum_purchase_amount?: number | null
+          reward_type: string
+          reward_unit?: string | null
+          reward_value?: number | null
+          updated_at?: string | null
+          uses_per_customer?: number | null
+        }
+        Update: {
+          campaign_id?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          expires_after?: number | null
+          id?: string
+          minimum_purchase_amount?: number | null
+          reward_type?: string
+          reward_unit?: string | null
+          reward_value?: number | null
+          updated_at?: string | null
+          uses_per_customer?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_rewards_campaign_id_fkey"
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
@@ -445,7 +546,7 @@ export type Database = {
           max_achievement: number | null
           min_tier: number | null
           name: string
-          start_date: string
+          start_date: string | null
           status: string | null
           type: string
           updated_at: string | null
@@ -463,7 +564,7 @@ export type Database = {
           max_achievement?: number | null
           min_tier?: number | null
           name: string
-          start_date: string
+          start_date?: string | null
           status?: string | null
           type: string
           updated_at?: string | null
@@ -481,7 +582,7 @@ export type Database = {
           max_achievement?: number | null
           min_tier?: number | null
           name?: string
-          start_date?: string
+          start_date?: string | null
           status?: string | null
           type?: string
           updated_at?: string | null
@@ -689,47 +790,39 @@ export type Database = {
       }
       customer_action_progress: {
         Row: {
-          action_type: string
-          campaign_action_reward_id: string | null
+          campaign_action_id: string | null
           campaign_id: string | null
           completed: boolean | null
           completed_at: string | null
+          created_at: string | null
           customer_id: string | null
           id: string
+          progress_count: number | null
+          updated_at: string | null
         }
         Insert: {
-          action_type: string
-          campaign_action_reward_id?: string | null
+          campaign_action_id?: string | null
           campaign_id?: string | null
           completed?: boolean | null
           completed_at?: string | null
+          created_at?: string | null
           customer_id?: string | null
           id?: string
+          progress_count?: number | null
+          updated_at?: string | null
         }
         Update: {
-          action_type?: string
-          campaign_action_reward_id?: string | null
+          campaign_action_id?: string | null
           campaign_id?: string | null
           completed?: boolean | null
           completed_at?: string | null
+          created_at?: string | null
           customer_id?: string | null
           id?: string
+          progress_count?: number | null
+          updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "customer_action_progress_campaign_action_reward_id_fkey"
-            columns: ["campaign_action_reward_id"]
-            isOneToOne: false
-            referencedRelation: "campaign_action_rewards"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "customer_action_progress_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "customer_action_progress_customer_id_fkey"
             columns: ["customer_id"]
@@ -1160,6 +1253,7 @@ export type Database = {
       create_campaign: {
         Args: {
           campaign_data: Json
+          actions_data: Json
           reward_data: Json
         }
         Returns: {
@@ -1174,7 +1268,7 @@ export type Database = {
           max_achievement: number | null
           min_tier: number | null
           name: string
-          start_date: string
+          start_date: string | null
           status: string | null
           type: string
           updated_at: string | null
@@ -1362,6 +1456,7 @@ export type Database = {
         Args: {
           campaign_id: string
           campaign_data: Json
+          actions_data: Json
           reward_data: Json
         }
         Returns: {
@@ -1376,7 +1471,7 @@ export type Database = {
           max_achievement: number | null
           min_tier: number | null
           name: string
-          start_date: string
+          start_date: string | null
           status: string | null
           type: string
           updated_at: string | null

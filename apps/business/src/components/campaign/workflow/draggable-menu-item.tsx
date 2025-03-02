@@ -22,7 +22,6 @@ export function DraggableMenuItem({
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id,
-      data: { title },
     });
 
   const style = transform
@@ -39,20 +38,21 @@ export function DraggableMenuItem({
       {...listeners}
       {...attributes}
       className={cn(
-        "flex items-center p-3 mb-2 bg-white rounded cursor-grab hover:bg-gray-100 transition-all duration-200",
-        "active:cursor-grabbing active:scale-95",
-        "dark:bg-secondary dark:hover:bg-secondary/80",
+        "flex items-center p-3 mb-2 bg-card rounded-lg border shadow-sm",
+        "hover:border-primary/50 transition-all duration-200",
         isDragging && "opacity-50",
         className,
       )}
     >
-      {Icon && (
-        <div className="text-muted-foreground">
-          <Icon className="w-4 h-4 mr-2" />
-        </div>
-      )}
-      <span className="font-medium">{title}</span>
-      <GripVertical className="w-4 h-4 ml-auto text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="flex items-center gap-3 flex-1">
+        {Icon && (
+          <div className="text-muted-foreground">
+            <Icon className="w-4 h-4" />
+          </div>
+        )}
+        <span className="font-medium">{title}</span>
+      </div>
+      <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
     </div>
   );
 }

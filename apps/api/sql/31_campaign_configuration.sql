@@ -10,47 +10,56 @@ CREATE TABLE campaigns (
     visibility TEXT CHECK (visibility IN ('AlwaysVisible', 'NotVisible')) DEFAULT 'AlwaysVisible', -- Visibility setting
     status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active', -- Campaign status
     start_date TIMESTAMP, -- Campaign start time
-    end_date TIMESTAMP , -- Campaign end time
+    end_date TIMESTAMP, -- Campaign end time
     expires_after INT, -- Campaign expiration time in days
     is_live_on_marketplace BOOLEAN DEFAULT FALSE, -- Is the campaign live on the marketplace?
     created_at TIMESTAMP DEFAULT now(),
-    updated_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now()
 );
 
-ALTER TABLE campaigns ALTER COLUMN end_date DROP NOT NULL;
-ALTER TABLE campaigns ADD COLUMN expires_after INT;
-
--- ✅ Campaign Action Rewards
-CREATE TABLE campaign_action_rewards (
+-- ✅ Campaign Actions
+CREATE TABLE campaign_actions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE, -- Links to campaign
+    campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE,
+    action_type TEXT NOT NULL, -- Type of action required (e.g., 'share', 'like', 'comment')
+    action_details TEXT, -- Additional details about the action
+    required_count INT DEFAULT 1, -- Number of times this action needs to be performed
+    order_index INT DEFAULT 0, -- Order in which actions should be completed (0 means any order)
+    is_mandatory BOOLEAN DEFAULT true, -- Whether this action is mandatory
+    social_link TEXT, -- Social media link if applicable
+    platform TEXT, -- Platform where action needs to be performed
     icon_url TEXT, -- Icon URL
     redirection_button_text TEXT, -- Call-to-action text
     redirection_button_link TEXT, -- Call-to-action link
-    reward_type TEXT CHECK (reward_type IN ('rank_points', 'wallet_points', 'wallet_multiplier', 'coupon', 'percentage_discount', 'fixed_amount_discount')) NOT NULL, -- Reward type
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now()
+);
+
+-- ✅ Campaign Rewards
+CREATE TABLE campaign_rewards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE,
+    reward_type TEXT CHECK (reward_type IN ('rank_points', 'wallet_points', 'wallet_multiplier', 'coupon', 'percentage_discount', 'fixed_amount_discount')) NOT NULL,
     reward_value INT DEFAULT 0, -- Reward amount (points, multiplier, etc.)
-    reward_unit TEXT CHECK (reward_unit IN ('points', '%', 'currency')) DEFAULT 'points', -- Unit of the reward
-    action_type TEXT NOT NULL, -- Type of action
-    action_details TEXT, -- Additional details about the action
+    reward_unit TEXT CHECK (reward_unit IN ('points', '%', 'currency')) DEFAULT 'points',
     coupon_code TEXT, -- If the reward is a coupon, store code here
     uses_per_customer INT DEFAULT 1, -- How many times a customer can use the reward
     minimum_purchase_amount NUMERIC DEFAULT 0, -- Minimum purchase amount required to use the reward
+    expires_after INT, -- Reward expiration in days
     created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now()
 );
 
--- ✅ Get Campaigns for a Customer's Tier
--- SELECT c.*
--- FROM campaigns c
--- JOIN campaign_eligibility ce ON c.id = ce.campaign_id
--- WHERE ce.min_tier <= (SELECT tier FROM customers WHERE id = 'customer-uuid');
+-- Add indexes for faster lookups
+CREATE INDEX idx_campaign_actions_campaign_id ON campaign_actions(campaign_id);
+CREATE INDEX idx_campaign_rewards_campaign_id ON campaign_rewards(campaign_id);
 
--- ✅ Get Rewards for a Campaign
--- SELECT * FROM campaign_action_rewards WHERE campaign_id = 'campaign-uuid';
-
-
--- 6. RLS for Campaigns
+-- Enable RLS
 ALTER TABLE campaigns ENABLE ROW LEVEL SECURITY;
-ALTER TABLE campaign_action_rewards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE campaign_actions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE campaign_rewards ENABLE ROW LEVEL SECURITY;
+
+
 
 -- ✅ Business Can Manage Their Own Campaigns
 CREATE POLICY business_manage_campaigns ON campaigns
@@ -58,44 +67,71 @@ CREATE POLICY business_manage_campaigns ON campaigns
     USING (is_user_in_business(business_id))
     WITH CHECK (is_user_in_business(business_id));
 
--- ✅ Customers Can View Only Active & Eligible Campaigns
-DROP POLICY IF EXISTS customer_view_active_campaigns ON campaigns;
-
-CREATE POLICY customer_view_active_campaigns ON campaigns
-    FOR SELECT
-    USING (
-        start_date <= now()
-        AND end_date >= now()
-        AND min_tier <= (get_customer_tier(auth.uid()))::INT
-    );
-
--- ✅ Business Can Manage Their Own Campaign Rewards
-CREATE POLICY business_manage_campaign_action_rewards ON campaign_action_rewards
+-- ✅ Business Can Manage Their Campaign Actions
+CREATE POLICY business_manage_campaign_actions ON campaign_actions
     FOR ALL
     USING (EXISTS (
         SELECT 1 FROM campaigns 
-        WHERE campaigns.id = campaign_action_rewards.campaign_id 
+        WHERE campaigns.id = campaign_actions.campaign_id 
         AND is_user_in_business(campaigns.business_id)
     ))
     WITH CHECK (EXISTS (
         SELECT 1 FROM campaigns 
-        WHERE campaigns.id = campaign_action_rewards.campaign_id 
+        WHERE campaigns.id = campaign_actions.campaign_id 
         AND is_user_in_business(campaigns.business_id)
     ));
 
+-- ✅ Business Can Manage Their Campaign Rewards
+CREATE POLICY business_manage_campaign_rewards ON campaign_rewards
+    FOR ALL
+    USING (EXISTS (
+        SELECT 1 FROM campaigns 
+        WHERE campaigns.id = campaign_rewards.campaign_id 
+        AND is_user_in_business(campaigns.business_id)
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM campaigns 
+        WHERE campaigns.id = campaign_rewards.campaign_id 
+        AND is_user_in_business(campaigns.business_id)
+    ));
 
--- -- ✅ Customers can only view campaign rewards they have earned based on events
--- CREATE POLICY customer_view_earned_rewards ON campaign_action_rewards
---     FOR SELECT
---     USING (
---         EXISTS (
---             SELECT 1 FROM events 
---             WHERE events.customer_id = auth.uid()
---             AND events.campaign_id = campaign_action_rewards.campaign_id
---         )
---     );
+-- ✅ Customers Can View Only Active & Eligible Campaigns
+CREATE POLICY customer_view_active_campaigns ON campaigns
+    FOR SELECT
+    USING (
+        start_date <= now()
+        AND (end_date IS NULL OR end_date >= now())
+        AND min_tier <= (get_customer_tier(auth.uid()))::INT
+    );
+
+-- ✅ Customers Can View Only Active & Eligible Campaign Actions
+CREATE POLICY customer_view_active_campaign_actions ON campaign_actions
+    FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM campaigns 
+            WHERE campaigns.id = campaign_actions.campaign_id 
+            AND (campaigns.end_date IS NULL OR campaigns.end_date >= now())
+            AND (campaigns.start_date <= now() OR campaigns.start_date IS NULL)
+            AND (campaigns.min_tier <= (get_customer_tier(auth.uid()))::INT OR campaigns.min_tier IS NULL)
+        )
+    );
+
+-- ✅ Customers Can View Only Active & Eligible Campaign Rewards
+CREATE POLICY customer_view_active_campaign_rewards ON campaign_rewards
+    FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM campaigns 
+            WHERE campaigns.id = campaign_rewards.campaign_id 
+            AND (campaigns.end_date IS NULL OR campaigns.end_date >= now())
+            AND (campaigns.start_date <= now() OR campaigns.start_date IS NULL)
+            AND (campaigns.min_tier <= (get_customer_tier(auth.uid()))::INT OR campaigns.min_tier IS NULL)
+        )
+    );
 
 
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON campaign_action_rewards TO authenticated;
+-- Grant permissions
 GRANT SELECT, INSERT, UPDATE, DELETE ON campaigns TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON campaign_actions TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON campaign_rewards TO authenticated;

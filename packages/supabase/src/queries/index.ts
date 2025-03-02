@@ -184,13 +184,17 @@ export async function getCampaignsQuery(supabase: Client, businessId: string) {
     .from("campaigns")
     .select(`
       *,
-      campaign_action_rewards(
+      campaign_actions(
+        id,
+        action_type,
+        action_details,
+        created_at
+      ),
+      campaign_rewards(
         id,
         reward_type,
         reward_value,
         reward_unit,
-        action_type,
-        action_details,
         coupon_code,
         created_at
       )

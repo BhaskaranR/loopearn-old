@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({
   data: initialData,
 }: DataTableProps<TData, TValue>) {
   const [data, setData] = useState(initialData);
-  const toast = useToast();
+  const { toast } = useToast();
 
   const deleteCampaign = useAction(deleteCampaignAction, {
     onError: () => {

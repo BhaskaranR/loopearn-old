@@ -190,11 +190,12 @@ export async function canJoinTeamByInviteCode(supabase: Client, code: string) {
 
 // Campaign Types
 export interface CreateCampaignParams extends TablesInsert<"campaigns"> {
-  reward: TablesInsert<"campaign_action_rewards">;
+  actions: TablesInsert<"campaign_actions">[];
+  reward: TablesInsert<"campaign_rewards">;
 }
 
 interface UpdateCampaignParams extends TablesUpdate<"campaigns"> {
-  reward?: Partial<TablesUpdate<"campaign_action_rewards">>;
+  reward?: Partial<TablesUpdate<"campaign_rewards">>;
 }
 
 // Campaign Mutations
@@ -202,10 +203,11 @@ export async function createCampaign(
   supabase: Client,
   params: CreateCampaignParams,
 ): Promise<Tables<"campaigns"> | null> {
-  const { reward, ...campaignData } = params;
+  const { reward, actions, ...campaignData } = params;
 
   const { data, error } = await supabase.rpc("create_campaign", {
     campaign_data: campaignData,
+    actions_data: actions,
     reward_data: reward,
   });
 

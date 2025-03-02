@@ -8,6 +8,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarRail,
 } from "@loopearn/ui/sidebar";
@@ -15,69 +16,55 @@ import {
 import {
   CampaignTemplates,
   CampaignTypeGroups,
+  actions,
 } from "@/components/campaign-templates";
 import { Badge } from "@loopearn/ui/badge";
+import { cn } from "@loopearn/ui/cn";
 import { Separator } from "@loopearn/ui/separator";
-import { Award, Calendar, Gift, PlusCircle } from "lucide-react";
 import { DraggableMenuItem } from "./draggable-menu-item";
 
-interface Action {
-  id: string;
-  title: string;
-  icon: React.ElementType;
-}
-
-const actions: Action[] = [
-  { id: "reward-coupon", title: "Reward a Coupon", icon: Gift },
-  { id: "add-points", title: "Add Points", icon: PlusCircle },
-];
-
-export function WorkFlowSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export function WorkFlowSidebar({ className }: { className?: string }) {
   return (
-    <Sidebar className="border-r-0" {...props}>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Action Based</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {CampaignTemplates.filter((t) => t.type === "action-based").map(
-                (c) => (
-                  <DraggableMenuItem
-                    key={c.id}
-                    id={c.id}
-                    title={c.title}
-                    icon={c.icon}
-                  />
-                ),
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+    <Sidebar className={cn("border-r-0", className)}>
+      <SidebarGroup>
+        <SidebarGroupLabel>Action Based</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {CampaignTemplates.filter((t) => t.type === "action-based").map(
+              (c) => (
+                <DraggableMenuItem
+                  key={c.id}
+                  id={c.id}
+                  title={c.title}
+                  icon={c.icon}
+                />
+              ),
+            )}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            Game Based
-            <Badge variant="blue" className="text-xs ml-2">
-              Coming Soon
-            </Badge>
-          </SidebarGroupLabel>
-        </SidebarGroup>
+      <SidebarGroup>
+        <SidebarGroupLabel>
+          Game Based
+          <Badge variant="blue" className="text-xs ml-2">
+            Coming Soon
+          </Badge>
+        </SidebarGroupLabel>
+      </SidebarGroup>
+      <Separator />
 
-        <Separator />
-      </SidebarContent>
       <SidebarRail />
       <SidebarFooter>
         <SidebarGroupLabel>Actions</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            {actions.map((action) => (
+            {actions.map((item) => (
               <DraggableMenuItem
-                key={action.id}
-                id={action.id}
-                title={action.title}
-                icon={action.icon}
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                icon={item.icon}
               />
             ))}
           </SidebarMenu>
