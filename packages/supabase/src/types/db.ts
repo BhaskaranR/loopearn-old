@@ -373,57 +373,6 @@ export type Database = {
           },
         ]
       }
-      campaign_action_rewards: {
-        Row: {
-          action_details: string | null
-          action_type: string
-          campaign_id: string | null
-          coupon_code: string | null
-          created_at: string | null
-          icon_url: string | null
-          id: string
-          minimum_purchase_amount: number | null
-          redirection_button_link: string | null
-          redirection_button_text: string | null
-          reward_type: string
-          reward_unit: string | null
-          reward_value: number | null
-          uses_per_customer: number | null
-        }
-        Insert: {
-          action_details?: string | null
-          action_type: string
-          campaign_id?: string | null
-          coupon_code?: string | null
-          created_at?: string | null
-          icon_url?: string | null
-          id?: string
-          minimum_purchase_amount?: number | null
-          redirection_button_link?: string | null
-          redirection_button_text?: string | null
-          reward_type: string
-          reward_unit?: string | null
-          reward_value?: number | null
-          uses_per_customer?: number | null
-        }
-        Update: {
-          action_details?: string | null
-          action_type?: string
-          campaign_id?: string | null
-          coupon_code?: string | null
-          created_at?: string | null
-          icon_url?: string | null
-          id?: string
-          minimum_purchase_amount?: number | null
-          redirection_button_link?: string | null
-          redirection_button_text?: string | null
-          reward_type?: string
-          reward_unit?: string | null
-          reward_value?: number | null
-          uses_per_customer?: number | null
-        }
-        Relationships: []
-      }
       campaign_actions: {
         Row: {
           action_details: string | null
@@ -1454,29 +1403,15 @@ export type Database = {
       }
       update_campaign: {
         Args: {
-          campaign_id: string
+          p_campaign_id: string
           campaign_data: Json
-          actions_data: Json
-          reward_data: Json
+          actions_data: Json[]
+          rewards_data: Json
         }
         Returns: {
-          business_id: string | null
-          created_at: string | null
-          description: string | null
-          end_date: string | null
-          expires_after: number | null
-          id: string
-          is_live_on_marketplace: boolean | null
-          is_repeatable: boolean | null
-          max_achievement: number | null
-          min_tier: number | null
-          name: string
-          start_date: string | null
-          status: string | null
-          type: string
-          updated_at: string | null
-          visibility: string | null
-        }
+          success: boolean
+          message: string
+        }[]
       }
     }
     Enums: {

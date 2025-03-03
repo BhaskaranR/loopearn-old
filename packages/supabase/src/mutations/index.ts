@@ -195,6 +195,7 @@ export interface CreateCampaignParams extends TablesInsert<"campaigns"> {
 }
 
 interface UpdateCampaignParams extends TablesUpdate<"campaigns"> {
+  actions?: Partial<TablesUpdate<"campaign_actions">>[];
   reward?: Partial<TablesUpdate<"campaign_rewards">>;
 }
 
@@ -222,20 +223,19 @@ export async function updateCampaign(
   supabase: Client,
   id: string,
   params: UpdateCampaignParams,
-): Promise<Tables<"campaigns"> | null> {
-  const { reward, ...campaignData } = params;
+) {
+  const { reward, actions, ...campaignData } = params;
 
   const { data, error } = await supabase.rpc("update_campaign", {
-    campaign_id: id,
+    p_campaign_id: id,
     campaign_data: campaignData,
-    reward_data: reward!,
+    actions_data: actions ?? [],
+    rewards_data: reward ?? {},
   });
 
   if (error) {
     throw new Error(error.message);
   }
-
-  return data;
 }
 
 export async function deleteCampaign(

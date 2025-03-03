@@ -37,27 +37,27 @@ export const createCampaignAction = authActionClient
       end_date: parsedInput.end_date || null,
       expires_after: null,
       is_live_on_marketplace: parsedInput.is_live_on_marketplace,
-      actions: [
-        {
-          action_type: parsedInput.trigger.action_type,
-          action_details: parsedInput.trigger.social_link,
-          required_count: 1,
-          order_index: 0,
-          is_mandatory: true,
-          social_link: parsedInput.trigger.social_link,
-          icon_url: null,
-          redirection_button_text: null,
-          redirection_button_link: null,
-        },
-      ],
+      actions: parsedInput.campaign_actions.map((action, index) => ({
+        action_type: action.action_type ?? "",
+        action_details: action.action_details,
+        required_count: action.required_count ?? 1,
+        order_index: action.order_index ?? index,
+        is_mandatory: action.is_mandatory ?? true,
+        social_link: action.social_link,
+        platform: action.platform,
+        icon_url: action.icon_url ?? null,
+        redirection_button_text: action.redirection_button_text ?? null,
+        redirection_button_link: action.redirection_button_link ?? null,
+      })),
       reward: {
-        reward_type: parsedInput.reward.reward_type,
-        reward_value: parsedInput.reward.reward_value,
-        reward_unit: parsedInput.reward.reward_unit,
+        reward_type: parsedInput.campaign_rewards.reward_type,
+        reward_value: parsedInput.campaign_rewards.reward_value,
+        reward_unit: parsedInput.campaign_rewards.reward_unit,
         coupon_code: null,
-        uses_per_customer: parsedInput.reward.uses_per_customer,
+        uses_per_customer: parsedInput.campaign_rewards.uses_per_customer,
         minimum_purchase_amount:
-          parsedInput.reward.minimum_purchase_amount || 0,
+          parsedInput.campaign_rewards.minimum_purchase_amount ?? 0,
+        expires_after: parsedInput.campaign_rewards.expires_after ?? null,
       },
     };
 
@@ -75,25 +75,39 @@ export const updateCampaignAction = authActionClient
       channel: LogEvents.CampaignUpdate.channel,
     },
   })
-  .action(async ({ parsedInput, ctx: { supabase } }) => {
-    const {
-      id,
-      revalidatePath: revalidatePathInput,
-      ...updateData
-    } = parsedInput;
+  .action(async ({ parsedInput, ctx: { user, supabase } }) => {
+    const { id, ...updateData } = parsedInput;
+    const { campaign_actions, campaign_rewards, ...campaignData } = updateData;
 
-    const campaign = await updateCampaignMutation(supabase, id, {
-      ...updateData,
-      reward: updateData.reward && {
-        ...updateData.reward,
+    await updateCampaignMutation(supabase, id, {
+      ...campaignData,
+      actions: updateData.campaign_actions?.map((action, index) => ({
+        action_type: action.action_type ?? "",
+        action_details: action.action_details,
+        required_count: action.required_count ?? 1,
+        order_index: action.order_index ?? index,
+        is_mandatory: action.is_mandatory ?? true,
+        social_link: action.social_link,
+        platform: action.platform,
+        icon_url: action.icon_url ?? null,
+        redirection_button_text: action.redirection_button_text ?? null,
+        redirection_button_link: action.redirection_button_link ?? null,
+      })),
+      reward: updateData.campaign_rewards && {
+        reward_type: updateData.campaign_rewards.reward_type,
+        reward_value: updateData.campaign_rewards.reward_value,
+        reward_unit: updateData.campaign_rewards.reward_unit,
+        coupon_code: null,
+        uses_per_customer: updateData.campaign_rewards.uses_per_customer,
+        minimum_purchase_amount:
+          updateData.campaign_rewards.minimum_purchase_amount ?? 0,
+        expires_after: updateData.campaign_rewards.expires_after ?? null,
       },
     });
 
-    if (revalidatePathInput) {
-      revalidatePath(revalidatePathInput);
-    }
-
-    return campaign;
+    revalidateTag(`campaigns_${user.business_id}`);
+    revalidateTag(`campaign_${id}`);
+    revalidatePath(`/campaigns/edit/${id}`);
   });
 
 export const deleteCampaignAction = authActionClient

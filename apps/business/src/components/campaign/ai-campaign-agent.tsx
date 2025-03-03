@@ -74,8 +74,8 @@ export function AICampaignAgent() {
           content: `I've created a campaign with the following details:
 • Name: ${campaignConfig.name}
 • Type: ${campaignConfig.type}
-• Action: ${campaignConfig.trigger.action_type}
-• Reward: ${campaignConfig.reward.reward_value} ${campaignConfig.reward.reward_unit} ${campaignConfig.reward.reward_type}
+• Action: ${campaignConfig.campaign_actions[0].action_type}
+• Reward: ${campaignConfig.campaign_rewards.reward_value} ${campaignConfig.campaign_rewards.reward_unit} ${campaignConfig.campaign_rewards.reward_type}
 ${campaignConfig.start_date ? `• Duration: ${new Date(campaignConfig.start_date).toLocaleDateString()} to ${new Date(campaignConfig.end_date || "").toLocaleDateString()}` : "• Always active"}`,
         },
       ]);

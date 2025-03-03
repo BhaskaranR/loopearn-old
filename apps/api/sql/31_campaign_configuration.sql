@@ -8,7 +8,7 @@ CREATE TABLE campaigns (
     max_achievement INT DEFAULT 1, -- Max times a customer can achieve the campaign (-1 for unlimited)
     min_tier INT DEFAULT 1, -- Minimum customer tier required
     visibility TEXT CHECK (visibility IN ('AlwaysVisible', 'NotVisible')) DEFAULT 'AlwaysVisible', -- Visibility setting
-    status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active', -- Campaign status
+    status TEXT CHECK (status IN ('draft', 'active', 'inactive')) DEFAULT 'draft', -- Campaign status
     start_date TIMESTAMP, -- Campaign start time
     end_date TIMESTAMP, -- Campaign end time
     expires_after INT, -- Campaign expiration time in days
@@ -22,12 +22,13 @@ CREATE TABLE campaign_actions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE,
     action_type TEXT NOT NULL, -- Type of action required (e.g., 'share', 'like', 'comment')
-    action_details TEXT, -- Additional details about the action
+    action_details TEXT, -- Additional details for non-social-media actions (e.g., game rules, time-based instructions, popup messages)
+                        -- Not needed for social media actions as those use social_link and platform fields
     required_count INT DEFAULT 1, -- Number of times this action needs to be performed
     order_index INT DEFAULT 0, -- Order in which actions should be completed (0 means any order)
     is_mandatory BOOLEAN DEFAULT true, -- Whether this action is mandatory
-    social_link TEXT, -- Social media link if applicable
-    platform TEXT, -- Platform where action needs to be performed
+    social_link TEXT, -- Social media URL where the action needs to be performed (e.g., https://twitter.com/...)
+    platform TEXT, -- Social media platform (e.g., Twitter, Instagram)
     icon_url TEXT, -- Icon URL
     redirection_button_text TEXT, -- Call-to-action text
     redirection_button_link TEXT, -- Call-to-action link

@@ -8,6 +8,7 @@ import {
   getBusinessBySlugQuery,
   getBusinessMembersQuery,
   getCampaignActionRewardsQuery,
+  getCampaignByIdQuery,
   getCampaignsQuery,
   getCategoriesQuery,
   getPendingBusinessInvitesQueryForUser,
@@ -239,17 +240,17 @@ export const getCampaignsForBusiness = async () => {
   )();
 };
 
-export const getCampaignActionReward = async (id: string) => {
+export const getCampaignById = async (id: string) => {
   const supabase = createClient();
 
   return unstable_cache(
     async () => {
-      return getCampaignActionRewardsQuery(supabase, id);
+      return getCampaignByIdQuery(supabase, id);
     },
-    ["campaign_action_reward", id],
+    ["campaign", id],
     {
-      tags: [`campaign_action_reward_${id}`],
-      revalidate: 180,
+      tags: [`campaign_${id}`],
+      revalidate: 1,
     },
   )();
 };

@@ -350,141 +350,90 @@ export const filterVaultSchema = z.object({
   owners: z.array(z.string()).optional().describe("The owners to filter by"),
 });
 
-export const createCampaignSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "Campaign name must be at least 2 characters.",
-    }),
-    description: z.string().min(2, {
-      message: "Campaign description must be at least 2 characters.",
-    }),
-    type: z.enum(["SignUp", "Reward Campaign", "Other"]),
-    is_repeatable: z.boolean().default(false),
-    max_achievement: z.number().default(1),
-    min_tier: z.number().default(1),
-    visibility: z
-      .enum(["AlwaysVisible", "NotVisible"])
-      .default("AlwaysVisible"),
-    status: z.enum(["active", "inactive"]).default("active"),
-    start_date: z.string().datetime().optional(),
-    end_date: z.string().datetime().optional(),
-    is_live_on_marketplace: z.boolean().default(false),
-    // Campaign Rules
-    audience: z.enum(["all", "specific"]).default("all"),
-    trigger: z.object({
-      action_type: z.enum([
-        "write_review",
-        "follow_instagram",
-        "share",
-        "like",
-        "comment",
-        "other",
-      ]),
-      social_link: z.string().url().optional(),
-    }),
-    // Reward Configuration
-    reward: z.object({
-      icon_url: z.string().url().optional(),
-      redirection_button_text: z.string().optional(),
-      redirection_button_link: z.string().url().optional(),
-      reward_type: z.enum([
-        "rank_points",
-        "wallet_points",
-        "wallet_multiplier",
-        "coupon",
-        "percentage_discount",
-        "fixed_amount_discount",
-        "free_product",
-        "free_shipping",
-      ]),
-      reward_value: z.number().min(0),
-      reward_unit: z.enum(["points", "%", "currency"]).default("points"),
-      applies_to: z.enum(["entire", "specific"]).default("entire"),
-      // Advanced Options
-      prefix: z.boolean().optional(),
-      expires_after: z.number().optional(), // Time in seconds
-      minimum_purchase_amount: z.number().optional(),
-      uses_per_customer: z.number().default(1),
-    }),
-  })
-  .refine(
-    (data) => {
-      if (data.start_date && data.end_date) {
-        return new Date(data.end_date) > new Date(data.start_date);
-      }
-      return true;
-    },
-    {
-      message: "End date must be after start date",
-      path: ["end_date"],
-    },
-  );
+// Base campaign action schema
+const campaignActionSchema = z.object({
+  action_type: z.string().optional(),
+  action_details: z.string().optional(),
+  platform: z.string().optional(),
+  social_link: z.string().url().optional(),
+  required_count: z.number().optional(),
+  order_index: z.number().optional(),
+  is_mandatory: z.boolean().optional(),
+  icon_url: z.string().url().optional().or(z.literal("")).or(z.null()),
+  redirection_button_link: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .or(z.null()),
+  redirection_button_text: z.string().nullable().optional(),
+});
 
-export type CreateCampaignFormValues = z.infer<typeof createCampaignSchema>;
+// Base campaign reward schema
+const campaignRewardSchema = z.object({
+  // icon_url: z.string().url().optional(),
+  // redirection_button_text: z.string().optional(),
+  // redirection_button_link: z.string().url().optional(),
+  // prefix: z.boolean().optional(),
+  reward_type: z.enum([
+    "rank_points",
+    "wallet_points",
+    "wallet_multiplier",
+    "coupon",
+    "percentage_discount",
+    "fixed_amount_discount",
+    "free_product",
+    "free_shipping",
+  ]),
+  reward_value: z.number().min(0),
+  reward_unit: z.enum(["points", "%", "currency"]).default("points"),
+  expires_after: z.number().optional().nullable(),
+  minimum_purchase_amount: z.number().optional(),
+  uses_per_customer: z.number().default(1),
+});
 
-export const updateCampaignSchema = z
-  .object({
+// First create the object schema
+const baseCampaignSchema = z.object({
+  name: z.string().min(2, {
+    message: "Campaign name must be at least 2 characters.",
+  }),
+  description: z.string().min(2, {
+    message: "Campaign description must be at least 2 characters.",
+  }),
+  type: z.enum(["SignUp", "Reward Campaign", "Other"]),
+  is_repeatable: z.boolean().default(false),
+  max_achievement: z.number().default(1),
+  min_tier: z.number().default(1),
+  visibility: z.enum(["AlwaysVisible", "NotVisible"]).default("AlwaysVisible"),
+  status: z.enum(["active", "inactive"]).default("active"),
+  start_date: z.string().datetime().optional(),
+  end_date: z.string().datetime().optional(),
+  is_live_on_marketplace: z.boolean().default(true),
+  audience: z.enum(["all", "specific"]).default("all"),
+  campaign_actions: z.array(campaignActionSchema).min(1),
+  campaign_rewards: campaignRewardSchema,
+});
+
+// Create campaign schema with refinement
+export const createCampaignSchema = baseCampaignSchema.refine(
+  (data) => {
+    if (data.start_date && data.end_date) {
+      return new Date(data.end_date) > new Date(data.start_date);
+    }
+    return true;
+  },
+  {
+    message: "End date must be after start date",
+    path: ["end_date"],
+  },
+);
+
+// Update campaign schema with refinement
+export const updateCampaignSchema = baseCampaignSchema
+  .extend({
     id: z.string().uuid(),
-    name: z.string().min(2).optional(),
-    description: z.string().min(2).optional(),
-    type: z.enum(["SignUp", "Reward Campaign", "Other"]).optional(),
-    is_repeatable: z.boolean().optional(),
-    max_achievement: z.number().optional(),
-    min_tier: z.number().optional(),
-    visibility: z.enum(["AlwaysVisible", "NotVisible"]).optional(),
-    status: z.enum(["active", "inactive"]).optional(),
-    start_date: z.string().datetime().optional(),
-    end_date: z.string().datetime().optional(),
-    is_live_on_marketplace: z.boolean().optional(),
-
-    // Campaign Rules
-    audience: z.enum(["all", "specific"]).optional(),
-    trigger: z
-      .object({
-        action_type: z.enum([
-          "write_review",
-          "follow_instagram",
-          "share",
-          "like",
-          "comment",
-          "other",
-        ]),
-        social_link: z.string().url().optional(),
-      })
-      .optional(),
-
-    // Reward Configuration
-    reward: z
-      .object({
-        icon_url: z.string().url().optional(),
-        redirection_button_text: z.string().optional(),
-        redirection_button_link: z.string().url().optional(),
-        reward_type: z
-          .enum([
-            "rank_points",
-            "wallet_points",
-            "wallet_multiplier",
-            "coupon",
-            "percentage_discount",
-            "fixed_amount_discount",
-            "free_product",
-            "free_shipping",
-          ])
-          .optional(),
-        reward_value: z.number().min(0).optional(),
-        reward_unit: z.enum(["points", "%", "currency"]).optional(),
-        applies_to: z.enum(["entire", "specific"]).optional(),
-
-        // Advanced Options
-        prefix: z.boolean().optional(),
-        expires_after: z.number().optional(),
-        minimum_purchase_amount: z.number().optional(),
-        uses_per_customer: z.number().optional(),
-      })
-      .optional(),
-
-    revalidatePath: z.string().optional(),
   })
+  .partial()
   .refine(
     (data) => {
       if (data.start_date && data.end_date) {
@@ -498,6 +447,9 @@ export const updateCampaignSchema = z
     },
   );
 
+export type CampaignAction = z.infer<typeof campaignActionSchema>;
+export type CampaignReward = z.infer<typeof campaignRewardSchema>;
+export type CreateCampaignFormValues = z.infer<typeof createCampaignSchema>;
 export type UpdateCampaignFormValues = z.infer<typeof updateCampaignSchema>;
 
 export const marketplaceProfileSchema = z.object({

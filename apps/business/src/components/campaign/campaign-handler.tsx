@@ -1,3 +1,5 @@
+"use client";
+
 import type { ClientMessage } from "@/actions/ai/types";
 import { createCampaignAction } from "@/actions/campaign-actions";
 import { processCampaignMessage } from "@/utils/campaign-processor";
@@ -31,8 +33,13 @@ export async function handleCampaignCreation(
     // Create the campaign
     const result = await createCampaignAction(campaignConfig);
 
-    if (!result.success) {
-      throw new Error(result.error || "Failed to create campaign");
+    // Check for validation errors or server errors
+    if (result.validationErrors || result.serverError) {
+      throw new Error(
+        result.serverError ||
+          result.validationErrors?.formErrors?.[0] ||
+          "Failed to create campaign",
+      );
     }
 
     // Return success message
@@ -43,10 +50,10 @@ export async function handleCampaignCreation(
         <CampaignSuccessMessage
           name={campaignConfig.name}
           type={campaignConfig.type}
-          action_type={campaignConfig.trigger.action_type}
-          reward_value={campaignConfig.reward.reward_value}
-          reward_unit={campaignConfig.reward.reward_unit}
-          reward_type={campaignConfig.reward.reward_type}
+          action_type={campaignConfig.campaign_actions[0].action_type}
+          reward_value={campaignConfig.campaign_rewards.reward_value}
+          reward_unit={campaignConfig.campaign_rewards.reward_unit}
+          reward_type={campaignConfig.campaign_rewards.reward_type}
           start_date={campaignConfig.start_date}
           end_date={campaignConfig.end_date}
         />
