@@ -15,15 +15,9 @@ export interface CampaignTemplate
   icon: string;
   defaultName: string;
   defaultDescription: string;
+  selectedAction: string;
   availableActions: {
-    action_type:
-      | "subscribe"
-      | "write_review"
-      | "follow_instagram"
-      | "share"
-      | "like"
-      | "comment"
-      | "other";
+    action_type: string;
     name: string;
     description: string;
     defaultReward?: Partial<CreateCampaignFormValues["reward"]>;
@@ -52,6 +46,7 @@ export const campaignTemplates: CampaignTemplate[] = [
       applies_to: "entire",
       uses_per_customer: 1,
     },
+    selectedAction: "share",
     availableActions: [
       {
         action_type: "share",
@@ -106,6 +101,7 @@ export const campaignTemplates: CampaignTemplate[] = [
       applies_to: "entire",
       uses_per_customer: 1,
     },
+    selectedAction: "follow_instagram",
     availableActions: [
       {
         action_type: "follow_instagram",
@@ -160,6 +156,7 @@ export const campaignTemplates: CampaignTemplate[] = [
       applies_to: "entire",
       uses_per_customer: 1,
     },
+    selectedAction: "share",
     availableActions: [
       {
         action_type: "share",
@@ -197,6 +194,7 @@ export const campaignTemplates: CampaignTemplate[] = [
       reward_value: 10,
       reward_unit: "%",
     },
+    selectedAction: "share",
     availableActions: [
       {
         action_type: "subscribe",
@@ -241,6 +239,7 @@ export const campaignTemplates: CampaignTemplate[] = [
       applies_to: "entire",
       uses_per_customer: 1,
     },
+    selectedAction: "write_review",
     availableActions: [
       {
         action_type: "write_review",
@@ -276,6 +275,7 @@ export const campaignTemplates: CampaignTemplate[] = [
       uses_per_customer: 1,
       expires_after: 86400,
     },
+    selectedAction: "other",
     availableActions: [
       {
         action_type: "other",

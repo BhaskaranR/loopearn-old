@@ -1,7 +1,6 @@
 import { cn } from "@loopearn/ui/cn";
 import { useClickAway } from "@uidotdev/usehooks";
 import { SidebarItems } from "./sidebar-items";
-import { Toolbar } from "./toolbar";
 
 type Props = {
   isExpanded: boolean;
@@ -32,7 +31,6 @@ export function SidebarList({
         )}
       >
         <SidebarItems onSelect={onSelect} chatId={chatId} />
-        <Toolbar onNewChat={onNewChat} />
         <div className="absolute z-10 h-[477px] w-[45px] bg-gradient-to-r from-background/30 dark:from-[#131313]/30 to-background right-0 top-0 pointer-events-none" />
       </div>
 

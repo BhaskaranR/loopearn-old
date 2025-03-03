@@ -7,13 +7,16 @@ CREATE TABLE business(
   business_email varchar(255),
   business_phone varchar(255),
   business_url text,
-  business_image text,
+  business_logo text,
   business_meta jsonb,
   business_currency text,
   team__description text,
   website_url text,
   category text,
   tags text[],
+  latitude float NOT NULL,
+  longitude float NOT NULL,
+  location GEOGRAPHY(point),
   address_line_1 varchar(255),
   address_line_2 varchar(255),
   city varchar(255),
@@ -22,7 +25,20 @@ CREATE TABLE business(
   country varchar(255),
   stripe_id text,
   stripe_connect_id text,
-  plan text default 'free',
+
+  profile_photos TEXT[],
+  profile_videos TEXT[],
+  profile_bio TEXT,
+  profile_website_url TEXT,
+  description JSONB,
+  terms_conditions JSONB,
+  directions JSONB,
+  redemption_rules JSONB,
+  amenities JSONB,
+  marketplace_onboarding_step text DEFAULT null,
+  marketplace_listing_status listing_status DEFAULT 'draft',
+
+  plan text default 'free_plus',
   payouts_enabled boolean default false,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   referral_code text UNIQUE,
@@ -35,6 +51,10 @@ CREATE TABLE business(
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP;
 );
 
+
+-- Add columns from business_loopearn_profile to business
+-- Drop columns from business table
+CREATE INDEX business_location_index ON business USING GIST(location);
 
 -- add status
 CREATE TABLE business_users(
@@ -90,7 +110,6 @@ grant all on table public.business_users to supabase_auth_admin;
 CREATE INDEX idx_business_users_lookup ON business_users (user_id, business_id, role, is_active);
 
 CREATE INDEX idx_business_users_business_id ON business_users (business_id, user_id);
-
 
 -- ... existing code ...
 DROP POLICY IF EXISTS "Allow business owner update access" ON public.business;
@@ -268,3 +287,122 @@ COMMENT ON TABLE business_social_accounts IS 'Stores social media account connec
 COMMENT ON COLUMN business_social_accounts.platform_user_id IS 'The unique identifier from the social platform';
 COMMENT ON COLUMN business_social_accounts.instance_url IS 'The Mastodon instance URL (e.g., mastodon.social)';
 COMMENT ON COLUMN business_social_accounts.metadata IS 'Platform-specific data in JSON format. Examples: Mastodon: {"instance_version": "4.0.2", "scopes": ["read", "write"]}, Bluesky: {"did": "did:plc:123", "handle": "user.bsky.social"}';
+
+-- Business Address table for handling multiple addresses
+create table business_address (
+  id uuid primary key default uuid_generate_v4(),
+  business_id uuid references business(id) on delete cascade,
+  address_line_1 text not null,
+  address_line_2 text,
+  city text not null,
+  state text not null,
+  postal_code text not null,
+  country text not null,
+  directions text,
+  latitude float NOT NULL,
+  longitude float NOT NULL,
+  location GEOGRAPHY(point),
+  created_at timestamp with time zone default current_timestamp,
+  updated_at timestamp with time zone default current_timestamp
+);
+
+CREATE INDEX business_address_location_index ON business_address USING GIST(location);
+
+-- Enable RLS on the business_address table
+ALTER TABLE business_address ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow all users to view addresses" ON business_address;
+DROP POLICY IF EXISTS "Allow only admins to insert addresses" ON business_address;
+DROP POLICY IF EXISTS "Allow only admins to update addresses" ON business_address;
+DROP POLICY IF EXISTS "Allow only admins to delete addresses" ON business_address;
+
+-- Policy to allow everyone to view addresses
+CREATE POLICY "Allow all users to view addresses" ON business_address
+  FOR SELECT
+  USING (true);
+
+-- Policy to restrict insert operations to admins
+-- Policy to restrict insert operations to admins
+CREATE POLICY "Allow only admins to insert addresses" ON business_address
+  FOR INSERT
+  WITH CHECK (
+    public.is_user_in_business(business_id) AND 
+    public.get_user_role_in_business(business_id) = 'owner'
+  );
+
+-- Policy to restrict update operations to admins
+CREATE POLICY "Allow only admins to update addresses" ON business_address
+  FOR UPDATE
+  USING (
+    public.is_user_in_business(business_id) AND 
+    public.get_user_role_in_business(business_id) = 'owner'
+  );
+
+-- Policy to restrict delete operations to admins
+CREATE POLICY "Allow only admins to delete addresses" ON business_address
+  FOR DELETE
+  USING (
+    public.is_user_in_business(business_id) AND 
+    public.get_user_role_in_business(business_id) = 'owner'
+  );
+
+-- Ensure the policies are applied
+ALTER TABLE business_address FORCE ROW LEVEL SECURITY;
+
+CREATE TYPE listing_status AS enum(
+  'draft',
+  'created',
+  'reviewing',
+  'document_required',
+  'approved',
+  'rejected'
+);
+
+-- Business Marketplace Place table for handling marketplace places
+CREATE TABLE business_marketplace (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  business_id UUID REFERENCES business(id) ON DELETE CASCADE,
+ 
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+alter table business_marketplace add column status listing_status DEFAULT 'draft';
+
+-- Enable RLS on the business_marketplace table
+ALTER TABLE business_marketplace ENABLE ROW LEVEL SECURITY;
+
+
+
+-- Enable RLS on the business_marketplace table
+ALTER TABLE business_marketplace ENABLE ROW LEVEL SECURITY;
+
+-- Create new policies for business_marketplace
+CREATE POLICY "Allow all users to view marketplace places" ON business_marketplace
+  FOR SELECT
+  USING (true);
+
+CREATE POLICY "Allow only admins to insert marketplace places" ON business_marketplace
+  FOR INSERT
+  WITH CHECK (
+    public.is_user_in_business(business_id) AND 
+    public.get_user_role_in_business(business_id) = 'owner'
+  );
+
+CREATE POLICY "Allow only admins to update marketplace places" ON business_marketplace
+  FOR UPDATE
+  USING (
+    public.is_user_in_business(business_id) AND 
+    public.get_user_role_in_business(business_id) = 'owner'
+  );
+
+CREATE POLICY "Allow only admins to delete marketplace places" ON business_marketplace
+  FOR DELETE
+  USING (
+    public.is_user_in_business(business_id) AND 
+    public.get_user_role_in_business(business_id) = 'owner'
+  );
+
+-- Ensure the policies are applied
+ALTER TABLE business_marketplace FORCE ROW LEVEL SECURITY;
+

@@ -23,7 +23,7 @@ export default async function Workspace({
         </a>
       }
     >
-      <CreateTeamForm continueTo="/onboarding/category" />
+      <CreateTeamForm continueTo="/onboarding/plan" />
     </StepPage>
   );
 }

@@ -6,6 +6,7 @@ import { fontSans } from "@/lib/fonts";
 import { cn, constructMetadata } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Toaster } from "@loopearn/ui/toaster";
 
 export const metadata: Metadata = constructMetadata({
   title: `${siteConfig.name} | ${siteConfig.description}`,
@@ -40,6 +41,7 @@ export default function RootLayout({
           {children}
           <ThemeToggle />
           <TailwindIndicator />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

@@ -1,7 +1,7 @@
 "use client";
 
 import { CampaignTypeGroups } from "@/components/campaign-templates";
-import { Logo } from "@/components/logo";
+import { Logo } from "@loopearn/ui/logo";
 import {
   Sidebar,
   SidebarContent,

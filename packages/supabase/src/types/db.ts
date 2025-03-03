@@ -58,12 +58,13 @@ export type Database = {
         Row: {
           address_line_1: string | null
           address_line_2: string | null
+          amenities: Json | null
           avatar_url: string | null
           billing_cycle_start: number | null
           business_currency: string | null
           business_description: string | null
           business_email: string | null
-          business_image: string | null
+          business_logo: string | null
           business_meta: Json | null
           business_name: string
           business_phone: string | null
@@ -73,14 +74,25 @@ export type Database = {
           contact_name: string | null
           country: string | null
           created_at: string | null
+          description: Json | null
+          directions: Json | null
           document_classification: boolean | null
           id: string
           invoice_prefix: string | null
+          marketplace_listing_status:
+            | Database["public"]["Enums"]["listing_status"]
+            | null
+          marketplace_onboarding_step: string | null
           payment_failed_at: string | null
           payout_method_id: string | null
           payouts_enabled: boolean | null
           plan: string | null
           postal_code: string | null
+          profile_bio: string | null
+          profile_photos: string[] | null
+          profile_videos: string[] | null
+          profile_website_url: string | null
+          redemption_rules: Json | null
           referral_code: string | null
           shopify_store_id: string | null
           slug: string | null
@@ -88,18 +100,20 @@ export type Database = {
           stripe_connect_id: string | null
           stripe_id: string | null
           tags: string[] | null
+          terms_conditions: Json | null
           updated_at: string | null
           website_url: string | null
         }
         Insert: {
           address_line_1?: string | null
           address_line_2?: string | null
+          amenities?: Json | null
           avatar_url?: string | null
           billing_cycle_start?: number | null
           business_currency?: string | null
           business_description?: string | null
           business_email?: string | null
-          business_image?: string | null
+          business_logo?: string | null
           business_meta?: Json | null
           business_name: string
           business_phone?: string | null
@@ -109,14 +123,25 @@ export type Database = {
           contact_name?: string | null
           country?: string | null
           created_at?: string | null
+          description?: Json | null
+          directions?: Json | null
           document_classification?: boolean | null
           id?: string
           invoice_prefix?: string | null
+          marketplace_listing_status?:
+            | Database["public"]["Enums"]["listing_status"]
+            | null
+          marketplace_onboarding_step?: string | null
           payment_failed_at?: string | null
           payout_method_id?: string | null
           payouts_enabled?: boolean | null
           plan?: string | null
           postal_code?: string | null
+          profile_bio?: string | null
+          profile_photos?: string[] | null
+          profile_videos?: string[] | null
+          profile_website_url?: string | null
+          redemption_rules?: Json | null
           referral_code?: string | null
           shopify_store_id?: string | null
           slug?: string | null
@@ -124,18 +149,20 @@ export type Database = {
           stripe_connect_id?: string | null
           stripe_id?: string | null
           tags?: string[] | null
+          terms_conditions?: Json | null
           updated_at?: string | null
           website_url?: string | null
         }
         Update: {
           address_line_1?: string | null
           address_line_2?: string | null
+          amenities?: Json | null
           avatar_url?: string | null
           billing_cycle_start?: number | null
           business_currency?: string | null
           business_description?: string | null
           business_email?: string | null
-          business_image?: string | null
+          business_logo?: string | null
           business_meta?: Json | null
           business_name?: string
           business_phone?: string | null
@@ -145,14 +172,25 @@ export type Database = {
           contact_name?: string | null
           country?: string | null
           created_at?: string | null
+          description?: Json | null
+          directions?: Json | null
           document_classification?: boolean | null
           id?: string
           invoice_prefix?: string | null
+          marketplace_listing_status?:
+            | Database["public"]["Enums"]["listing_status"]
+            | null
+          marketplace_onboarding_step?: string | null
           payment_failed_at?: string | null
           payout_method_id?: string | null
           payouts_enabled?: boolean | null
           plan?: string | null
           postal_code?: string | null
+          profile_bio?: string | null
+          profile_photos?: string[] | null
+          profile_videos?: string[] | null
+          profile_website_url?: string | null
+          redemption_rules?: Json | null
           referral_code?: string | null
           shopify_store_id?: string | null
           slug?: string | null
@@ -160,10 +198,70 @@ export type Database = {
           stripe_connect_id?: string | null
           stripe_id?: string | null
           tags?: string[] | null
+          terms_conditions?: Json | null
           updated_at?: string | null
           website_url?: string | null
         }
         Relationships: []
+      }
+      business_address: {
+        Row: {
+          address_line_1: string
+          address_line_2: string | null
+          business_id: string | null
+          city: string
+          country: string
+          created_at: string | null
+          directions: string | null
+          geography: unknown | null
+          id: string
+          latitude: number
+          longitude: number
+          postal_code: string
+          state: string
+          updated_at: string | null
+        }
+        Insert: {
+          address_line_1: string
+          address_line_2?: string | null
+          business_id?: string | null
+          city: string
+          country: string
+          created_at?: string | null
+          directions?: string | null
+          geography?: unknown | null
+          id?: string
+          latitude: number
+          longitude: number
+          postal_code: string
+          state: string
+          updated_at?: string | null
+        }
+        Update: {
+          address_line_1?: string
+          address_line_2?: string | null
+          business_id?: string | null
+          city?: string
+          country?: string
+          created_at?: string | null
+          directions?: string | null
+          geography?: unknown | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          postal_code?: string
+          state?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_address_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       business_social_accounts: {
         Row: {
@@ -275,58 +373,108 @@ export type Database = {
           },
         ]
       }
-      campaign_action_rewards: {
+      campaign_actions: {
         Row: {
           action_details: string | null
           action_type: string
           campaign_id: string | null
-          coupon_code: string | null
           created_at: string | null
           icon_url: string | null
           id: string
-          minimum_purchase_amount: number | null
+          is_mandatory: boolean | null
+          order_index: number | null
+          platform: string | null
           redirection_button_link: string | null
           redirection_button_text: string | null
-          reward_type: string
-          reward_unit: string | null
-          reward_value: number | null
-          uses_per_customer: number | null
+          required_count: number | null
+          social_link: string | null
+          updated_at: string | null
         }
         Insert: {
           action_details?: string | null
           action_type: string
           campaign_id?: string | null
-          coupon_code?: string | null
           created_at?: string | null
           icon_url?: string | null
           id?: string
-          minimum_purchase_amount?: number | null
+          is_mandatory?: boolean | null
+          order_index?: number | null
+          platform?: string | null
           redirection_button_link?: string | null
           redirection_button_text?: string | null
-          reward_type: string
-          reward_unit?: string | null
-          reward_value?: number | null
-          uses_per_customer?: number | null
+          required_count?: number | null
+          social_link?: string | null
+          updated_at?: string | null
         }
         Update: {
           action_details?: string | null
           action_type?: string
           campaign_id?: string | null
-          coupon_code?: string | null
           created_at?: string | null
           icon_url?: string | null
           id?: string
-          minimum_purchase_amount?: number | null
+          is_mandatory?: boolean | null
+          order_index?: number | null
+          platform?: string | null
           redirection_button_link?: string | null
           redirection_button_text?: string | null
+          required_count?: number | null
+          social_link?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_actions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_rewards: {
+        Row: {
+          campaign_id: string | null
+          coupon_code: string | null
+          created_at: string | null
+          expires_after: number | null
+          id: string
+          minimum_purchase_amount: number | null
+          reward_type: string
+          reward_unit: string | null
+          reward_value: number | null
+          updated_at: string | null
+          uses_per_customer: number | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          expires_after?: number | null
+          id?: string
+          minimum_purchase_amount?: number | null
+          reward_type: string
+          reward_unit?: string | null
+          reward_value?: number | null
+          updated_at?: string | null
+          uses_per_customer?: number | null
+        }
+        Update: {
+          campaign_id?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          expires_after?: number | null
+          id?: string
+          minimum_purchase_amount?: number | null
           reward_type?: string
           reward_unit?: string | null
           reward_value?: number | null
+          updated_at?: string | null
           uses_per_customer?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "campaign_action_rewards_campaign_id_fkey"
+            foreignKeyName: "campaign_rewards_campaign_id_fkey"
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
@@ -347,7 +495,7 @@ export type Database = {
           max_achievement: number | null
           min_tier: number | null
           name: string
-          start_date: string
+          start_date: string | null
           status: string | null
           type: string
           updated_at: string | null
@@ -365,7 +513,7 @@ export type Database = {
           max_achievement?: number | null
           min_tier?: number | null
           name: string
-          start_date: string
+          start_date?: string | null
           status?: string | null
           type: string
           updated_at?: string | null
@@ -383,7 +531,7 @@ export type Database = {
           max_achievement?: number | null
           min_tier?: number | null
           name?: string
-          start_date?: string
+          start_date?: string | null
           status?: string | null
           type?: string
           updated_at?: string | null
@@ -591,47 +739,39 @@ export type Database = {
       }
       customer_action_progress: {
         Row: {
-          action_type: string
-          campaign_action_reward_id: string | null
+          campaign_action_id: string | null
           campaign_id: string | null
           completed: boolean | null
           completed_at: string | null
+          created_at: string | null
           customer_id: string | null
           id: string
+          progress_count: number | null
+          updated_at: string | null
         }
         Insert: {
-          action_type: string
-          campaign_action_reward_id?: string | null
+          campaign_action_id?: string | null
           campaign_id?: string | null
           completed?: boolean | null
           completed_at?: string | null
+          created_at?: string | null
           customer_id?: string | null
           id?: string
+          progress_count?: number | null
+          updated_at?: string | null
         }
         Update: {
-          action_type?: string
-          campaign_action_reward_id?: string | null
+          campaign_action_id?: string | null
           campaign_id?: string | null
           completed?: boolean | null
           completed_at?: string | null
+          created_at?: string | null
           customer_id?: string | null
           id?: string
+          progress_count?: number | null
+          updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "customer_action_progress_campaign_action_reward_id_fkey"
-            columns: ["campaign_action_reward_id"]
-            isOneToOne: false
-            referencedRelation: "campaign_action_rewards"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "customer_action_progress_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "customer_action_progress_customer_id_fkey"
             columns: ["customer_id"]
@@ -1062,6 +1202,7 @@ export type Database = {
       create_campaign: {
         Args: {
           campaign_data: Json
+          actions_data: Json
           reward_data: Json
         }
         Returns: {
@@ -1076,7 +1217,7 @@ export type Database = {
           max_achievement: number | null
           min_tier: number | null
           name: string
-          start_date: string
+          start_date: string | null
           status: string | null
           type: string
           updated_at: string | null
@@ -1262,32 +1403,26 @@ export type Database = {
       }
       update_campaign: {
         Args: {
-          campaign_id: string
+          p_campaign_id: string
           campaign_data: Json
-          reward_data: Json
+          actions_data: Json[]
+          rewards_data: Json
         }
         Returns: {
-          business_id: string | null
-          created_at: string | null
-          description: string | null
-          end_date: string | null
-          expires_after: number | null
-          id: string
-          is_live_on_marketplace: boolean | null
-          is_repeatable: boolean | null
-          max_achievement: number | null
-          min_tier: number | null
-          name: string
-          start_date: string
-          status: string | null
-          type: string
-          updated_at: string | null
-          visibility: string | null
-        }
+          success: boolean
+          message: string
+        }[]
       }
     }
     Enums: {
       kyc_status: "pending" | "verified" | "rejected"
+      listing_status:
+        | "draft"
+        | "created"
+        | "reviewing"
+        | "document_required"
+        | "approved"
+        | "rejected"
       onboarding_status: "pending" | "complete"
       profile_status: "pending" | "incomplete" | "complete"
       social_platform_type:

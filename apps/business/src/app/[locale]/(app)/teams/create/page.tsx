@@ -1,7 +1,6 @@
 import { CreateTeamForm } from "@/components/forms/create-team-form";
-import { Logo } from "@/components/logo";
 import { UserMenu } from "@/components/user-menu";
-import { Icons } from "@loopearn/ui/icons";
+import { Logo } from "@loopearn/ui/logo";
 import { TooltipProvider } from "@loopearn/ui/tooltip";
 import type { Metadata } from "next";
 import Link from "next/link";

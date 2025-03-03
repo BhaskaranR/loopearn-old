@@ -1,7 +1,7 @@
 "use client";
 
-import { Logo } from "@/components/logo";
 import { VerifyMfa } from "@/components/verify-mfa";
+import { Logo } from "@loopearn/ui/logo";
 import Link from "next/link";
 
 export default function Verify() {

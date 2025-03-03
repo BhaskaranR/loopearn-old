@@ -1,7 +1,9 @@
 // import { SystemBanner } from "@/components/system-banner";
 import "@/styles/globals.css";
+import "@/styles/prosemirror.css";
 import { cn } from "@loopearn/ui/cn";
 import "@loopearn/ui/globals.css";
+
 import { Provider as Analytics } from "@loopearn/events/client";
 import { Toaster } from "@loopearn/ui/toaster";
 import { GeistMono } from "geist/font/mono";

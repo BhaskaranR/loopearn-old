@@ -13,11 +13,13 @@ import {
   PieChart,
   Settings2,
   Share2,
+  Store,
   Users,
 } from "lucide-react";
 import type React from "react";
 import { Suspense } from "react";
 
+import { Logo } from "@loopearn/ui/logo";
 import {
   Sidebar,
   SidebarContent,
@@ -31,7 +33,6 @@ import {
   SidebarMenuSkeleton,
   SidebarRail,
 } from "@loopearn/ui/sidebar";
-import { Logo } from "./logo";
 import { SidebarOptInForm } from "./sidebar-opt-in-form";
 import { TeamMenu } from "./team-menu";
 import { TeamSwitcher } from "./team-switcher";
@@ -74,10 +75,12 @@ const data = {
       url: "/apps",
       icon: <AppWindow className="h-10 w-10" />,
     },
+  ],
+  marketplace: [
     {
-      name: "Influencers",
-      url: "/influencers",
-      icon: <Share2 className="h-10 w-10" />,
+      name: "Marketplace",
+      url: "/marketplace",
+      icon: <Store className="h-10 w-10" />,
     },
   ],
   ai: [
@@ -135,6 +138,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
 
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Marketplace</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.marketplace.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild>
+                  <a href={item.url}>
+                    {item.icon}
+                    <span>{item.name}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>AI</SidebarGroupLabel>
           <SidebarMenu>
             {data.ai.map((item) => (
@@ -174,12 +193,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        {/* <UserSurveyButton /> */}
+      {/* <SidebarFooter>
         <div className="p-1">
           <SidebarOptInForm />
         </div>
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   );

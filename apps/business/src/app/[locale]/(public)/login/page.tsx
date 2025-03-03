@@ -1,7 +1,7 @@
 import { ConsentBanner } from "@/components/consent-banner";
 import { DesktopCommandMenuSignIn } from "@/components/desktop-command-menu-sign-in";
-import { Logo } from "@/components/logo";
 import { OTPSignIn } from "@/components/otp-sign-in";
+import { Logo } from "@loopearn/ui/logo";
 import type { Metadata } from "next";
 import Link from "next/link";
 

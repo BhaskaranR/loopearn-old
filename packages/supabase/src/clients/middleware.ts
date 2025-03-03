@@ -1,6 +1,4 @@
-import type { JwtPayload } from "@loopearn/supabase/types";
 import { createServerClient } from "@supabase/ssr";
-import { jwtDecode } from "jwt-decode";
 import { type NextRequest, NextResponse } from "next/server";
 
 const localeRegex = /^\/(en|fr|de)(\/|$)/; // Add supported locales here

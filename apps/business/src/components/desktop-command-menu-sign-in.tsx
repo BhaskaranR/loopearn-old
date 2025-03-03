@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@loopearn/ui/button";
-import { Logo } from "./logo";
+import { Logo } from "@loopearn/ui/logo";
 
 export function DesktopCommandMenuSignIn() {
   return (

@@ -35,18 +35,21 @@ ALTER TABLE customer_progress
 
 CREATE TABLE customer_action_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    customer_id UUID REFERENCES customers(id) ON DELETE CASCADE, -- Links to customer
-    campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE, -- Links to campaign
-    campaign_action_reward_id UUID REFERENCES campaign_action_rewards(id) ON DELETE CASCADE, -- Links to campaign action reward
-    action_type TEXT CHECK (action_type IN ('write_review', 'follow_instagram', 'other')) NOT NULL, -- Type of action
-    completed BOOLEAN DEFAULT FALSE, -- Whether the action has been completed
-    completed_at TIMESTAMP -- When the action was completed
+    customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+    campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE,
+    campaign_action_id UUID REFERENCES campaign_actions(id) ON DELETE CASCADE,
+    progress_count INT DEFAULT 0,
+    completed BOOLEAN DEFAULT FALSE,
+    completed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now()
 );
 
--- Enable RLS on customers table
-ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+-- Add index for faster lookups
+CREATE INDEX idx_customer_action_progress_customer ON customer_action_progress(customer_id);
+CREATE INDEX idx_customer_action_progress_campaign ON customer_action_progress(campaign_id);
 
--- Enable RLS on customer_action_progress table
+-- Enable RLS
 ALTER TABLE customer_action_progress ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies first
@@ -164,40 +167,47 @@ CREATE POLICY customer_view_own_tier_rewards ON tiers
         )
     );
 
+-- Keep only these two comprehensive policies that cover all cases:
 
--- Enable RLS on customer_action_progress table
-ALTER TABLE customer_action_progress ENABLE ROW LEVEL SECURITY;
-
--- Create policy for customer_action_progress based on customer's business
-CREATE POLICY manage_customer_action_progress ON customer_action_progress
-    FOR ALL
+-- 1. Policy for customers to manage their own progress
+CREATE POLICY customer_view_own_action_progress ON customer_action_progress
+    FOR SELECT
     USING (
         EXISTS (
             SELECT 1 FROM customers
             WHERE customers.id = customer_action_progress.customer_id
-            AND is_user_in_business(customers.business_id)
+            AND customers.id = auth.uid()
         )
     );
 
--- Policy for customers to view, insert, and update their own action progress
-CREATE POLICY customer_manage_own_action_progress ON customer_action_progress
-    FOR SELECT, INSERT, UPDATE
+CREATE POLICY customer_insert_own_action_progress ON customer_action_progress
+    FOR INSERT
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM customers
+            WHERE customers.id = customer_action_progress.customer_id
+            AND customers.id = auth.uid()
+        )
+    );
+
+CREATE POLICY customer_update_own_action_progress ON customer_action_progress
+    FOR UPDATE
     USING (
         EXISTS (
             SELECT 1 FROM customers
             WHERE customers.id = customer_action_progress.customer_id
-            AND customers.id = auth.uid() -- Customer can access their own records
+            AND customers.id = auth.uid()
         )
     )
     WITH CHECK (
         EXISTS (
             SELECT 1 FROM customers
             WHERE customers.id = customer_action_progress.customer_id
-            AND customers.id = auth.uid() -- Customer can modify their own records
+            AND customers.id = auth.uid()
         )
     );
 
--- Policy for business team members to view, insert, update, and delete action progress
+-- 2. Policy for business team members to manage all progress
 CREATE POLICY team_manage_action_progress ON customer_action_progress
     FOR ALL
     USING (
@@ -216,6 +226,3 @@ CREATE POLICY team_manage_action_progress ON customer_action_progress
             AND campaigns.id = customer_action_progress.campaign_id
         )
     );
-
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON customer_action_progress TO authenticated;

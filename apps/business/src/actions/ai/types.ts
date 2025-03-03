@@ -45,6 +45,12 @@ export interface ClientMessage {
   display: ReactNode;
 }
 
+export interface ChatState {
+  messages: ClientMessage[];
+  input: string;
+  isLoading: boolean;
+}
+
 type ValueOrUpdater<T> = T | ((prevState: T) => T);
 
 export type MutableAIState = {

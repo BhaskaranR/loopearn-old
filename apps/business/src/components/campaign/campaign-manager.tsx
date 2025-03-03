@@ -1,12 +1,18 @@
 "use client";
 
-import { createCampaignAction } from "@/actions/campaign-actions";
+import {
+  createCampaignAction,
+  updateCampaignAction,
+} from "@/actions/campaign-actions";
 import {
   type CreateCampaignFormValues,
+  type UpdateCampaignFormValues,
   createCampaignSchema,
+  updateCampaignSchema,
 } from "@/actions/schema";
 import type { CampaignTemplate } from "@/utils/campaigns";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Database } from "@loopearn/supabase/db";
 import { Button } from "@loopearn/ui/button";
 import { Calendar } from "@loopearn/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@loopearn/ui/card";
@@ -18,16 +24,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@loopearn/ui/form";
-import {
-  Calendar as CalendarIcon,
-  Disc,
-  Facebook,
-  Instagram,
-  Star,
-  Tiktok,
-} from "@loopearn/ui/icons";
+import { Facebook, Instagram, Tiktok } from "@loopearn/ui/icons";
 import { Input } from "@loopearn/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@loopearn/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@loopearn/ui/radio-group";
 import {
   Select,
@@ -39,31 +37,33 @@ import {
 import { useToast } from "@loopearn/ui/use-toast";
 import { addDays, format } from "date-fns";
 import { Loader2 } from "lucide-react";
-import { ArrowLeft, Check, Edit2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import type { DateRange } from "react-day-picker";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { DatePickerWithRange } from "./date-picker-range";
 
 interface CampaignManagerProps {
-  template?: CampaignTemplate;
-  defaultIcon?: string;
-  defaultPlatform?: CampaignTemplate["platform"];
+  template: CampaignTemplate;
+  initialData?: CreateCampaignFormValues | UpdateCampaignFormValues;
+  mode?: "create" | "edit";
 }
 
 export default function CampaignManager({
   template,
-  defaultIcon = "facebook",
-  defaultPlatform = "facebook",
+  initialData,
+  mode = "create",
 }: CampaignManagerProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
-    template?.start_date && template?.end_date
+    initialData?.start_date && initialData?.end_date
       ? {
-          from: new Date(template.start_date),
-          to: new Date(template.end_date),
+          from: new Date(initialData.start_date),
+          to: new Date(initialData.end_date),
         }
       : undefined,
   );
@@ -71,12 +71,19 @@ export default function CampaignManager({
   const [activation, setActivation] = React.useState<
     "always-active" | "scheduled"
   >(
-    !template?.start_date && !template?.end_date
+    !initialData?.start_date && !initialData?.end_date
       ? "always-active"
       : "scheduled",
   );
 
-  const action = useAction(createCampaignAction, {
+  const createAction = useAction(createCampaignAction, {
+    onSuccess: () => {
+      toast({
+        title: "Campaign created successfully",
+        duration: 3500,
+      });
+      router.push("/campaigns");
+    },
     onError: ({ error }) => {
       toast({
         duration: 3500,
@@ -87,44 +94,48 @@ export default function CampaignManager({
     },
   });
 
-  const form = useForm<CreateCampaignFormValues>({
-    resolver: zodResolver(createCampaignSchema),
-    defaultValues: template
-      ? {
-          name: template.defaultName,
-          description: template.defaultDescription,
-          ...template,
-        }
-      : {
-          name: "",
-          description: "",
-          type: "Reward Campaign",
-          is_repeatable: false,
-          max_achievement: 1,
-          min_tier: 1,
-          visibility: "AlwaysVisible",
-          status: "active",
-          is_live_on_marketplace: false,
-          audience: "all",
-          start_date: new Date(),
-          end_date: addDays(new Date(), 30),
-          trigger: {
-            action_type: "share",
-            social_link: "",
-          },
-          reward: {
-            reward_type: "percentage_discount",
-            reward_value: 0,
-            reward_unit: "points",
-            applies_to: "entire",
-            uses_per_customer: 1,
-          },
-        },
+  const updateAction = useAction(updateCampaignAction, {
+    onSuccess: () => {
+      toast({
+        title: "Campaign updated successfully",
+        duration: 3500,
+      });
+      router.push("/campaigns");
+    },
+    onError: ({ error }) => {
+      toast({
+        duration: 3500,
+        variant: "error",
+        title: "Something went wrong please try again.",
+      });
+      console.error("Failed to update campaign", error);
+    },
   });
 
-  async function onSubmit(data: CreateCampaignFormValues) {
-    action.execute(data);
+  const form = useForm<CreateCampaignFormValues | UpdateCampaignFormValues>({
+    resolver: zodResolver(
+      mode === "create" ? createCampaignSchema : updateCampaignSchema,
+    ),
+    defaultValues: initialData,
+  });
+
+  const { fields, append } = useFieldArray({
+    control: form.control,
+    name: "campaign_actions",
+  });
+
+  async function onSubmit(
+    data: CreateCampaignFormValues | UpdateCampaignFormValues,
+  ) {
+    if (mode === "edit") {
+      await updateAction.execute(data as UpdateCampaignFormValues);
+    } else {
+      await createAction.execute(data as CreateCampaignFormValues);
+    }
   }
+
+  console.log(form.formState.errors);
+  console.log(form.formState.isValid);
 
   return (
     <div className="container mx-auto py-6 max-w-5xl">
@@ -140,12 +151,12 @@ export default function CampaignManager({
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center">
               <DynamicIcon
-                name={defaultIcon}
+                name={template.icon}
                 className="h-4 w-4 text-blue-600"
               />
             </div>
             <h1 className="text-xl font-semibold capitalize">
-              {defaultPlatform}
+              {template.platform}
             </h1>
           </div>
         </div>
@@ -234,7 +245,7 @@ export default function CampaignManager({
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="trigger.action_type"
+                  name={`campaign_actions.${0}.action_type`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Social Action</FormLabel>
@@ -245,8 +256,8 @@ export default function CampaignManager({
                             (a) => a.action_type === value,
                           );
                           if (action?.defaultReward) {
-                            form.setValue("reward", {
-                              ...form.getValues("reward"),
+                            form.setValue("campaign_rewards", {
+                              ...form.getValues("campaign_rewards"),
                               ...action.defaultReward,
                             });
                           }
@@ -276,7 +287,7 @@ export default function CampaignManager({
 
                 <FormField
                   control={form.control}
-                  name="trigger.social_link"
+                  name={`campaign_actions.${0}.social_link`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Social Link</FormLabel>
@@ -302,7 +313,7 @@ export default function CampaignManager({
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="reward.reward_type"
+                  name="campaign_rewards.reward_type"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Select a reward type</FormLabel>
@@ -347,7 +358,7 @@ export default function CampaignManager({
 
                 <FormField
                   control={form.control}
-                  name="reward.reward_value"
+                  name="campaign_rewards.reward_value"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Reward Value</FormLabel>
@@ -367,7 +378,7 @@ export default function CampaignManager({
 
                 <FormField
                   control={form.control}
-                  name="reward.reward_unit"
+                  name="campaign_rewards.reward_unit"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Reward Unit</FormLabel>
@@ -393,7 +404,7 @@ export default function CampaignManager({
 
                 <FormField
                   control={form.control}
-                  name="reward.uses_per_customer"
+                  name="campaign_rewards.uses_per_customer"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Uses Per Customer</FormLabel>
@@ -410,6 +421,61 @@ export default function CampaignManager({
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="campaign_rewards.expires_after"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Reward Expiration</FormLabel>
+                      <div className="space-y-4">
+                        <RadioGroup
+                          defaultValue={
+                            field.value === null ? "never" : "timed"
+                          }
+                          onValueChange={(value) => {
+                            if (value === "never") {
+                              field.onChange(null);
+                            } else {
+                              field.onChange(field.value || 1);
+                            }
+                          }}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="never" id="never" />
+                            <label htmlFor="never" className="text-sm">
+                              Never Expires
+                            </label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="timed" id="timed" />
+                            <label htmlFor="timed" className="text-sm">
+                              Expires After
+                            </label>
+                          </div>
+                        </RadioGroup>
+
+                        {field.value !== null && (
+                          <div className="flex items-center gap-2">
+                            <FormControl>
+                              <Input
+                                type="number"
+                                className="w-24"
+                                value={field.value}
+                                onChange={(e) =>
+                                  field.onChange(Number(e.target.value))
+                                }
+                                min={1}
+                              />
+                            </FormControl>
+                            <span className="text-sm">months</span>
+                          </div>
+                        )}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </CardContent>
           </Card>
@@ -421,7 +487,7 @@ export default function CampaignManager({
             <CardContent>
               <div className="space-y-4">
                 <RadioGroup
-                  defaultValue="scheduled"
+                  defaultValue={activation}
                   onValueChange={(value) => {
                     setActivation(value as "always-active" | "scheduled");
                     if (value === "always-active") {
@@ -451,34 +517,43 @@ export default function CampaignManager({
                   <Controller
                     control={form.control}
                     name="start_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Start Date</FormLabel>
-                        <DatePickerWithRange
-                          className="w-full"
-                          value={{
-                            from: new Date(field.value),
-                            to: new Date(form.getValues("end_date")),
-                          }}
-                          onChange={(range) => {
-                            setDateRange(range);
-                            if (range?.from) {
-                              form.setValue(
-                                "start_date",
-                                format(range.from, "yyyy-MM-dd"),
-                              );
-                            }
-                            if (range?.to) {
-                              form.setValue(
-                                "end_date",
-                                format(range.to, "yyyy-MM-dd"),
-                              );
-                            }
-                          }}
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const startDate = field.value
+                        ? new Date(field.value)
+                        : new Date();
+                      const endDate = form.getValues("end_date")
+                        ? new Date(form.getValues("end_date"))
+                        : addDays(startDate, 30);
+
+                      return (
+                        <FormItem>
+                          <FormLabel>Start Date</FormLabel>
+                          <DatePickerWithRange
+                            className="w-full"
+                            value={{
+                              from: startDate,
+                              to: endDate,
+                            }}
+                            onChange={(range) => {
+                              setDateRange(range);
+                              if (range?.from) {
+                                form.setValue(
+                                  "start_date",
+                                  format(range.from, "yyyy-MM-dd"),
+                                );
+                              }
+                              if (range?.to) {
+                                form.setValue(
+                                  "end_date",
+                                  format(range.to, "yyyy-MM-dd"),
+                                );
+                              }
+                            }}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 )}
               </div>
@@ -488,13 +563,19 @@ export default function CampaignManager({
           <div className="mt-6 flex justify-end">
             <Button
               type="submit"
-              disabled={action.status === "executing"}
+              disabled={
+                mode === "create"
+                  ? createAction.status === "executing"
+                  : updateAction.status === "executing"
+              }
               className="flex items-center gap-2"
             >
-              {action.status === "executing" && (
+              {(mode === "create"
+                ? createAction.status === "executing"
+                : updateAction.status === "executing") && (
                 <Loader2 className="size-4 animate-spin" />
               )}
-              Create Campaign
+              {mode === "create" ? "Create Campaign" : "Update Campaign"}
             </Button>
           </div>
         </form>
@@ -506,7 +587,10 @@ export default function CampaignManager({
 function DynamicIcon({
   name,
   className,
-}: { name: string; className?: string }) {
+}: {
+  name: string;
+  className?: string;
+}) {
   switch (name) {
     case "facebook":
       return <Facebook className={className} />;
@@ -514,12 +598,6 @@ function DynamicIcon({
       return <Instagram className={className} />;
     case "tiktok":
       return <Tiktok className={className} />;
-    case "star":
-      return <Star className={className} />;
-    case "wheel":
-      return <Disc className={className} />;
-    case "calendar":
-      return <Calendar className={className} />;
     default:
       return <Facebook className={className} />;
   }

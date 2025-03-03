@@ -35,7 +35,7 @@ export default async function Workspace({
         id={business.id.toString()}
         name={business.business_name}
         slug={business.slug}
-        continueTo={"/onboarding/category"}
+        continueTo={"/onboarding/plan"}
       />
     </StepPage>
   );

@@ -1,5 +1,4 @@
-import { Logo } from "@/components/logo";
-import { NewBackground } from "@/components/onboarding/new-background";
+import { Logo } from "@loopearn/ui/logo";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -19,7 +18,6 @@ export default function NotFound() {
           Go back home
         </Link>
       </div>
-      <NewBackground showAnimation />
     </>
   );
 }

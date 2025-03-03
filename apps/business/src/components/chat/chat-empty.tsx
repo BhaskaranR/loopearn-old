@@ -1,6 +1,6 @@
 import { Icons } from "@loopearn/ui/icons";
+import { Logo } from "@loopearn/ui/logo";
 import Link from "next/link";
-import { Logo } from "../logo";
 
 type Props = {
   firstName: string;

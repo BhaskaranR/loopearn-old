@@ -37,6 +37,7 @@ export const createBusinessAction = authActionClient
 
       revalidateTag(`user_${user.data.id}`);
       revalidateTag(`teams_${user.data.id}`);
+      revalidateTag(`business_by_slug_${slug}`);
 
       if (redirectTo) {
         redirect(redirectTo);

@@ -2,11 +2,11 @@
 
 import { PlanFeatures } from "@/components/plan-features";
 import { UpgradePlanButton } from "@/components/upgrade-plan-button";
-import { PRO_PLAN, SELF_SERVE_PAID_PLANS } from "@/utils/pricing";
+import { ENTERPRISE_PLAN, PRO_PLAN } from "@/utils/pricing";
 import { Badge } from "@loopearn/ui/badge";
 import { ToggleGroup } from "@loopearn/ui/toggle-group";
 import NumberFlow from "@number-flow/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function PlanSelector({
   currentPlan,
@@ -26,7 +26,7 @@ export function PlanSelector({
             {
               value: "yearly",
               label: "Pay yearly",
-              badge: <Badge variant="blue">Save 20%</Badge>,
+              badge: <Badge variant="blue">Save 10%</Badge>,
             },
           ]}
           selected={periodTab}
@@ -37,20 +37,16 @@ export function PlanSelector({
       </div>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <PlanCard
-          name="Pro"
-          plans={[PRO_PLAN]}
+          plan={PRO_PLAN}
           period={periodTab}
           slug={slug}
           currentPlan={currentPlan}
         />
         <PlanCard
-          name="Business"
-          currentPlan={currentPlan}
-          slug={slug}
-          plans={SELF_SERVE_PAID_PLANS.filter(({ name }) =>
-            name.startsWith("Business"),
-          )}
+          plan={ENTERPRISE_PLAN}
           period={periodTab}
+          slug={slug}
+          currentPlan={currentPlan}
         />
       </div>
     </div>
@@ -58,72 +54,60 @@ export function PlanSelector({
 }
 
 function PlanCard({
-  name,
-  plans,
+  plan,
   period,
   slug,
   currentPlan,
+  isPopular,
 }: {
-  name: string;
-  plans: (typeof SELF_SERVE_PAID_PLANS)[number][];
+  plan: typeof PRO_PLAN;
   period: "monthly" | "yearly";
   slug: string;
   currentPlan: string;
+  isPopular?: boolean;
 }) {
-  const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
-  const selectedPlan = plans[selectedPlanIndex];
-
-  useEffect(() => {
-    if (currentPlan?.startsWith("business")) {
-      const idx = plans.findIndex((p) => p.name.toLowerCase() === currentPlan);
-      if (idx !== -1) {
-        setSelectedPlanIndex(idx);
-      }
-    }
-  }, [currentPlan]);
+  const price = plan.price[period];
+  const isFreePlan = price === 0;
 
   return (
     <div className="flex flex-col rounded-lg border border-gray-200 bg-white p-6">
       <div className="flex items-center gap-2">
-        <h2 className="text-lg font-medium text-gray-900">{name}</h2>
-        {name === "Pro" && <Badge variant="blue">Most popular</Badge>}
+        <h2 className="text-lg font-medium text-gray-900">{plan.name}</h2>
+        {isPopular && <Badge variant="blue">Most popular</Badge>}
       </div>
       <div className="mt-2 text-3xl font-medium text-gray-900">
-        <NumberFlow
-          value={selectedPlan.price[period]!}
-          className="tabular-nums"
-          format={{
-            style: "currency",
-            currency: "INR",
-            maximumFractionDigits: 0,
-          }}
-          continuous
-        />
-        <span className="ml-1 text-sm font-medium">
-          per month
-          {period === "yearly" && ", billed yearly"}
-        </span>
+        {price === null ? (
+          "Contact us"
+        ) : (
+          <>
+            <NumberFlow
+              value={price}
+              className="tabular-nums"
+              format={{
+                style: "currency",
+                currency: "USD",
+                maximumFractionDigits: 0,
+              }}
+              continuous
+            />
+            <span className="ml-1 text-sm font-medium">
+              {isFreePlan ? (
+                "Free forever"
+              ) : (
+                <>
+                  per month
+                  {period === "yearly" && ", billed yearly"}
+                </>
+              )}
+            </span>
+          </>
+        )}
       </div>
-      {plans.length > 1 && (
-        <div className="mt-4">
-          <ToggleGroup
-            className="grid grid-cols-4"
-            style={{ gridTemplateColumns: "1fr ".repeat(plans.length) }}
-            options={plans.map((plan) => ({
-              value: plan.name,
-              label: plan.name.replace(name, "").trim() || "Basic",
-            }))}
-            selected={selectedPlan.name}
-            selectAction={(name) =>
-              setSelectedPlanIndex(plans.findIndex((p) => p.name === name))
-            }
-          />
-        </div>
-      )}
-      <PlanFeatures className="mt-4" plan={selectedPlan.name} />
+      <p className="mt-2 text-sm text-gray-500">{plan.tagline}</p>
+      <PlanFeatures className="mt-4" plan={plan.name} />
       <div className="mt-10 flex grow flex-col justify-end">
         <UpgradePlanButton
-          plan={selectedPlan.name.toLowerCase()}
+          plan={plan.name.toLowerCase()}
           period={period}
           slug={slug}
           currentPlan={currentPlan}

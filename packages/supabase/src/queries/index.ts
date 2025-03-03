@@ -60,18 +60,32 @@ export async function getBusinessByIdQuery(
 ) {
   return supabase
     .from("business")
-    .select("*")
+    .select(
+      `
+      *,
+      business_address!inner(*)
+    `,
+    )
     .eq("id", businessId)
     .throwOnError()
     .single();
 }
 
-export async function getBusinessBySlugQuery(
-  supabase: Client,
-  userId: string,
-  slug: string,
-) {
-  return supabase.from("business").select("*").eq("slug", slug).single();
+export async function getBusinessBySlugQuery(supabase: Client, slug: string) {
+  const { data, error } = await supabase
+    .from("business")
+    .select(
+      `
+      *,
+      business_address(*)
+    `,
+    )
+    .eq("slug", slug)
+    .single();
+
+  if (error) throw error;
+
+  return data;
 }
 
 export async function getTeamsByUserIdQuery(supabase: Client, userId: string) {
@@ -170,13 +184,17 @@ export async function getCampaignsQuery(supabase: Client, businessId: string) {
     .from("campaigns")
     .select(`
       *,
-      campaign_action_rewards(
+      campaign_actions(
+        id,
+        action_type,
+        action_details,
+        created_at
+      ),
+      campaign_rewards(
         id,
         reward_type,
         reward_value,
         reward_unit,
-        action_type,
-        action_details,
         coupon_code,
         created_at
       )
@@ -185,12 +203,44 @@ export async function getCampaignsQuery(supabase: Client, businessId: string) {
     .throwOnError();
 }
 
-export async function getCampaignActionRewardsQuery(
-  supabase: Client,
-  id: string,
-) {
-  return supabase
-    .from("campaign_action_rewards")
-    .select("*")
-    .eq("campaign_id", id);
+export async function getCampaignByIdQuery(supabase: Client, id: string) {
+  const { data, error } = await supabase
+    .from("campaigns")
+    .select(`
+      *,
+      campaign_actions(
+        id,
+        action_type,
+        action_details,
+        social_link,
+        created_at,
+        campaign_id,
+        icon_url,
+        is_mandatory,
+        order_index,
+        platform,
+        redirection_button_link,
+        redirection_button_text,
+        required_count,
+        updated_at
+      ),
+      campaign_rewards(
+        id,
+        reward_type,
+        reward_value,
+        reward_unit,
+        coupon_code,
+        uses_per_customer,
+        minimum_purchase_amount,
+        created_at,
+        updated_at,
+        campaign_id,
+        expires_after
+      )
+    `)
+    .eq("id", id)
+    .single();
+
+  if (error) throw error;
+  return { data };
 }

@@ -2,13 +2,13 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
-import { createClient as createClientAdmin } from "../clients/admin";
 import { createClient } from "../clients/server";
 import {
   getBusinessByIdQuery,
   getBusinessBySlugQuery,
   getBusinessMembersQuery,
   getCampaignActionRewardsQuery,
+  getCampaignByIdQuery,
   getCampaignsQuery,
   getCategoriesQuery,
   getPendingBusinessInvitesQueryForUser,
@@ -57,12 +57,31 @@ export const getBusinessBySlug = async (slug: string) => {
     return;
   }
 
-  return getBusinessBySlugQuery(supabase, userId, slug);
+  return unstable_cache(
+    async () => {
+      return getBusinessBySlugQuery(supabase, slug);
+    },
+    ["business_by_slug", slug],
+    {
+      tags: [`business_by_slug_${slug}`],
+      revalidate: 280,
+    },
+  )();
 };
 
 export const getBusinessById = async (businessId: string) => {
   const supabase = createClient();
-  return getBusinessByIdQuery(supabase, businessId);
+
+  return unstable_cache(
+    async () => {
+      return getBusinessByIdQuery(supabase, businessId);
+    },
+    ["business", businessId],
+    {
+      tags: [`teams_${businessId}`],
+      revalidate: 280,
+    },
+  )();
 };
 
 export const getTeams = async () => {
@@ -82,7 +101,7 @@ export const getTeams = async () => {
     ["teams", userId],
     {
       tags: [`teams_${userId}`],
-      revalidate: 10,
+      revalidate: 280,
     },
   )();
 };
@@ -103,7 +122,7 @@ export const getPendingBusinessInvites = async () => {
     ["pending_business_invites", user!.username!],
     {
       tags: [`pending_business_invites_${userId}`],
-      revalidate: 180,
+      revalidate: 280,
     },
   )();
 };
@@ -125,7 +144,7 @@ export const getBusinessMembers = async () => {
     ["business_members", businessId],
     {
       tags: [`business_members_${businessId}`],
-      revalidate: 10,
+      revalidate: 280,
     },
   )();
 };
@@ -147,7 +166,7 @@ export const getTeamInvites = async () => {
     ["team", "invites", teamId],
     {
       tags: [`team_invites_${teamId}`],
-      revalidate: 180,
+      revalidate: 280,
     },
   )();
 };
@@ -165,7 +184,7 @@ export const getUserInvites = async () => {
     ["user", "invites", email],
     {
       tags: [`user_invites_${email}`],
-      revalidate: 180,
+      revalidate: 280,
     },
   )();
 };
@@ -221,17 +240,17 @@ export const getCampaignsForBusiness = async () => {
   )();
 };
 
-export const getCampaignActionReward = async (id: string) => {
+export const getCampaignById = async (id: string) => {
   const supabase = createClient();
 
   return unstable_cache(
     async () => {
-      return getCampaignActionRewardsQuery(supabase, id);
+      return getCampaignByIdQuery(supabase, id);
     },
-    ["campaign_action_reward", id],
+    ["campaign", id],
     {
-      tags: [`campaign_action_reward_${id}`],
-      revalidate: 180,
+      tags: [`campaign_${id}`],
+      revalidate: 1,
     },
   )();
 };

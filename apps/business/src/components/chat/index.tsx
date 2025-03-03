@@ -4,16 +4,26 @@ import type { ClientMessage } from "@/actions/ai/types";
 import { useEnterSubmit } from "@/hooks/use-enter-submit";
 import { useScrollAnchor } from "@/hooks/use-scroll-anchor";
 import { useAssistantStore } from "@/store/assistant";
+import {
+  handleCampaignCreation,
+  isCampaignRequest,
+} from "@/utils/chat-handlers/campaign-handler";
 import { ScrollArea } from "@loopearn/ui/scroll-area";
 import { Textarea } from "@loopearn/ui/textarea";
 import { useActions } from "ai/rsc";
 import { nanoid } from "nanoid";
 import { useEffect, useRef } from "react";
 import { ChatEmpty } from "./chat-empty";
-import { ChatExamples } from "./chat-examples";
+import { ChatExamples, DEFAULT_EXAMPLES } from "./chat-examples";
 import { ChatFooter } from "./chat-footer";
 import { ChatList } from "./chat-list";
 import { UserMessage } from "./messages";
+
+const CAMPAIGN_EXAMPLES = [
+  "Create a Facebook campaign where users share our post for a 10% discount",
+  "Set up an Instagram campaign with 500 points reward for following us",
+  "Make a review campaign that gives users a $10 discount",
+];
 
 export function Chat({
   messages,
@@ -50,8 +60,18 @@ export function Chat({
       },
     ]);
 
-    const responseMessage = await submitUserMessage(value);
+    // Check if this is a campaign creation request
+    if (isCampaignRequest(value)) {
+      const responseMessage = await handleCampaignCreation(value);
+      submitMessage((messages: ClientMessage[]) => [
+        ...messages,
+        responseMessage,
+      ]);
+      return;
+    }
 
+    // Handle other types of messages with the existing AI
+    const responseMessage = await submitUserMessage(value);
     submitMessage((messages: ClientMessage[]) => [
       ...messages,
       responseMessage,
@@ -92,7 +112,12 @@ export function Chat({
       </ScrollArea>
 
       <div className="fixed bottom-[1px] left-[1px] right-[1px] todesktop:h-[88px] md:h-[88px] bg-background border-border border-t-[1px]">
-        {showExamples && <ChatExamples onSubmit={onSubmit} />}
+        {showExamples && (
+          <ChatExamples
+            onSubmit={onSubmit}
+            examples={[...CAMPAIGN_EXAMPLES, ...DEFAULT_EXAMPLES]}
+          />
+        )}
 
         <form
           ref={formRef}
@@ -110,7 +135,7 @@ export function Chat({
             autoCorrect="off"
             value={input}
             className="h-12 min-h-12 pt-3 resize-none border-none"
-            placeholder="Ask LoopEarn a question..."
+            placeholder="Ask LoopEarn a question or describe a campaign to create..."
             onKeyDown={onKeyDown}
             onChange={(evt) => {
               setInput(evt.target.value);

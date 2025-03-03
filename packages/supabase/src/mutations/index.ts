@@ -190,11 +190,13 @@ export async function canJoinTeamByInviteCode(supabase: Client, code: string) {
 
 // Campaign Types
 export interface CreateCampaignParams extends TablesInsert<"campaigns"> {
-  reward: TablesInsert<"campaign_action_rewards">;
+  actions: TablesInsert<"campaign_actions">[];
+  reward: TablesInsert<"campaign_rewards">;
 }
 
 interface UpdateCampaignParams extends TablesUpdate<"campaigns"> {
-  reward?: Partial<TablesUpdate<"campaign_action_rewards">>;
+  actions?: Partial<TablesUpdate<"campaign_actions">>[];
+  reward?: Partial<TablesUpdate<"campaign_rewards">>;
 }
 
 // Campaign Mutations
@@ -202,10 +204,11 @@ export async function createCampaign(
   supabase: Client,
   params: CreateCampaignParams,
 ): Promise<Tables<"campaigns"> | null> {
-  const { reward, ...campaignData } = params;
+  const { reward, actions, ...campaignData } = params;
 
   const { data, error } = await supabase.rpc("create_campaign", {
     campaign_data: campaignData,
+    actions_data: actions,
     reward_data: reward,
   });
 
@@ -220,20 +223,19 @@ export async function updateCampaign(
   supabase: Client,
   id: string,
   params: UpdateCampaignParams,
-): Promise<Tables<"campaigns"> | null> {
-  const { reward, ...campaignData } = params;
+) {
+  const { reward, actions, ...campaignData } = params;
 
   const { data, error } = await supabase.rpc("update_campaign", {
-    campaign_id: id,
+    p_campaign_id: id,
     campaign_data: campaignData,
-    reward_data: reward!,
+    actions_data: actions ?? [],
+    rewards_data: reward ?? {},
   });
 
   if (error) {
     throw new Error(error.message);
   }
-
-  return data;
 }
 
 export async function deleteCampaign(
@@ -247,4 +249,14 @@ export async function deleteCampaign(
   }
 
   return { success: true };
+}
+
+export async function createBusinessAddress(supabase: Client, data: any) {
+  // delete existing address
+  await supabase
+    .from("business_address")
+    .delete()
+    .eq("business_id", data.business_id);
+
+  return supabase.from("business_address").insert(data).select("*").single();
 }
