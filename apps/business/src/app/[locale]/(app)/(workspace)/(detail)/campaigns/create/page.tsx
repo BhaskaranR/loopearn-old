@@ -1,6 +1,7 @@
 "use client";
 
 import { CampaignTemplates } from "@/components/campaign-templates";
+import { CampaignCreateSheet } from "@/components/campaign/campaign-create-sheet";
 import { CampaignSidebar } from "@/components/campaign/campaign-sidebar";
 import { Badge } from "@loopearn/ui/badge";
 import { Card } from "@loopearn/ui/card";
@@ -10,11 +11,19 @@ import { SidebarProvider } from "@loopearn/ui/sidebar";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useQueryState } from "nuqs";
+import {
+  parseAsBoolean,
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+} from "nuqs";
 
 export default function CreateCampaignPage() {
   const router = useRouter();
   const [selectedType, setSelectedType] = useQueryState("type");
+  const [_, setParams] = useQueryStates({
+    "create-campaign": parseAsBoolean,
+  });
 
   return (
     <div className="flex h-full">
@@ -46,7 +55,7 @@ export default function CreateCampaignPage() {
                 className={cn(
                   "p-6 cursor-pointer hover:border-primary transition-colors flex items-center justify-center gap-3",
                 )}
-                onClick={() => router.push("/campaigns/create/workflow")}
+                onClick={() => setParams({ "create-campaign": true })}
               >
                 <Plus className="h-5 w-5" />
                 <span className="text-lg font-medium">
@@ -104,6 +113,8 @@ export default function CreateCampaignPage() {
           </div>
         </div>
       </SidebarProvider>
+
+      <CampaignCreateSheet />
     </div>
   );
 }

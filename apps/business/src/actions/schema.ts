@@ -410,8 +410,9 @@ const baseCampaignSchema = z.object({
   end_date: z.string().datetime().optional(),
   is_live_on_marketplace: z.boolean().default(true),
   audience: z.enum(["all", "specific"]).default("all"),
-  campaign_actions: z.array(campaignActionSchema).min(1),
-  campaign_rewards: campaignRewardSchema,
+  campaign_actions: z.array(campaignActionSchema).min(0),
+  campaign_rewards: campaignRewardSchema.optional(),
+  redirect_to: z.string().optional(),
 });
 
 // Create campaign schema with refinement

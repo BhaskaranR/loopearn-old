@@ -37,7 +37,7 @@ export const createCampaignAction = authActionClient
       end_date: parsedInput.end_date || null,
       expires_after: null,
       is_live_on_marketplace: parsedInput.is_live_on_marketplace,
-      actions: parsedInput.campaign_actions.map((action, index) => ({
+      actions: (parsedInput.campaign_actions || []).map((action, index) => ({
         action_type: action.action_type ?? "",
         action_details: action.action_details,
         required_count: action.required_count ?? 1,
@@ -49,21 +49,28 @@ export const createCampaignAction = authActionClient
         redirection_button_text: action.redirection_button_text ?? null,
         redirection_button_link: action.redirection_button_link ?? null,
       })),
-      reward: {
-        reward_type: parsedInput.campaign_rewards.reward_type,
-        reward_value: parsedInput.campaign_rewards.reward_value,
-        reward_unit: parsedInput.campaign_rewards.reward_unit,
-        coupon_code: null,
-        uses_per_customer: parsedInput.campaign_rewards.uses_per_customer,
-        minimum_purchase_amount:
-          parsedInput.campaign_rewards.minimum_purchase_amount ?? 0,
-        expires_after: parsedInput.campaign_rewards.expires_after ?? null,
-      },
+      reward: parsedInput.campaign_rewards
+        ? {
+            reward_type: parsedInput.campaign_rewards.reward_type,
+            reward_value: parsedInput.campaign_rewards.reward_value,
+            reward_unit: parsedInput.campaign_rewards.reward_unit,
+            coupon_code: null,
+            uses_per_customer: parsedInput.campaign_rewards.uses_per_customer,
+            minimum_purchase_amount:
+              parsedInput.campaign_rewards.minimum_purchase_amount ?? 0,
+            expires_after: parsedInput.campaign_rewards.expires_after ?? null,
+          }
+        : undefined,
     };
 
-    await createCampaignMutation(supabase, params);
+    const campaign = await createCampaignMutation(supabase, params);
     revalidateTag(`campaigns_${user.business_id}`);
-    redirect("/campaigns");
+
+    if (parsedInput.redirect_to) {
+      redirect(`${parsedInput.redirect_to}/${campaign.id}`);
+    } else {
+      return { success: true, id: campaign.id };
+    }
   });
 
 export const updateCampaignAction = authActionClient
@@ -81,7 +88,7 @@ export const updateCampaignAction = authActionClient
 
     await updateCampaignMutation(supabase, id, {
       ...campaignData,
-      actions: updateData.campaign_actions?.map((action, index) => ({
+      actions: (updateData.campaign_actions || []).map((action, index) => ({
         action_type: action.action_type ?? "",
         action_details: action.action_details,
         required_count: action.required_count ?? 1,

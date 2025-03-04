@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION create_campaign(
   campaign_data jsonb,
-  actions_data jsonb,
-  reward_data jsonb
+  actions_data jsonb DEFAULT NULL,
+  reward_data jsonb DEFAULT NULL
 ) RETURNS "campaigns"
 LANGUAGE plpgsql
 SECURITY INVOKER
@@ -42,7 +42,7 @@ BEGIN
     (campaign_data->>'is_live_on_marketplace')::boolean
   RETURNING * INTO new_campaign;
 
-  -- Insert actions
+  -- Insert actions if provided
   IF actions_data IS NOT NULL AND actions_data != '[]'::jsonb THEN
     INSERT INTO "campaign_actions" (
       campaign_id,
@@ -72,38 +72,40 @@ BEGIN
     FROM jsonb_array_elements(actions_data) as action;
   END IF;
 
-  -- Insert reward with proper type checking and defaults
-  INSERT INTO "campaign_rewards" (
-    campaign_id,
-    reward_type,
-    reward_value,
-    reward_unit,
-    coupon_code,
-    uses_per_customer,
-    minimum_purchase_amount,
-    expires_after
-  )
-  SELECT
-    new_campaign.id,
-    -- Validate reward_type against allowed values
-    CASE 
-      WHEN reward_data->>'reward_type' IN (
-        'rank_points', 'wallet_points', 'wallet_multiplier', 
-        'coupon', 'percentage_discount', 'fixed_amount_discount'
-      ) THEN reward_data->>'reward_type'
-      ELSE 'wallet_points' -- Default value if invalid type provided
-    END,
-    COALESCE((reward_data->>'reward_value')::int, 0), -- Default to 0 if null
-    -- Validate reward_unit against allowed values
-    CASE 
-      WHEN reward_data->>'reward_unit' IN ('points', '%', 'currency') 
-      THEN reward_data->>'reward_unit'
-      ELSE 'points'
-    END,
-    reward_data->>'coupon_code',
-    COALESCE((reward_data->>'uses_per_customer')::int, 1),
-    COALESCE((reward_data->>'minimum_purchase_amount')::numeric, 0),
-    (reward_data->>'expires_after')::int;
+  -- Insert reward if provided
+  IF reward_data IS NOT NULL THEN
+    INSERT INTO "campaign_rewards" (
+      campaign_id,
+      reward_type,
+      reward_value,
+      reward_unit,
+      coupon_code,
+      uses_per_customer,
+      minimum_purchase_amount,
+      expires_after
+    )
+    SELECT
+      new_campaign.id,
+      -- Validate reward_type against allowed values
+      CASE 
+        WHEN reward_data->>'reward_type' IN (
+          'rank_points', 'wallet_points', 'wallet_multiplier', 
+          'coupon', 'percentage_discount', 'fixed_amount_discount'
+        ) THEN reward_data->>'reward_type'
+        ELSE 'wallet_points' -- Default value if invalid type provided
+      END,
+      COALESCE((reward_data->>'reward_value')::int, 0), -- Default to 0 if null
+      -- Validate reward_unit against allowed values
+      CASE 
+        WHEN reward_data->>'reward_unit' IN ('points', '%', 'currency') 
+        THEN reward_data->>'reward_unit'
+        ELSE 'points'
+      END,
+      reward_data->>'coupon_code',
+      COALESCE((reward_data->>'uses_per_customer')::int, 1),
+      COALESCE((reward_data->>'minimum_purchase_amount')::numeric, 0),
+      (reward_data->>'expires_after')::int;
+  END IF;
 
   RETURN new_campaign;
 END;

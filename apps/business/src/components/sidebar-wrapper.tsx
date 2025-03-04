@@ -7,6 +7,7 @@ import {
   SidebarTrigger,
 } from "@loopearn/ui/sidebar";
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 
 const AssistantModal = dynamic(
   () => import("./assistant/assistant-modal").then((mod) => mod.AssistantModal),

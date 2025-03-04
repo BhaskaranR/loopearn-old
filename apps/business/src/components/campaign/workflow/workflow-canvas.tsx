@@ -6,6 +6,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { cn } from "@loopearn/ui/cn";
+import { Separator } from "@loopearn/ui/separator";
 import { WorkflowItem } from "./workflow-item";
 
 interface WorkflowCanvasProps {
@@ -42,11 +43,14 @@ function DroppableContainer({
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-lg border-2 border-dashed p-4 max-w-2xl mx-auto",
+        "rounded-lg border-2 border-dashed p-4 mx-auto",
+        "transition-colors duration-200",
         isOver ? "border-primary bg-primary/5" : "border-muted",
         className,
       )}
     >
+      <h3 className="text-lg font-semibold mb-2 capitalize">{title}</h3>
+      <Separator className="my-2" />
       {items.length === 0 ? (
         <div className="flex h-32 items-center justify-center text-muted-foreground">
           Drag {title} here
@@ -57,7 +61,9 @@ function DroppableContainer({
             {items.map((item) => (
               <WorkflowItem
                 key={item.id}
-                {...item}
+                id={item.id}
+                title={item.title}
+                icon={item.icon}
                 onConfigure={() => onConfigure?.(item)}
               />
             ))}
@@ -76,25 +82,21 @@ export function WorkflowCanvas({
 }: WorkflowCanvasProps) {
   return (
     <div className={cn("space-y-4", className)}>
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Triggers</h3>
-        <DroppableContainer
-          id="triggers-container"
-          items={triggerItems}
-          title="triggers"
-          onConfigure={onConfigure}
-        />
-      </div>
+      <DroppableContainer
+        id="triggers-container"
+        items={triggerItems}
+        title="triggers"
+        className="max-w-xl h-[80%] mx-auto"
+        onConfigure={onConfigure}
+      />
 
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Rewards</h3>
-        <DroppableContainer
-          id="rewards-container"
-          items={rewardItems}
-          title="rewards"
-          onConfigure={onConfigure}
-        />
-      </div>
+      <DroppableContainer
+        id="rewards-container"
+        items={rewardItems}
+        title="rewards"
+        className="max-w-xl mx-auto"
+        onConfigure={onConfigure}
+      />
     </div>
   );
 }
