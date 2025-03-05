@@ -5,14 +5,14 @@ import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@loopearn/ui/button";
 import { cn } from "@loopearn/ui/cn";
 import { GripVertical, Settings } from "lucide-react";
-import type { ElementType } from "react";
+import { useQueryState } from "nuqs";
+import type { CSSProperties } from "react";
 
 interface WorkflowItemProps {
   id: string;
   title: string;
-  icon?: ElementType;
+  icon?: React.ElementType;
   className?: string;
-  onConfigure?: () => void;
 }
 
 export function WorkflowItem({
@@ -20,8 +20,8 @@ export function WorkflowItem({
   title,
   icon: Icon,
   className,
-  onConfigure,
 }: WorkflowItemProps) {
+  const [stepId, setStepId] = useQueryState("stepId");
   const {
     attributes,
     listeners,
@@ -31,7 +31,7 @@ export function WorkflowItem({
     isDragging,
   } = useSortable({ id });
 
-  const style = {
+  const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
@@ -40,39 +40,34 @@ export function WorkflowItem({
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
       {...attributes}
+      onClick={() => setStepId(id)}
       className={cn(
-        "flex flex-col p-4 bg-card rounded-lg border shadow-sm",
+        "relative flex flex-col p-4 bg-card rounded-lg border shadow-sm w-full",
         "hover:border-primary/50 transition-all duration-200",
-        isDragging && "opacity-50",
+        "cursor-pointer",
+        stepId === id && "border-primary",
+        isDragging && ["opacity-75", "border-primary", "shadow-lg", "z-50"],
         className,
       )}
     >
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-3 flex-1">
           {Icon && (
-            <div className="text-muted-foreground">
+            <div className={cn("text-muted-foreground")}>
               <Icon className="w-4 h-4" />
             </div>
           )}
           <span className="font-medium">{title}</span>
         </div>
-        <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
+        <div
+          {...listeners}
+          className="touch-none cursor-grab active:cursor-grabbing"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </div>
       </div>
-
-      <Button
-        variant="link"
-        className="mt-2 pl-0 text-xs text-muted-foreground hover:text-primary"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onConfigure?.();
-        }}
-      >
-        <Settings className="w-3 h-3 mr-1" />
-        Configure
-      </Button>
     </div>
   );
 }

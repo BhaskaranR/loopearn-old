@@ -37,3 +37,16 @@ export type BusinessAddress =
   Database["public"]["Tables"]["business_address"]["Row"];
 
 export type BusinessWithAddress = Business & BusinessAddress;
+
+export type Campaign = Database["public"]["Tables"]["campaigns"]["Row"];
+
+export type CampaignAction =
+  Database["public"]["Tables"]["campaign_actions"]["Row"];
+
+export type CampaignReward =
+  Database["public"]["Tables"]["campaign_rewards"]["Row"];
+
+export type CampaignWithActionsRewards = Campaign & {
+  campaign_actions: CampaignAction[];
+  campaign_rewards: CampaignReward[];
+};

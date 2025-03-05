@@ -4,6 +4,8 @@ import { LogEvents } from "@loopearn/events/events";
 import {
   type CreateCampaignParams,
   createCampaign as createCampaignMutation,
+  createCampaignTriggerAction,
+  createCampaignTriggerReward,
   deleteCampaign as deleteCampaignMutation,
   updateCampaign as updateCampaignMutation,
 } from "@loopearn/supabase/mutations";
@@ -11,7 +13,14 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { authActionClient } from "./safe-action";
-import { createCampaignSchema, updateCampaignSchema } from "./schema";
+import {
+  campaignActionSchema,
+  campaignRewardSchema,
+  createCampaignActionSchema,
+  createCampaignRewardSchema,
+  createCampaignSchema,
+  updateCampaignSchema,
+} from "./schema";
 
 export const createCampaignAction = authActionClient
   .schema(createCampaignSchema)
@@ -37,7 +46,7 @@ export const createCampaignAction = authActionClient
       end_date: parsedInput.end_date || null,
       expires_after: null,
       is_live_on_marketplace: parsedInput.is_live_on_marketplace,
-      actions: parsedInput.campaign_actions.map((action, index) => ({
+      actions: (parsedInput.campaign_actions || []).map((action, index) => ({
         action_type: action.action_type ?? "",
         action_details: action.action_details,
         required_count: action.required_count ?? 1,
@@ -49,21 +58,28 @@ export const createCampaignAction = authActionClient
         redirection_button_text: action.redirection_button_text ?? null,
         redirection_button_link: action.redirection_button_link ?? null,
       })),
-      reward: {
-        reward_type: parsedInput.campaign_rewards.reward_type,
-        reward_value: parsedInput.campaign_rewards.reward_value,
-        reward_unit: parsedInput.campaign_rewards.reward_unit,
-        coupon_code: null,
-        uses_per_customer: parsedInput.campaign_rewards.uses_per_customer,
-        minimum_purchase_amount:
-          parsedInput.campaign_rewards.minimum_purchase_amount ?? 0,
-        expires_after: parsedInput.campaign_rewards.expires_after ?? null,
-      },
+      reward: parsedInput.campaign_rewards
+        ? {
+            reward_type: parsedInput.campaign_rewards.reward_type,
+            reward_value: parsedInput.campaign_rewards.reward_value,
+            reward_unit: parsedInput.campaign_rewards.reward_unit,
+            coupon_code: null,
+            uses_per_customer: parsedInput.campaign_rewards.uses_per_customer,
+            minimum_purchase_amount:
+              parsedInput.campaign_rewards.minimum_purchase_amount ?? 0,
+            expires_after: parsedInput.campaign_rewards.expires_after ?? null,
+          }
+        : undefined,
     };
 
-    await createCampaignMutation(supabase, params);
+    const campaign = await createCampaignMutation(supabase, params);
     revalidateTag(`campaigns_${user.business_id}`);
-    redirect("/campaigns");
+
+    if (parsedInput.redirect_to) {
+      redirect(`${parsedInput.redirect_to}/${campaign.id}`);
+    } else {
+      return { success: true, id: campaign.id };
+    }
   });
 
 export const updateCampaignAction = authActionClient
@@ -81,7 +97,7 @@ export const updateCampaignAction = authActionClient
 
     await updateCampaignMutation(supabase, id, {
       ...campaignData,
-      actions: updateData.campaign_actions?.map((action, index) => ({
+      actions: (updateData.campaign_actions || []).map((action, index) => ({
         action_type: action.action_type ?? "",
         action_details: action.action_details,
         required_count: action.required_count ?? 1,
@@ -122,4 +138,36 @@ export const deleteCampaignAction = authActionClient
   .action(async ({ parsedInput: { id }, ctx: { supabase } }) => {
     const { success } = await deleteCampaignMutation(supabase, id);
     return { success, id };
+  });
+
+export const createCampaignTrigger = authActionClient
+  .schema(createCampaignActionSchema)
+  .metadata({
+    name: "create-campaign-action",
+    track: {
+      event: LogEvents.CampaignActionCreate.name,
+      channel: LogEvents.CampaignActionCreate.channel,
+    },
+  })
+  .action(async ({ parsedInput, ctx: { user, supabase } }) => {
+    await createCampaignTriggerAction(supabase, parsedInput);
+    revalidateTag(`campaigns_${user.business_id}`);
+    revalidateTag(`campaign_${parsedInput.campaign_id}`);
+    revalidatePath(`/campaigns/create/workflow/${parsedInput.campaign_id}`);
+  });
+
+export const createCampaignReward = authActionClient
+  .schema(createCampaignRewardSchema)
+  .metadata({
+    name: "create-campaign-reward",
+    track: {
+      event: LogEvents.CampaignRewardCreate.name,
+      channel: LogEvents.CampaignRewardCreate.channel,
+    },
+  })
+  .action(async ({ parsedInput, ctx: { user, supabase } }) => {
+    await createCampaignTriggerReward(supabase, parsedInput);
+    revalidateTag(`campaigns_${user.business_id}`);
+    revalidateTag(`campaign_${parsedInput.campaign_id}`);
+    revalidatePath(`/campaigns/create/workflow/${parsedInput.campaign_id}`);
   });

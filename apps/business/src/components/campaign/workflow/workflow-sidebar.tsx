@@ -25,7 +25,7 @@ import { DraggableMenuItem } from "./draggable-menu-item";
 
 export function WorkFlowSidebar({ className }: { className?: string }) {
   return (
-    <Sidebar className={cn("border-r-0", className)}>
+    <Sidebar collapsible="none" className={cn("border-r-0 ", className)}>
       <SidebarGroup>
         <SidebarGroupLabel>Action Based</SidebarGroupLabel>
         <SidebarGroupContent>

@@ -7,7 +7,6 @@ import {
   getBusinessByIdQuery,
   getBusinessBySlugQuery,
   getBusinessMembersQuery,
-  getCampaignActionRewardsQuery,
   getCampaignByIdQuery,
   getCampaignsQuery,
   getCategoriesQuery,

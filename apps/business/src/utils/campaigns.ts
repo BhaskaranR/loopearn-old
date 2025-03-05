@@ -11,7 +11,8 @@ export interface CampaignTemplate
     | "tiktok"
     | "instagram_business"
     | "review"
-    | "gamification";
+    | "gamification"
+    | "";
   icon: string;
   defaultName: string;
   defaultDescription: string;
@@ -20,9 +21,33 @@ export interface CampaignTemplate
     action_type: string;
     name: string;
     description: string;
-    defaultReward?: Partial<CreateCampaignFormValues["reward"]>;
+    defaultReward?: Partial<CreateCampaignFormValues["campaign_rewards"]>;
   }[];
 }
+
+export const emptyTemplate: CampaignTemplate = {
+  id: "",
+  platform: "",
+  icon: "",
+  defaultName: "",
+  defaultDescription: "",
+  type: "Reward Campaign",
+  is_repeatable: false,
+  max_achievement: 1,
+  min_tier: 1,
+  visibility: "AlwaysVisible",
+  status: "active",
+  is_live_on_marketplace: true,
+  audience: "all",
+  campaign_rewards: {
+    reward_type: "percentage_discount",
+    reward_value: 0,
+    reward_unit: "%",
+    uses_per_customer: 1,
+  },
+  selectedAction: "",
+  availableActions: [],
+};
 
 export const campaignTemplates: CampaignTemplate[] = [
   {
@@ -39,11 +64,10 @@ export const campaignTemplates: CampaignTemplate[] = [
     status: "active",
     is_live_on_marketplace: false,
     audience: "all",
-    reward: {
+    campaign_rewards: {
       reward_type: "percentage_discount",
       reward_value: 10,
       reward_unit: "%",
-      applies_to: "entire",
       uses_per_customer: 1,
     },
     selectedAction: "share",
@@ -94,11 +118,10 @@ export const campaignTemplates: CampaignTemplate[] = [
     status: "active",
     is_live_on_marketplace: false,
     audience: "all",
-    reward: {
+    campaign_rewards: {
       reward_type: "percentage_discount",
       reward_value: 15,
       reward_unit: "%",
-      applies_to: "entire",
       uses_per_customer: 1,
     },
     selectedAction: "follow_instagram",
@@ -149,11 +172,10 @@ export const campaignTemplates: CampaignTemplate[] = [
     status: "active",
     is_live_on_marketplace: true,
     audience: "all",
-    reward: {
+    campaign_rewards: {
       reward_type: "percentage_discount",
       reward_value: 10,
       reward_unit: "%",
-      applies_to: "entire",
       uses_per_customer: 1,
     },
     selectedAction: "share",
@@ -189,7 +211,7 @@ export const campaignTemplates: CampaignTemplate[] = [
     status: "active",
     is_live_on_marketplace: true,
     audience: "all",
-    reward: {
+    campaign_rewards: {
       reward_type: "percentage_discount",
       reward_value: 10,
       reward_unit: "%",
@@ -232,11 +254,10 @@ export const campaignTemplates: CampaignTemplate[] = [
     status: "active",
     is_live_on_marketplace: false,
     audience: "all",
-    reward: {
+    campaign_rewards: {
       reward_type: "percentage_discount",
       reward_value: 5,
       reward_unit: "%",
-      applies_to: "entire",
       uses_per_customer: 1,
     },
     selectedAction: "write_review",
@@ -267,11 +288,10 @@ export const campaignTemplates: CampaignTemplate[] = [
     status: "active",
     is_live_on_marketplace: true,
     audience: "all",
-    reward: {
+    campaign_rewards: {
       reward_type: "percentage_discount",
       reward_value: 20,
       reward_unit: "%",
-      applies_to: "entire",
       uses_per_customer: 1,
       expires_after: 86400,
     },

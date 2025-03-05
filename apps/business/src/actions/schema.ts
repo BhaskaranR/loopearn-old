@@ -351,7 +351,8 @@ export const filterVaultSchema = z.object({
 });
 
 // Base campaign action schema
-const campaignActionSchema = z.object({
+export const campaignActionSchema = z.object({
+  id: z.string().uuid().optional(),
   action_type: z.string().optional(),
   action_details: z.string().optional(),
   platform: z.string().optional(),
@@ -369,8 +370,12 @@ const campaignActionSchema = z.object({
   redirection_button_text: z.string().nullable().optional(),
 });
 
+export const createCampaignActionSchema = campaignActionSchema.extend({
+  campaign_id: z.string().uuid(),
+});
+
 // Base campaign reward schema
-const campaignRewardSchema = z.object({
+export const campaignRewardSchema = z.object({
   // icon_url: z.string().url().optional(),
   // redirection_button_text: z.string().optional(),
   // redirection_button_link: z.string().url().optional(),
@@ -392,6 +397,10 @@ const campaignRewardSchema = z.object({
   uses_per_customer: z.number().default(1),
 });
 
+export const createCampaignRewardSchema = campaignRewardSchema.extend({
+  campaign_id: z.string().uuid(),
+});
+
 // First create the object schema
 const baseCampaignSchema = z.object({
   name: z.string().min(2, {
@@ -410,8 +419,9 @@ const baseCampaignSchema = z.object({
   end_date: z.string().datetime().optional(),
   is_live_on_marketplace: z.boolean().default(true),
   audience: z.enum(["all", "specific"]).default("all"),
-  campaign_actions: z.array(campaignActionSchema).min(1),
-  campaign_rewards: campaignRewardSchema,
+  campaign_actions: z.array(campaignActionSchema).min(0),
+  campaign_rewards: campaignRewardSchema.optional(),
+  redirect_to: z.string().optional(),
 });
 
 // Create campaign schema with refinement
@@ -451,6 +461,12 @@ export type CampaignAction = z.infer<typeof campaignActionSchema>;
 export type CampaignReward = z.infer<typeof campaignRewardSchema>;
 export type CreateCampaignFormValues = z.infer<typeof createCampaignSchema>;
 export type UpdateCampaignFormValues = z.infer<typeof updateCampaignSchema>;
+export type CreateCampaignActionFormValues = z.infer<
+  typeof createCampaignActionSchema
+>;
+export type CreateCampaignRewardFormValues = z.infer<
+  typeof createCampaignRewardSchema
+>;
 
 export const marketplaceProfileSchema = z.object({
   slug: z.string().optional(),

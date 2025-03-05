@@ -4,7 +4,7 @@ import {
   getUserInviteQuery,
   getUserInviteQueryByCode,
 } from "../queries";
-import type { Client } from "../types";
+import type { CampaignAction, CampaignReward, Client } from "../types";
 import type { Tables, TablesInsert, TablesUpdate } from "../types/db";
 
 export async function updateUser(supabase: Client, data: any) {
@@ -259,4 +259,18 @@ export async function createBusinessAddress(supabase: Client, data: any) {
     .eq("business_id", data.business_id);
 
   return supabase.from("business_address").insert(data).select("*").single();
+}
+
+export async function createCampaignTriggerAction(supabase: Client, data) {
+  // delete existing action
+  await supabase.from("campaign_actions").delete().eq("id", data.id);
+
+  return supabase.from("campaign_actions").insert(data).select("*").single();
+}
+
+export async function createCampaignTriggerReward(supabase: Client, data) {
+  // delete existing reward
+  await supabase.from("campaign_rewards").delete().eq("id", data.id);
+
+  return supabase.from("campaign_rewards").insert(data).select("*").single();
 }

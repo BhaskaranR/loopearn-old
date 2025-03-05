@@ -1,8 +1,13 @@
 "use client";
 
-import { createCampaignAction } from "@/actions/campaign-actions";
+import {
+  createCampaignAction,
+  createCampaignReward,
+} from "@/actions/campaign-actions";
 import {
   type CreateCampaignFormValues,
+  type CreateCampaignRewardFormValues,
+  createCampaignRewardSchema,
   createCampaignSchema,
 } from "@/actions/schema";
 import type { CampaignTemplate } from "@/utils/campaigns";
@@ -49,17 +54,15 @@ import type { DateRange } from "react-day-picker";
 import { Controller, useForm } from "react-hook-form";
 import { DatePickerWithRange } from "./date-picker-range";
 
-interface CampaignManagerProps {
-  template?: CampaignTemplate;
-  defaultIcon?: string;
-  defaultPlatform?: CampaignTemplate["platform"];
-}
+type CampaignRewardProps = {
+  template: CampaignTemplate;
+  initialData?: CreateCampaignRewardFormValues;
+};
 
-export default function CampaignManager({
+export default function CampaignFormReward({
   template,
-  defaultIcon = "facebook",
-  defaultPlatform = "facebook",
-}: CampaignManagerProps) {
+  initialData,
+}: CampaignRewardProps) {
   const { toast } = useToast();
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
     template?.start_date && template?.end_date
@@ -70,15 +73,7 @@ export default function CampaignManager({
       : undefined,
   );
 
-  const [activation, setActivation] = React.useState<
-    "always-active" | "scheduled"
-  >(
-    !template?.start_date && !template?.end_date
-      ? "always-active"
-      : "scheduled",
-  );
-
-  const action = useAction(createCampaignAction, {
+  const action = useAction(createCampaignReward, {
     onError: ({ error }) => {
       toast({
         duration: 3500,
@@ -89,46 +84,12 @@ export default function CampaignManager({
     },
   });
 
-  const form = useForm<CreateCampaignFormValues>({
-    resolver: zodResolver(createCampaignSchema),
-    defaultValues: template
-      ? {
-          name: template.defaultName,
-          description: template.defaultDescription,
-          ...template,
-          start_date: template.start_date
-            ? new Date(template.start_date).toISOString()
-            : undefined,
-          end_date: template.end_date
-            ? new Date(template.end_date).toISOString()
-            : undefined,
-        }
-      : {
-          name: "",
-          description: "",
-          type: "Reward Campaign",
-          is_repeatable: false,
-          max_achievement: 1,
-          min_tier: 1,
-          visibility: "AlwaysVisible",
-          status: "active",
-          is_live_on_marketplace: false,
-          audience: "all",
-          trigger: {
-            action_type: "share",
-            social_link: "",
-          },
-          reward: {
-            reward_type: "percentage_discount",
-            reward_value: 0,
-            reward_unit: "points",
-            applies_to: "entire",
-            uses_per_customer: 1,
-          },
-        },
+  const form = useForm<CreateCampaignRewardFormValues>({
+    resolver: zodResolver(createCampaignRewardSchema),
+    defaultValues: initialData,
   });
 
-  async function onSubmit(data: CreateCampaignFormValues) {
+  async function onSubmit(data: CreateCampaignRewardFormValues) {
     action.execute(data);
   }
 
@@ -144,7 +105,7 @@ export default function CampaignManager({
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="reward.reward_type"
+                  name="reward_type"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Select a reward type</FormLabel>
@@ -189,7 +150,7 @@ export default function CampaignManager({
 
                 <FormField
                   control={form.control}
-                  name="reward.reward_value"
+                  name="reward_value"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Reward Value</FormLabel>
@@ -209,7 +170,7 @@ export default function CampaignManager({
 
                 <FormField
                   control={form.control}
-                  name="reward.reward_unit"
+                  name="reward_unit"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Reward Unit</FormLabel>
@@ -235,7 +196,7 @@ export default function CampaignManager({
 
                 <FormField
                   control={form.control}
-                  name="reward.uses_per_customer"
+                  name="uses_per_customer"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Uses Per Customer</FormLabel>
@@ -272,26 +233,4 @@ export default function CampaignManager({
       </Form>
     </div>
   );
-}
-
-function DynamicIcon({
-  name,
-  className,
-}: { name: string; className?: string }) {
-  switch (name) {
-    case "facebook":
-      return <Facebook className={className} />;
-    case "instagram":
-      return <Instagram className={className} />;
-    case "tiktok":
-      return <Tiktok className={className} />;
-    case "star":
-      return <Star className={className} />;
-    case "wheel":
-      return <Gamepad2 className={className} />;
-    case "calendar":
-      return <Calendar className={className} />;
-    default:
-      return <Facebook className={className} />;
-  }
 }

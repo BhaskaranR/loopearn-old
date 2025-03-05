@@ -99,6 +99,14 @@ export const LogEvents = {
     name: "Campaign Delete",
     channel: "campaign",
   },
+  CampaignActionCreate: {
+    name: "Campaign Action Create",
+    channel: "campaign",
+  },
+  CampaignRewardCreate: {
+    name: "Campaign Reward Create",
+    channel: "campaign",
+  },
   UpdateMarketplace: {
     name: "Update Marketplace",
     channel: "marketplace",

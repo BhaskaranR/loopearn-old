@@ -90,11 +90,16 @@ export const columns: ColumnDef<
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link href={`/campaigns/edit/${row.original.id}`}>Edit</Link>
+                <Link
+                  href={`/campaigns/create/workflow/${row.original.id}`}
+                  className="w-full"
+                >
+                  Edit
+                </Link>
               </DropdownMenuItem>
 
               <AlertDialogTrigger asChild>
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem className="text-destructive w-full">
                   Delete
                 </DropdownMenuItem>
               </AlertDialogTrigger>
