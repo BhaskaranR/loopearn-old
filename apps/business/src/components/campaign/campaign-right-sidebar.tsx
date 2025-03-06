@@ -1,7 +1,12 @@
 import type { UpdateCampaignFormValues } from "@/actions/schema";
 import { type CampaignTemplate, getCampaignTemplate } from "@/utils/campaigns";
 import type { CampaignWithActionsRewards } from "@loopearn/supabase/types";
-import { Icons } from "@loopearn/ui/icons";
+import { Button } from "@loopearn/ui/button";
+import {
+  ExpandingArrow,
+  ExpandingChevronLeft,
+  Icons,
+} from "@loopearn/ui/icons";
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +22,7 @@ import { Plus } from "lucide-react";
 import { useQueryState } from "nuqs";
 import type * as React from "react";
 import CampaignForm from "./campaign-form";
+import CampaignFormReward from "./campaign-form-reward";
 import CampaignFormTrigger from "./campaign-form-trigger";
 
 type CampaignRightSidebarProps = React.ComponentProps<typeof Sidebar> & {
@@ -30,6 +36,7 @@ export function CampaignRightSidebar({
   ...props
 }: CampaignRightSidebarProps) {
   const [stepId, setStepId] = useQueryState("stepId");
+  const [rewardId, setRewardId] = useQueryState("rewardId");
 
   // Convert campaign to form values format
   const initialFormData: UpdateCampaignFormValues = {
@@ -71,6 +78,8 @@ export function CampaignRightSidebar({
     (action) => action.id === stepId,
   );
 
+  const selectedReward = initialFormData.campaign_rewards;
+
   if (stepId && stepId !== "reward-coupon") {
     return (
       <Sidebar
@@ -79,9 +88,17 @@ export function CampaignRightSidebar({
         {...props}
       >
         <SidebarHeader className="py-5 border-b border-sidebar-border">
-          <div className="flex items-center gap-1">
-            <Icons.Workflow className="w-4 h-4" />
-            <span>Configure workflow</span>
+          <div className="flex items-center">
+            {/* <Icons.Workflow className="w-4 h-4" /> */}
+
+            <Button
+              variant="link"
+              className="group flex items-center  p-3 pr-7 text-sm text-black/50 transition-colors enabled:hover:text-black/80"
+              onClick={() => setStepId(null)}
+            >
+              <ExpandingChevronLeft className="size-6" />
+            </Button>
+            <span>Configure Action</span>
           </div>
         </SidebarHeader>
         <SidebarContent className="p-5">
@@ -102,16 +119,22 @@ export function CampaignRightSidebar({
         {...props}
       >
         <SidebarHeader className="py-5 border-b border-sidebar-border">
-          <div className="flex items-center gap-1">
-            <Icons.Workflow className="w-4 h-4" />
-            <span>Configure workflow</span>
+          <div className="flex items-center">
+            <Button
+              variant="link"
+              className="group flex items-center  p-3 pr-7 text-sm text-black/50 transition-colors enabled:hover:text-black/80"
+              onClick={() => setStepId(null)}
+            >
+              <ExpandingChevronLeft className="size-6" />
+            </Button>
+            <span>Configure Action</span>
           </div>
         </SidebarHeader>
         <SidebarContent className="p-5">
-          {/* <CampaignRewardsForm
+          <CampaignFormReward
             template={template}
-            initialData={initialFormData}
-          /> */}
+            initialData={selectedReward}
+          />
         </SidebarContent>
       </Sidebar>
     );

@@ -64,14 +64,6 @@ export default function CampaignFormReward({
   initialData,
 }: CampaignRewardProps) {
   const { toast } = useToast();
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
-    template?.start_date && template?.end_date
-      ? {
-          from: new Date(template.start_date),
-          to: new Date(template.end_date),
-        }
-      : undefined,
-  );
 
   const action = useAction(createCampaignReward, {
     onError: ({ error }) => {
@@ -97,125 +89,110 @@ export default function CampaignFormReward({
     <div className="container mx-auto py-6 max-w-5xl">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rewards</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="reward_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Select a reward type</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select reward type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="rank_points">
-                            Rank Points
-                          </SelectItem>
-                          <SelectItem value="wallet_points">
-                            Wallet Points
-                          </SelectItem>
-                          <SelectItem value="wallet_multiplier">
-                            Wallet Multiplier
-                          </SelectItem>
-                          <SelectItem value="coupon">Coupon</SelectItem>
-                          <SelectItem value="percentage_discount">
-                            Percentage Discount
-                          </SelectItem>
-                          <SelectItem value="fixed_amount_discount">
-                            Fixed Amount Discount
-                          </SelectItem>
-                          <SelectItem value="free_product">
-                            Free Product
-                          </SelectItem>
-                          <SelectItem value="free_shipping">
-                            Free Shipping
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="reward_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Select a reward type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select reward type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="rank_points">Rank Points</SelectItem>
+                      <SelectItem value="wallet_points">
+                        Wallet Points
+                      </SelectItem>
+                      <SelectItem value="wallet_multiplier">
+                        Wallet Multiplier
+                      </SelectItem>
+                      <SelectItem value="coupon">Coupon</SelectItem>
+                      <SelectItem value="percentage_discount">
+                        Percentage Discount
+                      </SelectItem>
+                      <SelectItem value="fixed_amount_discount">
+                        Fixed Amount Discount
+                      </SelectItem>
+                      <SelectItem value="free_product">Free Product</SelectItem>
+                      <SelectItem value="free_shipping">
+                        Free Shipping
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={form.control}
-                  name="reward_value"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Reward Value</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="reward_value"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Reward Value</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={form.control}
-                  name="reward_unit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Reward Unit</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select unit" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="points">Points</SelectItem>
-                          <SelectItem value="%">Percentage</SelectItem>
-                          <SelectItem value="currency">Currency</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="reward_unit"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Reward Unit</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select unit" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="points">Points</SelectItem>
+                      <SelectItem value="%">Percentage</SelectItem>
+                      <SelectItem value="currency">Currency</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={form.control}
-                  name="uses_per_customer"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Uses Per Customer</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
+            <FormField
+              control={form.control}
+              name="uses_per_customer"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Uses Per Customer</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <div className="mt-6 flex justify-end">
             <Button

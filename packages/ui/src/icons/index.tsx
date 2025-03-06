@@ -878,7 +878,8 @@ export const Icons = {
 
 export type Icon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
-export { default as ExpandingArrow } from "./expanding-arrow";
+export { ExpandingArrow, ExpandingChevronLeft } from "./expanding-arrow";
+
 export { ProductHunt } from "./product-hunt";
 export { Twitter } from "./twitter";
 export { LinkedIn } from "./linkedin";
