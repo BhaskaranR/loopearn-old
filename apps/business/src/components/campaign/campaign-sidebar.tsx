@@ -25,10 +25,7 @@ export function CampaignSidebar({
   onSelectType,
 }: CampaignSidebarProps) {
   return (
-    <Sidebar>
-      <SidebarHeader className="gap-4">
-        <Logo className="font-semibold h-8 w-auto" />
-      </SidebarHeader>
+    <Sidebar collapsible="none" className="hidden md:flex">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>All</SidebarGroupLabel>

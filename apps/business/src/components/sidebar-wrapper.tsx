@@ -7,6 +7,7 @@ import {
   SidebarTrigger,
 } from "@loopearn/ui/sidebar";
 import dynamic from "next/dynamic";
+import { CampaignTemplatesModal } from "./campaign/campaign-templates-modal";
 
 const AssistantModal = dynamic(
   () => import("./assistant/assistant-modal").then((mod) => mod.AssistantModal),
@@ -35,6 +36,7 @@ export function SidebarWrapper({
         <AssistantModal />
         <HotKeys />
       </SidebarInset>
+      <CampaignTemplatesModal />
     </SidebarProvider>
   );
 }

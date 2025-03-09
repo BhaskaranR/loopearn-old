@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@loopearn/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
+import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
@@ -67,10 +68,16 @@ export const columns: ColumnDef<
   {
     accessorKey: "start_date",
     header: "Start Date",
+    cell: ({ row, table }) => {
+      return formatDate(row.original.start_date, "MMM d, yyyy");
+    },
   },
   {
     accessorKey: "end_date",
     header: "End Date",
+    cell: ({ row, table }) => {
+      return formatDate(row.original.end_date, "MMM d, yyyy");
+    },
   },
   {
     id: "actions",

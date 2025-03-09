@@ -83,7 +83,6 @@ export default function CampaignForm({
         title: "Campaign created successfully",
         duration: 3500,
       });
-      router.push("/campaigns");
     },
     onError: ({ error }) => {
       toast({

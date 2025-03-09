@@ -2,10 +2,8 @@
 
 import type { CreateCampaignFormValues } from "@/actions/schema";
 import { emptyTemplate } from "@/utils/campaigns";
-import { Button } from "@loopearn/ui/button";
 import { Drawer, DrawerContent } from "@loopearn/ui/drawer";
 import { useMediaQuery } from "@loopearn/ui/hooks";
-import { Icons } from "@loopearn/ui/icons";
 import { ScrollArea } from "@loopearn/ui/scroll-area";
 import {
   Sheet,
