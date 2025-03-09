@@ -124,7 +124,7 @@ export function WorkflowPage({ campaignId, campaign }: WorkflowPageProps) {
   );
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <>
       <header className="border-b bg-background p-4 z-30">
         <div className="flex items-center justify-between max-w-[1400px] mx-auto">
           <Breadcrumb>
@@ -149,27 +149,29 @@ export function WorkflowPage({ campaignId, campaign }: WorkflowPageProps) {
           </Breadcrumb>
         </div>
       </header>
-      <SidebarProvider className="h-full">
-        <WorkFlowSidebar />
-        <SidebarInset>
-          <WorkflowCanvas
-            className="mt-10"
-            triggerItems={triggerItems}
-            rewardItems={rewardItems}
-          />
-          <DragOverlay>
-            {activeItem ? (
-              <WorkflowItem
-                id={activeItem.id}
-                title={activeItem.title}
-                icon={activeItem.icon}
-              />
-            ) : null}
-          </DragOverlay>
-        </SidebarInset>
+      <SidebarProvider>
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+          <WorkFlowSidebar />
+          <SidebarInset>
+            <WorkflowCanvas
+              className="mt-10"
+              triggerItems={triggerItems}
+              rewardItems={rewardItems}
+            />
+            <DragOverlay>
+              {activeItem ? (
+                <WorkflowItem
+                  id={activeItem.id}
+                  title={activeItem.title}
+                  icon={activeItem.icon}
+                />
+              ) : null}
+            </DragOverlay>
+          </SidebarInset>
 
-        <CampaignRightSidebar campaign={campaign} template={template} />
+          <CampaignRightSidebar campaign={campaign} template={template} />
+        </DndContext>
       </SidebarProvider>
-    </DndContext>
+    </>
   );
 }
