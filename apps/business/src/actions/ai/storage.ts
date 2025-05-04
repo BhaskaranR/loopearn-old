@@ -6,14 +6,14 @@ import type { Chat, SettingsResponse } from "./types";
 
 export async function getAssistantSettings(): Promise<SettingsResponse> {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
 
   const defaultSettings: SettingsResponse = {
     enabled: true,
   };
 
-  const userId = session?.user.id;
+  const userId = user?.id;
   const settings = await RedisClient.get(`assistant:user:${userId}:settings`);
 
   return {
@@ -34,10 +34,10 @@ export async function setAssistantSettings({
   params,
 }: SetAassistant) {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
 
-  const userId = session?.user.id;
+  const userId = user?.id;
 
   return RedisClient.set(`assistant:user:${userId}:settings`, {
     ...settings,
@@ -47,10 +47,10 @@ export async function setAssistantSettings({
 
 export async function clearChats() {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
 
-  const userId = session?.user.id;
+  const userId = user?.id;
 
   const chats: string[] = await RedisClient.zrange(
     `user:chat:${userId}`,
@@ -70,10 +70,10 @@ export async function clearChats() {
 
 export async function getLatestChat() {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
 
-  const userId = session?.user.id;
+  const userId = user?.id;
 
   try {
     const chat: string[] = await RedisClient.zrange(
@@ -97,10 +97,10 @@ export async function getLatestChat() {
 
 export async function getChats() {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
 
-  const userId = session?.user.id;
+  const userId = user?.id;
 
   try {
     const pipeline = RedisClient.pipeline();
@@ -127,10 +127,10 @@ export async function getChats() {
 
 export async function getChat(id: string) {
   const {
-    data: { session },
+    data: { user },
   } = await getSession();
 
-  const userId = session?.user.id;
+  const userId = user?.id;
 
   const chat = await RedisClient.hgetall<Chat>(`chat:${id}`);
 

@@ -60,3 +60,4 @@ tailwind.css
 # Trigger
 .trigger
 apps/mobile/credentials.json
+.cursor

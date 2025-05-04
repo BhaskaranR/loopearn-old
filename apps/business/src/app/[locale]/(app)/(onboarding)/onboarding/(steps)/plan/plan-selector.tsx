@@ -4,7 +4,7 @@ import { PlanFeatures } from "@/components/plan-features";
 import { UpgradePlanButton } from "@/components/upgrade-plan-button";
 import { ENTERPRISE_PLAN, PRO_PLAN } from "@/utils/pricing";
 import { Badge } from "@loopearn/ui/badge";
-import { ToggleGroup } from "@loopearn/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@loopearn/ui/toggle-group";
 import NumberFlow from "@number-flow/react";
 import { useState } from "react";
 
@@ -21,19 +21,17 @@ export function PlanSelector({
     <div>
       <div className="flex justify-center">
         <ToggleGroup
-          options={[
-            { value: "monthly", label: "Pay monthly" },
-            {
-              value: "yearly",
-              label: "Pay yearly",
-              badge: <Badge variant="blue">Save 10%</Badge>,
-            },
-          ]}
-          selected={periodTab}
-          selectAction={(period) =>
+          type="single"
+          value={periodTab}
+          onValueChange={(period) =>
             setPeriodTab(period as "monthly" | "yearly")
           }
-        />
+        >
+          <ToggleGroupItem value="monthly">Pay monthly</ToggleGroupItem>
+          <ToggleGroupItem value="yearly">
+            Pay yearly <Badge variant="blue">Save 10%</Badge>
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <PlanCard
