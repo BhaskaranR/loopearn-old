@@ -3,57 +3,36 @@
     "name": "loopearn",
     "slug": "loopearn",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "loopearn",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "updates": {
-      "enabled": true,
-      "fallbackToCacheTimeout": 0,
-      "checkAutomatically": "ON_LOAD",
-      "url": "https://u.expo.dev/bcb9c3c6-7b53-4e61-96df-008830823fc9"
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
+    "plugins": ["expo-router", "expo-video"],
+    "experiments": {
+      "typedRoutes": true,
+      "tsconfigPaths": true
     },
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "infoPlist": {
-        "CFBundleAllowMixedLocalizations": true
-      },
       "bundleIdentifier": "com.KS.KarmaSoc"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ],
-      "expo-localization"
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "locales": {
-      "en": "./locales/native/en.json",
-      "es": "./locales/native/es.json"
+      },
+      "package": "com.loopearn.loopearn"
     },
     "extra": {
       "router": {
