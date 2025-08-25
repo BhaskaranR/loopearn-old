@@ -1,126 +1,108 @@
 "use client";
 
-import { Icons } from "@/components/icons";
-import { Section } from "@/components/section";
-import { easeInOutCubic } from "@/lib/animation";
-import { siteConfig } from "@/lib/config";
-import { motion, useScroll, useTransform } from "framer-motion";
+import HeroVideoDialog from "@/components/magicui/hero-video";
+import { motion } from "framer-motion";
 
-export function Hero() {
-  const { scrollY } = useScroll({
-    offset: ["start start", "end start"],
-  });
-  const y1 = useTransform(scrollY, [0, 300], [100, 0]);
-  const y2 = useTransform(scrollY, [0, 300], [50, 0]);
-  const y3 = useTransform(scrollY, [0, 300], [0, 0]);
-  const y4 = useTransform(scrollY, [0, 300], [50, 0]);
-  const y5 = useTransform(scrollY, [0, 300], [100, 0]);
+const ease = [0.16, 1, 0.3, 1];
 
+function HeroPill() {
   return (
-    <Section id="hero" className="min-h-[100vh] w-full overflow-hidden">
-      <main className="mx-auto pt-16 sm:pt-24 md:pt-32 text-center relative px-4">
-        <div className="relative">
-          <motion.div
-            initial={{ scale: 4.5, height: "80vh" }}
-            animate={{ scale: 1, height: "10vh" }}
+    <motion.a
+      href="/blog/introducing-loopearn"
+      className="bg-primary/20 ring-accent flex w-auto items-center space-x-2 rounded-full px-2 py-1 whitespace-pre ring-1"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease }}>
+      <div className="bg-accent text-primary w-fit rounded-full px-2 py-0.5 text-center text-xs font-medium sm:text-sm">
+        📣 Announcement
+      </div>
+      <p className="text-primary text-xs font-medium sm:text-sm">Introducing Loopearn</p>
+      <svg
+        width="12"
+        height="12"
+        className="ml-1"
+        viewBox="0 0 12 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M8.78141 5.33312L5.20541 1.75712L6.14808 0.814453L11.3334 5.99979L6.14808 11.1851L5.20541 10.2425L8.78141 6.66645H0.666748V5.33312H8.78141Z"
+          fill="hsl(var(--primary))"
+        />
+      </svg>
+    </motion.a>
+  );
+}
+
+function HeroTitles() {
+  return (
+    <div className="flex w-full max-w-2xl flex-col space-y-4 overflow-hidden pt-8">
+      <motion.h1
+        className="text-foreground text-center text-4xl leading-tight font-medium sm:text-5xl md:text-6xl"
+        initial={{ filter: "blur(10px)", opacity: 0, y: 50 }}
+        animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+        transition={{
+          duration: 1,
+          ease,
+          staggerChildren: 0.2,
+        }}>
+        {["Open", "Source", "Rewards", "Infrastructure"].map((text, index) => (
+          <motion.span
+            key={index}
+            className="inline-block px-1 font-semibold text-balance md:px-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{
-              scale: { delay: 0, duration: 1.8, ease: easeInOutCubic },
-              height: { delay: 0, duration: 1.8, ease: easeInOutCubic },
-            }}
-            className="mb-16 relative z-20"
-            style={{ transformOrigin: "top" }}
-          >
-            <div className="bg-primary text-white text-xl font-bold p-4 h-20 w-20 flex items-center justify-center rounded-3xl mx-auto shadow-md">
-              <Icons.logo className="w-auto h-[40px]" />
-            </div>
-          </motion.div>
-        </div>
+              duration: 0.8,
+              delay: index * 0.2,
+              ease,
+            }}>
+            {text}
+          </motion.span>
+        ))}
+      </motion.h1>
+      <motion.p
+        className="text-muted-foreground mx-auto max-w-xl text-center text-lg leading-7 text-balance sm:text-xl sm:leading-9"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.6,
+          duration: 0.8,
+          ease,
+        }}>
+        LoopEarn combines the trust of open-source infrastructure with enterprise-grade SaaS tools to help
+        businesses gamify customer engagement.
+      </motion.p>
+    </div>
+  );
+}
 
-        <div className="max-w-5xl mx-auto">
-          <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5, ease: easeInOutCubic }}
-            className="text-5xl font-bold mb-4 tracking-tighter"
-          >
-            {siteConfig.description}
-          </motion.h1>
+function HeroImage() {
+  return (
+    <motion.div
+      className="relative mx-auto flex w-full items-center justify-center"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.2, duration: 1, ease }}>
+      <HeroVideoDialog
+        animationStyle="from-center"
+        videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
+        thumbnailSrc="/dashboard.png"
+        thumbnailAlt="Hero Video"
+        className="mt-16 max-w-screen-lg rounded-lg border shadow-lg"
+      />
+    </motion.div>
+  );
+}
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.7, ease: easeInOutCubic }}
-            className="mb-12 text-2xl tracking-tight text-gray-400 md:text-xl text-balance translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:400ms]"
-          >
-            {siteConfig.subDescription}
-          </motion.p>
-          <div className="flex justify-center mb-16">
-            <motion.img
-              src="/download-black.svg"
-              alt="Download"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1 }}
-              className="w-40 flex-shrink-0 dark:hidden block"
-            />
-            <motion.img
-              src="/download-white.svg"
-              alt="Download"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1 }}
-              className="w-40 flex-shrink-0 hidden dark:block"
-            />
-          </div>
-        </div>
-        {/* <div className="flex flex-nowrap items-center justify-center gap-4 sm:gap-8 h-auto sm:h-[500px] select-none">
-          <motion.img
-            src="/Device-1.png"
-            alt="iPhone"
-            initial={{ opacity: 0, x: -200 }}
-            animate={{ opacity: 1, x: 0 }}
-            style={{ y: y1 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="w-40 sm:w-64 h-[333px] sm:h-[500px] flex-shrink-0"
-          />
-          <motion.img
-            src="/Device-2.png"
-            alt="iPhone"
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            style={{ y: y2 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="w-40 sm:w-64 h-[333px] sm:h-[500px] flex-shrink-0"
-          />
-          <motion.img
-            src="/Device-3.png"
-            alt="iPhone"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={{ y: y3 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="w-40 sm:w-64 h-[333px] sm:h-[500px] flex-shrink-0"
-          />
-          <motion.img
-            src="/Device-4.png"
-            alt="iPhone"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            style={{ y: y4 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="w-40 sm:w-64 h-[333px] sm:h-[500px] flex-shrink-0"
-          />
-          <motion.img
-            src="/Device-5.png"
-            alt="iPhone"
-            initial={{ opacity: 0, x: 200 }}
-            animate={{ opacity: 1, x: 0 }}
-            style={{ y: y5 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="w-40 sm:w-64 h-[333px] sm:h-[500px] flex-shrink-0"
-          />
-        </div> */}
-      </main>
-    </Section>
+export default function Hero2() {
+  return (
+    <section id="hero">
+      <div className="relative flex w-full flex-col items-center justify-start px-4 pt-32 sm:px-6 sm:pt-24 md:pt-32 lg:px-8">
+        <HeroPill />
+        <HeroTitles />
+        <HeroImage />
+        <div className="from-background via-background pointer-events-none absolute inset-x-0 -bottom-12 h-1/3 bg-gradient-to-t to-transparent lg:h-1/4"></div>
+      </div>
+    </section>
   );
 }

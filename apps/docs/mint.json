@@ -1,0 +1,86 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "LoopEarn Docs",
+  "logo": {
+    "dark": "/logos/logotype-dark.svg",
+    "light": "/logos/logotype.svg",
+    "href": "https://business.loopearn.com"
+  },
+  "favicon": "/logos/favicon.png",
+  "colors": {
+    "primary": "#1D1D1D",
+    "light": "#F2F1EF",
+    "dark": "#1D1D1D",
+    "background": {
+      "dark": "#121212",
+      "light": "#FFFFFF"
+    },
+    "anchors": {
+      "from": "#FF7F57",
+      "to": "#9563FF"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@loopearn.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Business",
+    "url": "https://business.loopearn.com"
+  },
+  "openapi": "https://api.loopearn.com/openapi",
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Help Center",
+      "icon": "question",
+      "url": "https://loopearn.com/support"
+    },
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://git.new/loopearn"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["introduction"]
+    },
+    {
+      "group": "Resources",
+      "pages": ["integrations", "examples"]
+    },
+    {
+      "group": "Open source",
+      "pages": ["local-development", "self-hosting"]
+    },
+    {
+      "group": "API Reference",
+      "pages": ["api-reference/api/introduction"]
+    },
+    {
+      "group": "Links",
+      "pages": ["api-reference/endpoint/health"]
+    }
+  ],
+  "api": {
+    "maintainOrder": true
+  },
+  "feedback": {
+    "thumbsRating": true
+  },
+  "footerSocials": {
+    "twitter": "https://twitter.com/middayai",
+    "github": "https://git.new/midday",
+    "website": "https://midday.ai",
+    "linkedin": "https://www.linkedin.com/company/midday-ai"
+  }
+}

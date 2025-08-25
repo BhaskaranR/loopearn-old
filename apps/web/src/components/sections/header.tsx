@@ -1,104 +1,72 @@
 "use client";
 
+import Drawer from "@/components/drawer";
 import { Icons } from "@/components/icons";
-import { MobileDrawer } from "@/components/mobile-drawer";
+import Menu from "@/components/menu";
 import { buttonVariants } from "@/components/ui/button";
-import { easeInOutCubic } from "@/lib/animation";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export function Header() {
-  const [isVisible, setIsVisible] = useState(true);
+export default function Header() {
   const [addBorder, setAddBorder] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const controls = useAnimation();
 
   useEffect(() => {
-    let lastScrollY = 0;
-
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsVisible(currentScrollY <= lastScrollY);
-      setAddBorder(currentScrollY > 20);
-      lastScrollY = currentScrollY;
+      if (window.scrollY > 20) {
+        setAddBorder(true);
+      } else {
+        setAddBorder(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    // Set isInitialLoad to false after the component has mounted
-    setIsInitialLoad(false);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  useEffect(() => {
-    controls.start(isVisible ? "visible" : "hidden");
-  }, [isVisible, controls]);
-
-  const headerVariants = {
-    hidden: { opacity: 0, y: "-100%" },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.header
-          initial="hidden"
-          animate={controls}
-          exit="hidden"
-          variants={headerVariants}
-          transition={{
-            duration: isInitialLoad ? 1 : 0.3,
-            delay: isInitialLoad ? 0.5 : 0,
-            ease: easeInOutCubic,
-          }}
-          className={cn("sticky top-0 z-50 p-0 bg-background/60 backdrop-blur")}
-        >
-          <div className="flex justify-between items-center container mx-auto p-2">
-            <Link
-              href="/"
-              title="brand-logo"
-              className="relative mr-6 flex items-center space-x-2"
-            >
-              <Icons.logo className="w-auto" />
-              <span className="font-bold text-xl">{siteConfig.name}</span>
-            </Link>
-            <div className="hidden lg:block space-x-2">
-              <Link
-                href="https://business.loopearn.com"
-                className={cn(buttonVariants({ variant: "link" }))}
-              >
-                {siteConfig.list}
-              </Link>
+    <header className={"bg-background/60 sticky top-0 z-50 py-2 backdrop-blur"}>
+      <div className="container mx-auto flex items-center justify-between">
+        <Link href="/" title="brand-logo" className="relative mr-6 flex items-center space-x-2">
+          <Icons.logo className="h-[40px] w-auto" />
+        </Link>
 
+        <div className="hidden lg:block">
+          <div className="flex items-center">
+            <nav className="mr-10">
+              <Menu />
+            </nav>
+
+            <div className="flex gap-2">
+              <Link href="/login" className={buttonVariants({ variant: "outline" })}>
+                Login
+              </Link>
               <Link
-                href="https://loopearn.com"
+                href="/signup"
                 className={cn(
                   buttonVariants({ variant: "default" }),
-                  "h-8 text-white rounded-full group",
-                )}
-              >
-                {siteConfig.cta}
+                  "text-background flex w-full gap-2 sm:w-auto"
+                )}>
+                <Icons.logo className="h-6 w-6" />
+                Get Started for Free
               </Link>
             </div>
-            <div className="mt-2 cursor-pointer block lg:hidden">
-              <MobileDrawer />
-            </div>
           </div>
-          <motion.hr
-            initial={{ opacity: 0 }}
-            animate={{ opacity: addBorder ? 1 : 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="absolute w-full bottom-0"
-          />
-        </motion.header>
-      )}
-    </AnimatePresence>
+        </div>
+        <div className="mt-2 block cursor-pointer lg:hidden">
+          <Drawer />
+        </div>
+      </div>
+      <hr
+        className={cn(
+          "absolute bottom-0 w-full transition-opacity duration-300 ease-in-out",
+          addBorder ? "opacity-100" : "opacity-0"
+        )}
+      />
+    </header>
   );
 }

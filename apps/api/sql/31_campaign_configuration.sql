@@ -1,9 +1,9 @@
 CREATE TABLE campaigns (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    business_id UUID REFERENCES business(id) ON DELETE CASCADE, -- Business that owns the campaign
+    environment_id UUID REFERENCES environment(id) ON DELETE CASCADE, -- Business that owns the campaign
     name TEXT NOT NULL, -- Campaign name
     description TEXT, -- Description of the campaign
-    type TEXT CHECK (type IN ('SignUp', 'Reward Campaign', 'Other')) NOT NULL, -- Campaign type
+    type TEXT CHECK (type IN ('SignUp', 'Reward Campaign', 'Survey', 'Other')) NOT NULL, -- Campaign type
     is_repeatable BOOLEAN DEFAULT FALSE, -- Can the campaign be repeated?
     max_achievement INT DEFAULT 1, -- Max times a customer can achieve the campaign (-1 for unlimited)
     min_tier INT DEFAULT 1, -- Minimum customer tier required
@@ -59,7 +59,6 @@ CREATE INDEX idx_campaign_rewards_campaign_id ON campaign_rewards(campaign_id);
 ALTER TABLE campaigns ENABLE ROW LEVEL SECURITY;
 ALTER TABLE campaign_actions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE campaign_rewards ENABLE ROW LEVEL SECURITY;
-
 
 
 -- ✅ Business Can Manage Their Own Campaigns

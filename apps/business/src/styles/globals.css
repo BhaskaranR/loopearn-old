@@ -68,14 +68,6 @@ body {
   animation: shake 0.2s ease-in-out 0s 2;
 }
 
-.pin-field:first-of-type {
-  border-radius: 0.5rem 0 0 0.5rem;
-}
-
-.pin-field[disabled] {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
 
 @keyframes shake {
   0% { transform: translateX(0rem); }
@@ -84,85 +76,6 @@ body {
   100% { transform: translateX(0rem); }
 }
 
-/* Desktop App */
-html.todesktop {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-html.todesktop header {
-  -webkit-app-region: drag;
-}
-
-html.todesktop header .no-drag {
-  -webkit-app-region: no-drag;
-}
-
-html.todesktop,
-html.todesktop div {
-  cursor: default !important;
-}
-
-html.todesktop,
-html.todesktop.div {
-  cursor: default !important;
-}
-
-html.todesktop a {
-  cursor: pointer !important;
-}
-
-.update-available {
-  background: #68A7FF;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  position: relative;
-}
-
-.update-available svg {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  top: 0;
-  left: 0;
-}
-
-.update-available svg path.svg-update{
-  opacity: 1;
-  transform: scale(1);
-}
-
-.update-available svg circle.svg-progress{
-  stroke-dashoffset: 16px;
-  stroke-dasharray: 16px;
-  transform: rotate(270deg);
-  transform-origin: center;
-}
-
-.update-available.progress svg path.svg-update,
-.update-available.update-downloaded svg path.svg-update {
-  opacity: 0;
-  transform: scale(.5);
-}
-
-.update-available.progress svg circle.svg-progress {
-  stroke-dashoffset: 0px;
-  transform: rotate(270deg);
-  transition: all 4s linear;
-}
-
-.update-available svg path.svg-refresh{
-  opacity: 0;
-  transform: scale(.2) rotate(-135deg);
-  transition: all .3s ease;
-  transform-origin: center;
-}
-
-.update-available.update-downloaded svg path.svg-refresh{
-  opacity: 1;
-  transform: scale(1) rotate(0);
-}
 
 @keyframes anim-update {
   0%{
@@ -175,18 +88,6 @@ html.todesktop a {
   }
 }
 
-/* Desktop Command menu */
-html.light.todesktop-panel {
-  background-color: rgba(255,255,255,.5);
-}
-
-html.dark.todesktop-panel {
-  background-color: rgba(000,000,000,.3);
-}
-
-html.todesktop-panel body {
-  background-color: transparent !important;
-}
 
 .color-picker .react-colorful {
   height: 240px;
