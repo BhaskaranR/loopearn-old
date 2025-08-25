@@ -3,15 +3,22 @@ import CTA from "@/components/sections/cta";
 import FAQ from "@/components/sections/faq";
 import Features from "@/components/sections/features";
 import Footer from "@/components/sections/footer";
-import Header from "@/components/sections/header";
-import Hero from "@/components/sections/hero";
-import HowItWorks from "@/components/sections/how-it-works";
 import Logos from "@/components/sections/logos";
-import Pricing from "@/components/sections/pricing";
 import Problem from "@/components/sections/problem";
-import Solution from "@/components/sections/solution";
-import Testimonials from "@/components/sections/testimonials";
-import TestimonialsCarousel from "@/components/sections/testimonials-carousel";
+import dynamic from "next/dynamic";
+
+// Dynamically import client components
+const Header = dynamic(() => import("@/components/sections/header"));
+const Hero = dynamic(() => import("@/components/sections/hero"));
+const Solution = dynamic(() => import("@/components/sections/solution"));
+const HowItWorks = dynamic(() => import("@/components/sections/how-it-works"));
+const TestimonialsCarousel = dynamic(
+  () => import("@/components/sections/testimonials-carousel"),
+);
+const Testimonials = dynamic(
+  () => import("@/components/sections/testimonials"),
+);
+const Pricing = dynamic(() => import("@/components/sections/pricing"));
 
 export default function Home() {
   return (

@@ -1,7 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
 import { siteConfig } from "@/lib/config";
-import fs from "fs";
-import path from "path";
-import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
@@ -18,19 +17,19 @@ export type Post = {
 };
 
 function parseFrontmatter(fileContent: string) {
-  let frontmatterRegex = /---\s*([\s\S]*?)\s*---/;
-  let match = frontmatterRegex.exec(fileContent);
-  let frontMatterBlock = match![1];
-  let content = fileContent.replace(frontmatterRegex, "").trim();
-  let frontMatterLines = frontMatterBlock.trim().split("\n");
-  let metadata: Partial<Post> = {};
+  const frontmatterRegex = /---\s*([\s\S]*?)\s*---/;
+  const match = frontmatterRegex.exec(fileContent);
+  const frontMatterBlock = match![1];
+  const content = fileContent.replace(frontmatterRegex, "").trim();
+  const frontMatterLines = frontMatterBlock.trim().split("\n");
+  const metadata: Partial<Post> = {};
 
-  frontMatterLines.forEach((line) => {
-    let [key, ...valueArr] = line.split(": ");
+  for (const line of frontMatterLines) {
+    const [key, ...valueArr] = line.split(": ");
     let value = valueArr.join(": ").trim();
     value = value.replace(/^['"](.*)['"]$/, "$1"); // Remove quotes
     metadata[key.trim() as keyof Post] = value;
-  });
+  }
 
   return { data: metadata as Post, content };
 }
@@ -40,22 +39,22 @@ function getMDXFiles(dir: string) {
 }
 
 export async function markdownToHTML(markdown: string) {
-  const p = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypePrettyCode, {
-      // https://rehype-pretty.pages.dev/#usage
-      theme: {
-        light: "min-light",
-        dark: "min-dark",
-      },
-      keepBackground: false,
-    })
-    .use(rehypeStringify)
-    .process(markdown);
+  try {
+    const p = await unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkRehype)
+      .use(rehypeStringify)
+      .process(markdown);
 
-  return p.toString();
+    return p.toString();
+  } catch (error) {
+    console.warn(
+      "Error processing markdown, falling back to plain text:",
+      error,
+    );
+    return markdown;
+  }
 }
 
 export async function getPost(slug: string) {
@@ -85,7 +84,7 @@ async function getAllPosts(dir: string) {
         slug,
         source,
       };
-    })
+    }),
   );
 }
 
