@@ -1,21 +1,18 @@
-import { getBlogPosts } from "@/lib/blog";
-import { MetadataRoute } from "next";
-import { headers } from "next/headers";
+import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const allPosts = await getBlogPosts();
-  const headersList = await headers();
-  let domain = headersList.get("host") as string;
-  let protocol = "https";
-
   return [
     {
-      url: `${protocol}://${domain}`,
+      url: "https://loopearn.com",
       lastModified: new Date(),
     },
-    ...allPosts.map((post) => ({
-      url: `${protocol}://${domain}/blog/${post.slug}`,
+    {
+      url: "https://loopearn.com/blog",
       lastModified: new Date(),
-    })),
+    },
+    {
+      url: "https://loopearn.com/blog/introducing-loopearn",
+      lastModified: new Date(),
+    },
   ];
 }
