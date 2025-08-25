@@ -9,7 +9,7 @@ CREATE TABLE customers (
     date_of_birth DATE,
     custom JSONB, -- Store extra attributes per business
     tags TEXT[], -- Array of tags instead of separate table
-    business_id UUID REFERENCES business(id) ON DELETE CASCADE,
+    environment_id UUID REFERENCES environments(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now()
 );

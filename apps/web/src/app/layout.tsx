@@ -1,16 +1,11 @@
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { siteConfig } from "@/lib/config";
-import { fontSans } from "@/lib/fonts";
 import { cn, constructMetadata } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Toaster } from "@loopearn/ui/toaster";
 
-export const metadata: Metadata = constructMetadata({
-  title: `${siteConfig.name} | ${siteConfig.description}`,
-});
+export const metadata: Metadata = constructMetadata({});
 
 export const viewport: Viewport = {
   colorScheme: "light",
@@ -27,21 +22,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-background antialiased w-full mx-auto scroll-smooth",
-          fontSans.variable,
-        )}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-        >
+      <head>
+        <link rel="preconnect" href="https://rsms.me/" />
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+      </head>
+      <body className={cn("bg-background mx-auto min-h-screen w-full scroll-smooth antialiased")}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           {children}
           <ThemeToggle />
           <TailwindIndicator />
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>

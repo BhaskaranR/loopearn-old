@@ -1,68 +1,56 @@
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/lib/config";
-import {
-  InstagramLogoIcon,
-  LinkedInLogoIcon,
-  TwitterLogoIcon,
-} from "@radix-ui/react-icons";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
-interface Icon {
-  icon: JSX.Element;
-  url: string;
-}
-
-const icons: Icon[] = [
-  { icon: <LinkedInLogoIcon />, url: "#" },
-  { icon: <InstagramLogoIcon />, url: "#" },
-  { icon: <TwitterLogoIcon />, url: "#" },
-];
-
-type Link = {
-  text: string;
-  url: string;
-};
-
-const links: Link[] = [
-  { text: "Pricing", url: "#" },
-  { text: "Contact", url: "#" },
-];
-
-export function Footer() {
+export default function Footer() {
   return (
-    <footer className="flex flex-col gap-y-5 rounded-lg px-7 py-5 md:px-10 container">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-2">
-          <Icons.logo className="h-5 w-5" />
-          <h2 className="text-lg font-bold text-foreground">
-            {siteConfig.name}
-          </h2>
-        </div>
+    <footer>
+      <div className="mx-auto max-w-6xl px-5 py-16 pb-0 sm:px-10">
+        <a href="/" title={siteConfig.name} className="relative mr-6 flex items-center space-x-2">
+          <Icons.logo className="h-[40px] w-auto" />
+        </a>
 
-        <div className="flex gap-x-2">
-          {icons.map((icon, index) => (
-            <a
-              key={index}
-              href={icon.url}
-              className="flex h-5 w-5 items-center justify-center text-muted-foreground transition-all duration-100 ease-linear hover:text-foreground hover:underline hover:underline-offset-4"
-            >
-              {icon.icon}
-            </a>
+        <div className="mt-8 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {siteConfig.footer.map((section, index) => (
+            <div key={index} className="mb-5">
+              <h2 className="font-semibold">{section.title}</h2>
+              <ul>
+                {section.links.map((link, linkIndex) => (
+                  <li key={linkIndex} className="my-2">
+                    <Link
+                      href={link.href}
+                      className="group text-muted-foreground hover:text-foreground inline-flex cursor-pointer items-center justify-start gap-1 duration-200 hover:opacity-90">
+                      {link.icon && link.icon}
+                      {link.text}
+                      <ChevronRight className="h-4 w-4 translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
-      </div>
-      <div className="flex flex-col justify-between gap-y-5 md:flex-row md:items-center">
-        <ul className="flex flex-col gap-x-5 gap-y-2 text-muted-foreground md:flex-row md:items-center">
-          {links.map((link, index) => (
-            <li
-              key={index}
-              className="text-[15px]/normal font-medium text-muted-foreground transition-all duration-100 ease-linear hover:text-foreground hover:underline hover:underline-offset-4"
-            >
-              <a href={link.url}>{link.text}</a>
+        <div className="mx-auto grid h-full w-full max-w-6xl grid-cols-1 justify-between gap-1 border-t py-2 md:grid-cols-2">
+          <span className="text-foreground text-sm tracking-tight">
+            Copyright © {new Date().getFullYear()}{" "}
+            <Link href="/" className="cursor-pointer">
+              {siteConfig.name}
+            </Link>{" "}
+            - {siteConfig.description}
+          </span>
+          <ul className="text-foreground flex justify-start text-sm tracking-tight md:justify-end">
+            <li className="mr-3 md:mx-4">
+              <Link href="#" target="_blank" rel="noopener noreferrer">
+                Privacy Policy
+              </Link>
             </li>
-          ))}
-        </ul>
-        <div className="flex items-center justify-between text-sm font-medium tracking-tight text-muted-foreground">
-          <p>All rights reserved.</p>
+            <li className="mr-3 md:mx-4">
+              <Link href="#" target="_blank" rel="noopener noreferrer">
+                Terms of Service
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

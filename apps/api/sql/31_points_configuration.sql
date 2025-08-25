@@ -1,7 +1,8 @@
 -- Create points configuration table for businesses
 CREATE TABLE points_configuration (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    business_id UUID REFERENCES business(id) ON DELETE CASCADE,
+    environment_id UUID REFERENCES environments(id) ON DELETE CASCADE,
+    customer_tier TEXT DEFAULT NULL ,
     -- Points earning settings
     points_per_currency DECIMAL(10, 2) DEFAULT 2.0, -- e.g., 2 points for every 1 USD
     currency TEXT DEFAULT 'USD',
@@ -19,7 +20,7 @@ CREATE TABLE points_configuration (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
     -- Ensure one configuration per business
-    UNIQUE(business_id)
+    UNIQUE(environment_id)
 );
 
 ALTER TABLE points_configuration

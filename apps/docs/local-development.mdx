@@ -1,0 +1,92 @@
+---
+title: "Local Development"
+"og:title": "How to setup Loopearn for Local Development"
+description: "A guide on how to run Loopearn's codebase locally."
+icon: code
+---
+
+###
+
+## Introduction
+
+Loopearn's codebase is set up in a monorepo via [Turborepo](https://turbo.build/repo) and is fully [open-source on GitHub](https://git.new/Loopearn).
+
+Here's the monorepo structure:
+
+```
+apps
+├── api
+├── business
+├── docs
+├── mobile
+├── website
+packages
+├── documents
+├── email
+├── events
+├── import
+├── inbox
+├── jobs
+├── kv
+├── location
+├── notification
+├── supabase
+├── tsconfig
+├── ui
+├── utils
+```
+
+The `apps` directory contains the code for:
+
+- `api`: The backend for Loopearn (supabase).
+- `business`: Loopearn's application ([business.loopearn.com](https://business.loopearn.com)).
+- `docs`: Loopearn's documentation site ([loopearn.com/docs](https://loopearn.com/docs)).
+- `mobile`: Loopearn's mobile app.
+- `website`: Loopearn's website app ([loopearn.com](https://loopearn.com)).
+
+The `packages` directory contains the code for:
+
+- `documents`: OCR for receipts.
+- `events`: Analytics library.
+- `kv`: Key value storage client.
+- `location`: Location related utils.
+- `notification`: Notifications client.
+- `supabase`: Queries and client.
+- `tsconfig`: The TypeScript configuration for Loopearn's web app.
+- `ui`: UI component library.
+- `utils`: A collection of utility functions and constants used across Loopearn's codebase.
+
+## Running Loopearn locally
+
+To run Loopearn locally, you'll need to set up the following:
+
+- A [Supabase](https://supabase.com/) account
+- An [Upstash](https://upstash.com/) account
+
+## Step 1: Local setup
+
+First, you'll need to clone the Loopearn repo and install the dependencies.
+
+<Steps>
+
+  <Step title="Clone the repo">
+
+First, clone the [loopearn.com repo](https://d.to/github) into a public GitHub repository.
+
+    ```bash Terminal
+    git clone https://github.com/Loopearn-ai/Loopearn.git
+    ```
+
+  </Step>
+
+  <Step title="Install dependencies">
+
+    Run the following command to install the dependencies:
+
+    ```bash Terminal
+    bun i
+    ```
+
+  </Step>
+
+</Steps>
