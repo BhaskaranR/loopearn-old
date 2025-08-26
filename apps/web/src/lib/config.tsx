@@ -31,7 +31,8 @@ export const siteConfig = {
           {
             href: "#",
             title: "Spin & Play",
-            description: "Gamify experiences with spin-the-wheel and challenges.",
+            description:
+              "Gamify experiences with spin-the-wheel and challenges.",
           },
           {
             href: "#",
@@ -63,7 +64,8 @@ export const siteConfig = {
           {
             title: "Marketplaces",
             href: "#",
-            description: "Publish rewards directly to the LoopEarn marketplace.",
+            description:
+              "Publish rewards directly to the LoopEarn marketplace.",
           },
           {
             title: "Enterprises",
@@ -105,7 +107,6 @@ export const siteConfig = {
         "In-product Campaigns",
         "iOS & Android SDK for mobile campaigns",
         "Email Embedded Campaigns",
-        "Logic Jumps, Hidden Fields, Recurring Campaigns, etc.",
         "API & Webhooks",
       ],
       description: "Perfect to get started and test campaigns",
@@ -157,8 +158,9 @@ export const siteConfig = {
       question: "What is LoopEarn?",
       answer: (
         <span>
-          LoopEarn is an open-source rewards and loyalty platform that helps businesses launch gamified
-          campaigns, manage loyalty, and drive customer engagement across channels.
+          LoopEarn is an open-source rewards and loyalty platform that helps
+          businesses launch gamified campaigns, manage loyalty, and drive
+          customer engagement across channels.
         </span>
       ),
     },
@@ -166,8 +168,8 @@ export const siteConfig = {
       question: "How do I get started?",
       answer: (
         <span>
-          Sign up on loopearn.com, connect your Shopify store or marketplace account, and create your first
-          reward campaign in minutes.
+          Sign up on loopearn.com, connect your Shopify store or marketplace
+          account, and create your first reward campaign in minutes.
         </span>
       ),
     },
@@ -175,8 +177,8 @@ export const siteConfig = {
       question: "Does LoopEarn support Shopify?",
       answer: (
         <span>
-          Yes, LoopEarn integrates natively with Shopify Flow and checkout to trigger rewards based on
-          customer actions and store events.
+          Yes, LoopEarn integrates natively with Shopify Flow and checkout to
+          trigger rewards based on customer actions and store events.
         </span>
       ),
     },
@@ -184,8 +186,8 @@ export const siteConfig = {
       question: "Is LoopEarn open source?",
       answer: (
         <span>
-          Yes. LoopEarn is built on an open-source foundation (AGPL license) so you have transparency,
-          flexibility, and community-driven innovation.
+          Yes. LoopEarn is built on an open-source foundation (AGPL license) so
+          you have transparency, flexibility, and community-driven innovation.
         </span>
       ),
     },
@@ -193,8 +195,8 @@ export const siteConfig = {
       question: "What kind of support is available?",
       answer: (
         <span>
-          We provide documentation, tutorials, community channels, and premium enterprise support for teams
-          that need advanced help.
+          We provide documentation, tutorials, community channels, and premium
+          enterprise support for teams that need advanced help.
         </span>
       ),
     },

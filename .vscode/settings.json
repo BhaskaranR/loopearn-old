@@ -26,5 +26,6 @@
   },
   "tailwindCSS.experimental.classRegex": [
     ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ]
+  ],
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
